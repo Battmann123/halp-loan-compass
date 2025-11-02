@@ -3,7 +3,14 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import Home from "./pages/Home";
+import Calculators from "./pages/Calculators";
+import LoanTypes from "./pages/LoanTypes";
+import RepaymentCalculator from "./pages/calculators/RepaymentCalculator";
+import BorrowingPowerCalculator from "./pages/calculators/BorrowingPowerCalculator";
+import StampDutyCalculator from "./pages/calculators/StampDutyCalculator";
+import GovernmentGrantsCalculator from "./pages/calculators/GovernmentGrantsCalculator";
+import Disclaimer from "./pages/Disclaimer";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -15,7 +22,14 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/calculators" element={<Calculators />} />
+          <Route path="/calculators/repayment" element={<RepaymentCalculator />} />
+          <Route path="/calculators/borrowing-power" element={<BorrowingPowerCalculator />} />
+          <Route path="/calculators/stamp-duty" element={<StampDutyCalculator />} />
+          <Route path="/calculators/government-grants" element={<GovernmentGrantsCalculator />} />
+          <Route path="/loan-types" element={<LoanTypes />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
