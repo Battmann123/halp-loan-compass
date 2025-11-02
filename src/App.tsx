@@ -10,6 +10,15 @@ import RepaymentCalculator from "./pages/calculators/RepaymentCalculator";
 import BorrowingPowerCalculator from "./pages/calculators/BorrowingPowerCalculator";
 import StampDutyCalculator from "./pages/calculators/StampDutyCalculator";
 import GovernmentGrantsCalculator from "./pages/calculators/GovernmentGrantsCalculator";
+import ServiceabilityCalculator from "./pages/calculators/ServiceabilityCalculator";
+import LMICalculator from "./pages/calculators/LMICalculator";
+import UpfrontCostsCalculator from "./pages/calculators/UpfrontCostsCalculator";
+import InvestmentPropertyCalculator from "./pages/calculators/InvestmentPropertyCalculator";
+import CapitalGainsCalculator from "./pages/calculators/CapitalGainsCalculator";
+import DepreciationCalculator from "./pages/calculators/DepreciationCalculator";
+import RefinanceCalculator from "./pages/calculators/RefinanceCalculator";
+import ExtraRepaymentsCalculator from "./pages/calculators/ExtraRepaymentsCalculator";
+import LenderComparisonCalculator from "./pages/calculators/LenderComparisonCalculator";
 import Disclaimer from "./pages/Disclaimer";
 import NotFound from "./pages/NotFound";
 
@@ -28,6 +37,15 @@ const App = () => (
           <Route path="/calculators/borrowing-power" element={<BorrowingPowerCalculator />} />
           <Route path="/calculators/stamp-duty" element={<StampDutyCalculator />} />
           <Route path="/calculators/government-grants" element={<GovernmentGrantsCalculator />} />
+          <Route path="/calculators/serviceability" element={<ServiceabilityCalculator />} />
+          <Route path="/calculators/lmi" element={<LMICalculator />} />
+          <Route path="/calculators/upfront-costs" element={<UpfrontCostsCalculator />} />
+          <Route path="/calculators/investment-property" element={<InvestmentPropertyCalculator />} />
+          <Route path="/calculators/capital-gains" element={<CapitalGainsCalculator />} />
+          <Route path="/calculators/depreciation" element={<DepreciationCalculator />} />
+          <Route path="/calculators/refinance" element={<RefinanceCalculator />} />
+          <Route path="/calculators/extra-repayments" element={<ExtraRepaymentsCalculator />} />
+          <Route path="/calculators/lender-comparison" element={<LenderComparisonCalculator />} />
           <Route path="/loan-types" element={<LoanTypes />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
