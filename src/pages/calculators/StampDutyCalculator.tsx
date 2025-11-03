@@ -42,24 +42,29 @@ const StampDutyCalculator = () => {
         } else {
           stampDuty = 47295 + (propertyValue - 1168000) * 0.055;
         }
-        // First Home Buyer concession NSW
+        // First Home Buyer concession NSW (rules from 1 July 2023)
         if (firstHomeBuyer && propertyType === "primary") {
-          if (propertyCategory === "new" || propertyCategory === "vacant") {
-            // New homes or vacant land: Full exemption up to $800k
-            if (propertyValue <= 800000) {
+          if (propertyCategory === "vacant") {
+            // Vacant land: Full exemption up to $350k
+            if (propertyValue <= 350000) {
               concession = stampDuty;
               stampDuty = 0;
-            } else if (propertyValue <= 1000000) {
-              // Concessional rate between $800k-$1M for new homes
-              const concessionAmount = (propertyValue - 800000);
+            } else if (propertyValue <= 450000) {
+              // Concessional rate between $350k-$450k for vacant land
+              const concessionAmount = (propertyValue - 350000);
               stampDuty = concessionAmount * 0.002293;
               concession = 0;
             }
           } else {
-            // Established homes: Full exemption up to $650k only
-            if (propertyValue <= 650000) {
+            // New AND Existing homes: Full exemption up to $800k (as of 1 July 2023)
+            if (propertyValue <= 800000) {
               concession = stampDuty;
               stampDuty = 0;
+            } else if (propertyValue <= 1000000) {
+              // Concessional rate between $800k-$1M
+              const concessionAmount = (propertyValue - 800000);
+              stampDuty = concessionAmount * 0.002293;
+              concession = 0;
             }
           }
         }
