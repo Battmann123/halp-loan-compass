@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Calculator, Home, BookOpen, Menu, X } from "lucide-react";
+import { Calculator, Home, BookOpen, Menu, X, Percent, HelpCircle, FileText } from "lucide-react";
 import { useState } from "react";
 import halpLogo from "@/assets/halp-home-loans-logo.png";
 
@@ -16,7 +16,7 @@ const Navigation = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-6">
             <Link to="/" className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors">
               <Home className="h-4 w-4" />
               <span className="font-medium">Home</span>
@@ -29,6 +29,18 @@ const Navigation = () => {
               <BookOpen className="h-4 w-4" />
               <span className="font-medium">Loan Types</span>
             </Link>
+            <Link to="/interest-rates" className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors">
+              <Percent className="h-4 w-4" />
+              <span className="font-medium">Interest Rates</span>
+            </Link>
+            <Link to="/faq" className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors">
+              <HelpCircle className="h-4 w-4" />
+              <span className="font-medium">FAQ's</span>
+            </Link>
+            <Link to="/guides" className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors">
+              <FileText className="h-4 w-4" />
+              <span className="font-medium">Guides</span>
+            </Link>
             <Link to="/apply">
               <Button variant="default" size="lg" className="bg-gradient-to-r from-primary to-accent shadow-lg hover:shadow-xl transition-all">
                 Apply Now
@@ -38,7 +50,7 @@ const Navigation = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2"
+            className="lg:hidden p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -48,7 +60,7 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 space-y-4 border-t">
+          <div className="lg:hidden py-4 space-y-4 border-t">
             <Link 
               to="/" 
               className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-secondary rounded-lg transition-colors"
@@ -72,6 +84,30 @@ const Navigation = () => {
             >
               <BookOpen className="h-4 w-4" />
               <span className="font-medium">Loan Types</span>
+            </Link>
+            <Link 
+              to="/interest-rates" 
+              className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-secondary rounded-lg transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Percent className="h-4 w-4" />
+              <span className="font-medium">Interest Rates</span>
+            </Link>
+            <Link 
+              to="/faq" 
+              className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-secondary rounded-lg transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <HelpCircle className="h-4 w-4" />
+              <span className="font-medium">FAQ's</span>
+            </Link>
+            <Link 
+              to="/guides" 
+              className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-secondary rounded-lg transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <FileText className="h-4 w-4" />
+              <span className="font-medium">Guides</span>
             </Link>
             <div className="px-4">
               <Link to="/apply" onClick={() => setMobileMenuOpen(false)}>
