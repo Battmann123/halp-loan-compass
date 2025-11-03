@@ -48,10 +48,11 @@ const StampDutyCalculator = () => {
             concession = stampDuty;
             stampDuty = 0;
           } else if (propertyValue <= 800000) {
-            const fullDuty = stampDuty;
-            const reduction = (800000 - propertyValue) / 150000;
-            concession = fullDuty * reduction;
-            stampDuty = fullDuty - concession;
+            // NSW uses a concessional rate for properties between $650k-$800k
+            // The duty is calculated at the concessional rate, not as a reduction
+            const concessionAmount = (propertyValue - 650000);
+            stampDuty = concessionAmount * 0.002293; // Concessional rate
+            concession = 0; // The benefit is built into the lower rate
           }
         }
         // Foreign purchaser surcharge NSW (8% additional)
