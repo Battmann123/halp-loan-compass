@@ -79,15 +79,31 @@ const StampDutyCalculator = () => {
         break;
 
       case "vic":
-        // Victoria Stamp Duty
-        if (propertyValue <= 25000) {
-          stampDuty = propertyValue * 0.014;
-        } else if (propertyValue <= 130000) {
-          stampDuty = 350 + (propertyValue - 25000) * 0.024;
-        } else if (propertyValue <= 960000) {
-          stampDuty = 2870 + (propertyValue - 130000) * 0.06;
+        // Victoria Stamp Duty - PPR vs Non-PPR rates
+        if (propertyType === "primary" && propertyValue <= 550000) {
+          // Principal Place of Residence (PPR) rates
+          if (propertyValue <= 25000) {
+            stampDuty = propertyValue * 0.014;
+          } else if (propertyValue <= 130000) {
+            stampDuty = 350 + (propertyValue - 25000) * 0.024;
+          } else if (propertyValue <= 440000) {
+            stampDuty = 2870 + (propertyValue - 130000) * 0.05;
+          } else {
+            stampDuty = 18370 + (propertyValue - 440000) * 0.06;
+          }
         } else {
-          stampDuty = 52670 + (propertyValue - 960000) * 0.055;
+          // Non-PPR or PPR over $550k (use general rates)
+          if (propertyValue <= 25000) {
+            stampDuty = propertyValue * 0.014;
+          } else if (propertyValue <= 130000) {
+            stampDuty = 350 + (propertyValue - 25000) * 0.024;
+          } else if (propertyValue <= 960000) {
+            stampDuty = 2870 + (propertyValue - 130000) * 0.06;
+          } else if (propertyValue <= 2000000) {
+            stampDuty = propertyValue * 0.055;
+          } else {
+            stampDuty = 110000 + (propertyValue - 2000000) * 0.065;
+          }
         }
         // First Home Buyer concession VIC
         if (firstHomeBuyer && propertyType === "primary") {
@@ -109,26 +125,41 @@ const StampDutyCalculator = () => {
         break;
 
       case "qld":
-        // Queensland Stamp Duty
-        if (propertyValue <= 5000) {
-          stampDuty = 0;
-        } else if (propertyValue <= 75000) {
-          stampDuty = (propertyValue - 5000) * 0.015;
-        } else if (propertyValue <= 540000) {
-          stampDuty = 1050 + (propertyValue - 75000) * 0.035;
-        } else if (propertyValue <= 1000000) {
-          stampDuty = 17325 + (propertyValue - 540000) * 0.045;
+        // Queensland Stamp Duty - Use home concession rates if applicable
+        if (propertyType === "primary") {
+          // Home Concession Rates
+          if (propertyValue <= 350000) {
+            stampDuty = 0;
+          } else if (propertyValue <= 540000) {
+            stampDuty = (propertyValue - 350000) * 0.015;
+          } else if (propertyValue <= 1000000) {
+            stampDuty = 2850 + (propertyValue - 540000) * 0.035;
+          } else {
+            stampDuty = 18950 + (propertyValue - 1000000) * 0.045;
+          }
         } else {
-          stampDuty = 38025 + (propertyValue - 1000000) * 0.0575;
+          // Standard Transfer Duty Rates
+          if (propertyValue <= 5000) {
+            stampDuty = 0;
+          } else if (propertyValue <= 75000) {
+            stampDuty = (propertyValue - 5000) * 0.015;
+          } else if (propertyValue <= 540000) {
+            stampDuty = 1050 + (propertyValue - 75000) * 0.035;
+          } else if (propertyValue <= 1000000) {
+            stampDuty = 17325 + (propertyValue - 540000) * 0.045;
+          } else {
+            stampDuty = 38025 + (propertyValue - 1000000) * 0.0575;
+          }
         }
-        // First Home Buyer concession QLD
+        // First Home Buyer concession QLD (from 9 June 2024)
         if (firstHomeBuyer && propertyType === "primary") {
-          if (propertyValue <= 500000) {
+          if (propertyValue <= 700000) {
             concession = stampDuty;
             stampDuty = 0;
-          } else if (propertyValue <= 550000) {
+          } else if (propertyValue <= 800000) {
+            // Sliding scale
             const fullDuty = stampDuty;
-            concession = fullDuty * ((550000 - propertyValue) / 50000);
+            concession = fullDuty * ((800000 - propertyValue) / 100000);
             stampDuty = fullDuty - concession;
           }
         }
@@ -155,14 +186,14 @@ const StampDutyCalculator = () => {
         } else if (propertyValue <= 250000) {
           stampDuty = 6830 + (propertyValue - 200000) * 0.0425;
         } else if (propertyValue <= 300000) {
-          stampDuty = 8955 + (propertyValue - 250000) * 0.045;
+          stampDuty = 8955 + (propertyValue - 250000) * 0.0475;
         } else if (propertyValue <= 500000) {
-          stampDuty = 11205 + (propertyValue - 300000) * 0.0475;
+          stampDuty = 11330 + (propertyValue - 300000) * 0.05;
         } else {
-          stampDuty = 20705 + (propertyValue - 500000) * 0.055;
+          stampDuty = 21330 + (propertyValue - 500000) * 0.055;
         }
-        // First Home Buyer concession SA
-        if (firstHomeBuyer && propertyType === "primary" && propertyValue <= 650000) {
+        // First Home Buyer concession SA (Full exemption, no cap from Feb 2025)
+        if (firstHomeBuyer && propertyType === "primary" && propertyCategory === "new") {
           concession = stampDuty;
           stampDuty = 0;
         }
@@ -179,23 +210,36 @@ const StampDutyCalculator = () => {
         if (propertyValue <= 120000) {
           stampDuty = propertyValue * 0.019;
         } else if (propertyValue <= 150000) {
-          stampDuty = 2280 + (propertyValue - 120000) * 0.029;
+          stampDuty = 2280 + (propertyValue - 120000) * 0.0285;
         } else if (propertyValue <= 360000) {
-          stampDuty = 3150 + (propertyValue - 150000) * 0.038;
+          stampDuty = 3135 + (propertyValue - 150000) * 0.038;
         } else if (propertyValue <= 725000) {
-          stampDuty = 11130 + (propertyValue - 360000) * 0.049;
+          stampDuty = 11115 + (propertyValue - 360000) * 0.0475;
         } else {
-          stampDuty = 29015 + (propertyValue - 725000) * 0.051;
+          stampDuty = 28453 + (propertyValue - 725000) * 0.0515;
         }
-        // First Home Buyer concession WA
+        // First Home Buyer concession WA (effective 21 March 2025)
         if (firstHomeBuyer && propertyType === "primary") {
-          if (propertyValue <= 430000) {
-            concession = stampDuty;
-            stampDuty = 0;
-          } else if (propertyValue <= 530000) {
-            const fullDuty = stampDuty;
-            concession = fullDuty * ((530000 - propertyValue) / 100000);
-            stampDuty = fullDuty - concession;
+          if (propertyCategory === "vacant") {
+            // Vacant land
+            if (propertyValue <= 350000) {
+              concession = stampDuty;
+              stampDuty = 0;
+            } else if (propertyValue <= 450000) {
+              const fullDuty = stampDuty;
+              stampDuty = (propertyValue - 350000) * 0.1539;
+              concession = fullDuty - stampDuty;
+            }
+          } else {
+            // Homes - Metropolitan and Peel regions
+            if (propertyValue <= 500000) {
+              concession = stampDuty;
+              stampDuty = 0;
+            } else if (propertyValue <= 700000) {
+              const fullDuty = stampDuty;
+              stampDuty = (propertyValue - 500000) * 0.1363;
+              concession = fullDuty - stampDuty;
+            }
           }
         }
         // Foreign purchaser surcharge WA (7% additional)
@@ -213,21 +257,24 @@ const StampDutyCalculator = () => {
         } else if (propertyValue <= 25000) {
           stampDuty = 50 + (propertyValue - 3000) * 0.0175;
         } else if (propertyValue <= 75000) {
-          stampDuty = 435 + (propertyValue - 25000) * 0.022;
+          stampDuty = 435 + (propertyValue - 25000) * 0.0225;
         } else if (propertyValue <= 200000) {
-          stampDuty = 1535 + (propertyValue - 75000) * 0.035;
+          stampDuty = 1560 + (propertyValue - 75000) * 0.035;
         } else if (propertyValue <= 375000) {
-          stampDuty = 5910 + (propertyValue - 200000) * 0.04;
+          stampDuty = 5935 + (propertyValue - 200000) * 0.04;
         } else if (propertyValue <= 725000) {
-          stampDuty = 12910 + (propertyValue - 375000) * 0.0425;
+          stampDuty = 12935 + (propertyValue - 375000) * 0.0425;
         } else {
-          stampDuty = 27785 + (propertyValue - 725000) * 0.045;
+          stampDuty = 27810 + (propertyValue - 725000) * 0.045;
         }
-        // First Home Buyer concession TAS
-        if (firstHomeBuyer && propertyType === "primary" && propertyValue <= 600000) {
-          const reduction = Math.min(stampDuty, 8640);
-          concession = reduction;
-          stampDuty = Math.max(0, stampDuty - reduction);
+        // First Home Buyer exemption TAS (Full exemption for established homes under $750k)
+        if (firstHomeBuyer && propertyType === "primary" && propertyCategory === "established" && propertyValue <= 750000) {
+          concession = stampDuty;
+          stampDuty = 0;
+        }
+        // Foreign purchaser surcharge TAS (8% additional)
+        if (foreignPurchaser) {
+          foreignPurchaserSurcharge = propertyValue * 0.08;
         }
         mortgageRegistrationFee = 158.20;
         transferFee = 232.80;
@@ -236,15 +283,19 @@ const StampDutyCalculator = () => {
       case "nt":
         // Northern Territory Stamp Duty
         if (propertyValue <= 525000) {
-          stampDuty = propertyValue * 0.0665 + 15;
+          // Use the formula: (0.06571441 × V²) + (15 × V), where V = property value / 1000
+          const v = propertyValue / 1000;
+          stampDuty = (0.06571441 * v * v) + (15 * v);
         } else if (propertyValue <= 3000000) {
-          stampDuty = 0.0465 * propertyValue + 1065;
+          stampDuty = propertyValue * 0.0495;
+        } else if (propertyValue <= 5000000) {
+          stampDuty = propertyValue * 0.0575;
         } else {
-          stampDuty = 0.0565 * propertyValue - 28935;
+          stampDuty = propertyValue * 0.0595;
         }
-        // First Home Buyer concession NT
+        // First Home Buyer concession NT (Up to $18,601 reduction for under $650k)
         if (firstHomeBuyer && propertyType === "primary" && propertyValue <= 650000) {
-          const reduction = Math.min(stampDuty, 7019.40);
+          const reduction = Math.min(stampDuty, 18601);
           concession = reduction;
           stampDuty = Math.max(0, stampDuty - reduction);
         }
@@ -253,25 +304,44 @@ const StampDutyCalculator = () => {
         break;
 
       case "act":
-        // ACT uses annual rates system instead of stamp duty for most properties
-        // Calculating nominal transfer duty
-        if (propertyValue <= 260000) {
-          stampDuty = 0;
-        } else if (propertyValue <= 300000) {
-          stampDuty = (propertyValue - 260000) * 0.02;
-        } else if (propertyValue <= 500000) {
-          stampDuty = 800 + (propertyValue - 300000) * 0.035;
-        } else if (propertyValue <= 750000) {
-          stampDuty = 7800 + (propertyValue - 500000) * 0.0435;
-        } else if (propertyValue <= 1000000) {
-          stampDuty = 18675 + (propertyValue - 750000) * 0.0465;
-        } else if (propertyValue <= 1455000) {
-          stampDuty = 30300 + (propertyValue - 1000000) * 0.0495;
+        // ACT - Eligible Owner-Occupier vs Non-Eligible rates (2024-2025)
+        if (propertyType === "primary") {
+          // Eligible Owner-Occupier rates
+          if (propertyValue <= 260000) {
+            stampDuty = propertyValue * 0.004;
+          } else if (propertyValue <= 300000) {
+            stampDuty = 1040 + (propertyValue - 260000) * 0.022;
+          } else if (propertyValue <= 500000) {
+            stampDuty = 1920 + (propertyValue - 300000) * 0.034;
+          } else if (propertyValue <= 750000) {
+            stampDuty = 8720 + (propertyValue - 500000) * 0.0432;
+          } else if (propertyValue <= 1000000) {
+            stampDuty = 19520 + (propertyValue - 750000) * 0.059;
+          } else if (propertyValue <= 1455000) {
+            stampDuty = 34270 + (propertyValue - 1000000) * 0.064;
+          } else {
+            stampDuty = propertyValue * 0.0454;
+          }
         } else {
-          stampDuty = 52822.50 + (propertyValue - 1455000) * 0.0595;
+          // Non-Eligible Owner-Occupier rates (investors)
+          if (propertyValue <= 200000) {
+            stampDuty = propertyValue * 0.012;
+          } else if (propertyValue <= 300000) {
+            stampDuty = 2400 + (propertyValue - 200000) * 0.022;
+          } else if (propertyValue <= 500000) {
+            stampDuty = 4600 + (propertyValue - 300000) * 0.034;
+          } else if (propertyValue <= 750000) {
+            stampDuty = 11400 + (propertyValue - 500000) * 0.0432;
+          } else if (propertyValue <= 1000000) {
+            stampDuty = 22200 + (propertyValue - 750000) * 0.059;
+          } else if (propertyValue <= 1455000) {
+            stampDuty = 36950 + (propertyValue - 1000000) * 0.064;
+          } else {
+            stampDuty = propertyValue * 0.0454;
+          }
         }
-        // First Home Buyer concession ACT (exempt from duty)
-        if (firstHomeBuyer && propertyType === "primary" && propertyValue <= 1500000) {
+        // First Home Buyer concession ACT (Full exemption up to $1,020,000 from July 2025)
+        if (firstHomeBuyer && propertyType === "primary" && propertyValue <= 1020000) {
           concession = stampDuty;
           stampDuty = 0;
         }
