@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
@@ -13,6 +14,8 @@ import { Link } from "react-router-dom";
 
 const RepaymentCalculator = () => {
   const [loanAmount, setLoanAmount] = useState(600000);
+  const [deposit, setDeposit] = useState(0);
+  const [repaymentType, setRepaymentType] = useState("principal-interest");
   const [interestRate, setInterestRate] = useState(6.5);
   const [loanTerm, setLoanTerm] = useState(30);
   const [paymentFrequency, setPaymentFrequency] = useState("monthly");
@@ -114,6 +117,34 @@ const RepaymentCalculator = () => {
                     className="pl-7"
                   />
                 </div>
+              </div>
+
+              <div>
+                <Label htmlFor="deposit">My Deposit</Label>
+                <div className="relative mt-2">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                  <Input
+                    id="deposit"
+                    type="number"
+                    value={deposit}
+                    onChange={(e) => setDeposit(Number(e.target.value))}
+                    className="pl-7"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-base font-semibold mb-3 block">I'll be paying</Label>
+                <RadioGroup value={repaymentType} onValueChange={setRepaymentType} className="flex gap-4">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="principal-interest" id="principal-interest" />
+                    <Label htmlFor="principal-interest" className="cursor-pointer">Principal & Interest</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="interest-only" id="interest-only" />
+                    <Label htmlFor="interest-only" className="cursor-pointer">Interest only</Label>
+                  </div>
+                </RadioGroup>
               </div>
 
               <div>
