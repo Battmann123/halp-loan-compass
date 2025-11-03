@@ -14,46 +14,245 @@ const StampDutyCalculator = () => {
   const [propertyValue, setPropertyValue] = useState(600000);
   const [state, setState] = useState("nsw");
   const [firstHomeBuyer, setFirstHomeBuyer] = useState(true);
-  const [newProperty, setNewProperty] = useState(true);
+  const [propertyType, setPropertyType] = useState<"primary" | "investment">("primary");
 
-  const calculateStampDuty = () => {
+  const calculateFees = () => {
     let stampDuty = 0;
     let concession = 0;
+    let mortgageRegistrationFee = 0;
+    let transferFee = 0;
     
-    // NSW Stamp Duty Calculation (simplified)
-    if (state === "nsw") {
-      if (propertyValue <= 16000) {
-        stampDuty = propertyValue * 0.0125;
-      } else if (propertyValue <= 35000) {
-        stampDuty = 200 + (propertyValue - 16000) * 0.015;
-      } else if (propertyValue <= 93000) {
-        stampDuty = 485 + (propertyValue - 35000) * 0.0175;
-      } else if (propertyValue <= 351000) {
-        stampDuty = 1500 + (propertyValue - 93000) * 0.035;
-      } else if (propertyValue <= 1168000) {
-        stampDuty = 10530 + (propertyValue - 351000) * 0.045;
-      } else {
-        stampDuty = 47295 + (propertyValue - 1168000) * 0.055;
-      }
+    // Calculate stamp duty based on state
+    switch (state) {
+      case "nsw":
+        // NSW Stamp Duty
+        if (propertyValue <= 16000) {
+          stampDuty = propertyValue * 0.0125;
+        } else if (propertyValue <= 35000) {
+          stampDuty = 200 + (propertyValue - 16000) * 0.015;
+        } else if (propertyValue <= 93000) {
+          stampDuty = 485 + (propertyValue - 35000) * 0.0175;
+        } else if (propertyValue <= 351000) {
+          stampDuty = 1500 + (propertyValue - 93000) * 0.035;
+        } else if (propertyValue <= 1168000) {
+          stampDuty = 10530 + (propertyValue - 351000) * 0.045;
+        } else {
+          stampDuty = 47295 + (propertyValue - 1168000) * 0.055;
+        }
+        // First Home Buyer concession NSW
+        if (firstHomeBuyer && propertyType === "primary") {
+          if (propertyValue <= 650000) {
+            concession = stampDuty;
+            stampDuty = 0;
+          } else if (propertyValue <= 800000) {
+            const fullDuty = stampDuty;
+            const reduction = (800000 - propertyValue) / 150000;
+            concession = fullDuty * reduction;
+            stampDuty = fullDuty - concession;
+          }
+        }
+        mortgageRegistrationFee = 157;
+        transferFee = 143;
+        break;
 
-      // First Home Buyer concession
-      if (firstHomeBuyer && newProperty && propertyValue <= 800000) {
-        concession = stampDuty;
-        stampDuty = 0;
-      }
+      case "vic":
+        // Victoria Stamp Duty
+        if (propertyValue <= 25000) {
+          stampDuty = propertyValue * 0.014;
+        } else if (propertyValue <= 130000) {
+          stampDuty = 350 + (propertyValue - 25000) * 0.024;
+        } else if (propertyValue <= 960000) {
+          stampDuty = 2870 + (propertyValue - 130000) * 0.06;
+        } else {
+          stampDuty = 52670 + (propertyValue - 960000) * 0.055;
+        }
+        // First Home Buyer concession VIC
+        if (firstHomeBuyer && propertyType === "primary") {
+          if (propertyValue <= 600000) {
+            concession = stampDuty;
+            stampDuty = 0;
+          } else if (propertyValue <= 750000) {
+            const fullDuty = stampDuty;
+            concession = fullDuty * ((750000 - propertyValue) / 150000);
+            stampDuty = fullDuty - concession;
+          }
+        }
+        mortgageRegistrationFee = 122.90;
+        transferFee = 2775;
+        break;
+
+      case "qld":
+        // Queensland Stamp Duty
+        if (propertyValue <= 5000) {
+          stampDuty = 0;
+        } else if (propertyValue <= 75000) {
+          stampDuty = (propertyValue - 5000) * 0.015;
+        } else if (propertyValue <= 540000) {
+          stampDuty = 1050 + (propertyValue - 75000) * 0.035;
+        } else if (propertyValue <= 1000000) {
+          stampDuty = 17325 + (propertyValue - 540000) * 0.045;
+        } else {
+          stampDuty = 38025 + (propertyValue - 1000000) * 0.0575;
+        }
+        // First Home Buyer concession QLD
+        if (firstHomeBuyer && propertyType === "primary") {
+          if (propertyValue <= 500000) {
+            concession = stampDuty;
+            stampDuty = 0;
+          } else if (propertyValue <= 550000) {
+            const fullDuty = stampDuty;
+            concession = fullDuty * ((550000 - propertyValue) / 50000);
+            stampDuty = fullDuty - concession;
+          }
+        }
+        mortgageRegistrationFee = 198.60;
+        transferFee = propertyValue <= 180000 ? 207.45 : 9064.50;
+        break;
+
+      case "sa":
+        // South Australia Stamp Duty
+        if (propertyValue <= 12000) {
+          stampDuty = propertyValue * 0.01;
+        } else if (propertyValue <= 30000) {
+          stampDuty = 120 + (propertyValue - 12000) * 0.02;
+        } else if (propertyValue <= 50000) {
+          stampDuty = 480 + (propertyValue - 30000) * 0.03;
+        } else if (propertyValue <= 100000) {
+          stampDuty = 1080 + (propertyValue - 50000) * 0.035;
+        } else if (propertyValue <= 200000) {
+          stampDuty = 2830 + (propertyValue - 100000) * 0.04;
+        } else if (propertyValue <= 250000) {
+          stampDuty = 6830 + (propertyValue - 200000) * 0.0425;
+        } else if (propertyValue <= 300000) {
+          stampDuty = 8955 + (propertyValue - 250000) * 0.045;
+        } else if (propertyValue <= 500000) {
+          stampDuty = 11205 + (propertyValue - 300000) * 0.0475;
+        } else {
+          stampDuty = 20705 + (propertyValue - 500000) * 0.055;
+        }
+        // First Home Buyer concession SA
+        if (firstHomeBuyer && propertyType === "primary" && propertyValue <= 650000) {
+          concession = stampDuty;
+          stampDuty = 0;
+        }
+        mortgageRegistrationFee = 183;
+        transferFee = 225;
+        break;
+
+      case "wa":
+        // Western Australia Stamp Duty
+        if (propertyValue <= 120000) {
+          stampDuty = propertyValue * 0.019;
+        } else if (propertyValue <= 150000) {
+          stampDuty = 2280 + (propertyValue - 120000) * 0.029;
+        } else if (propertyValue <= 360000) {
+          stampDuty = 3150 + (propertyValue - 150000) * 0.038;
+        } else if (propertyValue <= 725000) {
+          stampDuty = 11130 + (propertyValue - 360000) * 0.049;
+        } else {
+          stampDuty = 29015 + (propertyValue - 725000) * 0.051;
+        }
+        // First Home Buyer concession WA
+        if (firstHomeBuyer && propertyType === "primary") {
+          if (propertyValue <= 430000) {
+            concession = stampDuty;
+            stampDuty = 0;
+          } else if (propertyValue <= 530000) {
+            const fullDuty = stampDuty;
+            concession = fullDuty * ((530000 - propertyValue) / 100000);
+            stampDuty = fullDuty - concession;
+          }
+        }
+        mortgageRegistrationFee = 192.50;
+        transferFee = 205.30;
+        break;
+
+      case "tas":
+        // Tasmania Stamp Duty
+        if (propertyValue <= 3000) {
+          stampDuty = 50;
+        } else if (propertyValue <= 25000) {
+          stampDuty = 50 + (propertyValue - 3000) * 0.0175;
+        } else if (propertyValue <= 75000) {
+          stampDuty = 435 + (propertyValue - 25000) * 0.022;
+        } else if (propertyValue <= 200000) {
+          stampDuty = 1535 + (propertyValue - 75000) * 0.035;
+        } else if (propertyValue <= 375000) {
+          stampDuty = 5910 + (propertyValue - 200000) * 0.04;
+        } else if (propertyValue <= 725000) {
+          stampDuty = 12910 + (propertyValue - 375000) * 0.0425;
+        } else {
+          stampDuty = 27785 + (propertyValue - 725000) * 0.045;
+        }
+        // First Home Buyer concession TAS
+        if (firstHomeBuyer && propertyType === "primary" && propertyValue <= 600000) {
+          const reduction = Math.min(stampDuty, 8640);
+          concession = reduction;
+          stampDuty = Math.max(0, stampDuty - reduction);
+        }
+        mortgageRegistrationFee = 158.20;
+        transferFee = 232.80;
+        break;
+
+      case "nt":
+        // Northern Territory Stamp Duty
+        if (propertyValue <= 525000) {
+          stampDuty = propertyValue * 0.0665 + 15;
+        } else if (propertyValue <= 3000000) {
+          stampDuty = 0.0465 * propertyValue + 1065;
+        } else {
+          stampDuty = 0.0565 * propertyValue - 28935;
+        }
+        // First Home Buyer concession NT
+        if (firstHomeBuyer && propertyType === "primary" && propertyValue <= 650000) {
+          const reduction = Math.min(stampDuty, 7019.40);
+          concession = reduction;
+          stampDuty = Math.max(0, stampDuty - reduction);
+        }
+        mortgageRegistrationFee = 149;
+        transferFee = 149;
+        break;
+
+      case "act":
+        // ACT uses annual rates system instead of stamp duty for most properties
+        // Calculating nominal transfer duty
+        if (propertyValue <= 260000) {
+          stampDuty = 0;
+        } else if (propertyValue <= 300000) {
+          stampDuty = (propertyValue - 260000) * 0.02;
+        } else if (propertyValue <= 500000) {
+          stampDuty = 800 + (propertyValue - 300000) * 0.035;
+        } else if (propertyValue <= 750000) {
+          stampDuty = 7800 + (propertyValue - 500000) * 0.0435;
+        } else if (propertyValue <= 1000000) {
+          stampDuty = 18675 + (propertyValue - 750000) * 0.0465;
+        } else if (propertyValue <= 1455000) {
+          stampDuty = 30300 + (propertyValue - 1000000) * 0.0495;
+        } else {
+          stampDuty = 52822.50 + (propertyValue - 1455000) * 0.0595;
+        }
+        // First Home Buyer concession ACT (exempt from duty)
+        if (firstHomeBuyer && propertyType === "primary" && propertyValue <= 1500000) {
+          concession = stampDuty;
+          stampDuty = 0;
+        }
+        mortgageRegistrationFee = 170;
+        transferFee = 454;
+        break;
     }
     
-    // Add other states with their specific rates
-    // This is a simplified version
+    const totalFees = Math.round(stampDuty + mortgageRegistrationFee + transferFee);
     
     return {
       stampDuty: Math.round(stampDuty),
       concession: Math.round(concession),
-      afterConcession: Math.round(stampDuty)
+      mortgageRegistrationFee: Math.round(mortgageRegistrationFee),
+      transferFee: Math.round(transferFee),
+      totalFees
     };
   };
 
-  const results = calculateStampDuty();
+  const results = calculateFees();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -126,17 +325,19 @@ const StampDutyCalculator = () => {
                     First Home Buyer
                   </Label>
                 </div>
+              </div>
 
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="newProperty" 
-                    checked={newProperty}
-                    onCheckedChange={(checked) => setNewProperty(checked as boolean)}
-                  />
-                  <Label htmlFor="newProperty" className="cursor-pointer">
-                    New Property (less than 3 years old)
-                  </Label>
-                </div>
+              <div>
+                <Label htmlFor="propertyType">Property Type</Label>
+                <Select value={propertyType} onValueChange={(value: "primary" | "investment") => setPropertyType(value)}>
+                  <SelectTrigger className="mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="primary">Primary Residence</SelectItem>
+                    <SelectItem value="investment">Investment Property</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
@@ -144,57 +345,55 @@ const StampDutyCalculator = () => {
           {/* Results Section */}
           <Card className="border-2 bg-gradient-to-br from-primary/5 to-accent/5">
             <CardHeader>
-              <CardTitle>Stamp Duty Calculation</CardTitle>
+              <CardTitle>Fee Breakdown</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {results.concession > 0 && (
-                <div className="bg-green-50 border-2 border-green-200 p-4 rounded-lg">
-                  <p className="text-sm font-medium text-green-800 mb-1">
+                <div className="bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 p-4 rounded-lg">
+                  <p className="text-sm font-medium text-green-800 dark:text-green-200 mb-1">
                     🎉 First Home Buyer Concession Applied!
                   </p>
-                  <p className="text-xs text-green-700">
-                    You're eligible for stamp duty exemption on new properties under $800,000
+                  <p className="text-xs text-green-700 dark:text-green-300">
+                    Saving: ${results.concession.toLocaleString()}
                   </p>
                 </div>
               )}
 
               <div className="bg-gradient-to-r from-primary to-accent p-6 rounded-lg text-white">
-                <p className="text-sm opacity-90 mb-2">Stamp Duty Payable</p>
-                <p className="text-4xl font-bold">${results.afterConcession.toLocaleString()}</p>
+                <p className="text-sm opacity-90 mb-2">Total Government Fees</p>
+                <p className="text-4xl font-bold">${results.totalFees.toLocaleString()}</p>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div className="flex justify-between items-center py-3 border-b">
-                  <span className="text-muted-foreground">Property Value</span>
-                  <span className="font-semibold">${propertyValue.toLocaleString()}</span>
+                  <span className="text-muted-foreground">Mortgage Registration Fee</span>
+                  <span className="font-semibold">${results.mortgageRegistrationFee.toLocaleString()}</span>
+                </div>
+
+                <div className="flex justify-between items-center py-3 border-b">
+                  <span className="text-muted-foreground">Transfer Fee</span>
+                  <span className="font-semibold">${results.transferFee.toLocaleString()}</span>
+                </div>
+
+                <div className="flex justify-between items-center py-3 border-b">
+                  <span className="text-muted-foreground">Stamp Duty</span>
+                  <span className="font-semibold">${results.stampDuty.toLocaleString()}</span>
                 </div>
 
                 {results.concession > 0 && (
-                  <>
-                    <div className="flex justify-between items-center py-3 border-b">
-                      <span className="text-muted-foreground">Standard Stamp Duty</span>
-                      <span className="font-semibold text-muted-foreground line-through">
-                        ${results.concession.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center py-3 border-b">
-                      <span className="text-green-600 font-medium">Concession Savings</span>
-                      <span className="font-semibold text-green-600">
-                        -${results.concession.toLocaleString()}
-                      </span>
-                    </div>
-                  </>
+                  <div className="flex justify-between items-center py-3 border-b bg-green-50 dark:bg-green-900/20 -mx-4 px-4">
+                    <span className="text-green-600 dark:text-green-400 font-medium">Concession Savings</span>
+                    <span className="font-semibold text-green-600 dark:text-green-400">
+                      -${results.concession.toLocaleString()}
+                    </span>
+                  </div>
                 )}
 
-                <div className="flex justify-between items-center py-3">
-                  <span className="text-muted-foreground">State</span>
-                  <span className="font-semibold">{state.toUpperCase()}</span>
+                <div className="flex justify-between items-center py-3 pt-4 border-t-2">
+                  <span className="font-bold">Total Government Fees</span>
+                  <span className="font-bold text-lg">${results.totalFees.toLocaleString()}</span>
                 </div>
               </div>
-
-              <Button className="w-full bg-gradient-to-r from-primary to-accent">
-                Calculate Total Purchase Costs
-              </Button>
             </CardContent>
           </Card>
         </div>
