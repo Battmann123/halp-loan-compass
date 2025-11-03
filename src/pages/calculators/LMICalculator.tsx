@@ -21,10 +21,8 @@ const LMICalculator = () => {
   const [result, setResult] = useState<any>(null);
 
   const calculateLMI = () => {
-    console.log("Calculate LMI clicked", { propertyValue, deposit });
     const property = parseFloat(propertyValue);
     const depositAmount = parseFloat(deposit);
-    console.log("Parsed values:", { property, depositAmount });
     
     // Validate inputs
     if (!propertyValue || !deposit) {
@@ -61,17 +59,61 @@ const LMICalculator = () => {
     let lmiAmount = 0;
     
     if (lvr > 80) {
-      // LMI calculation (simplified tiered approach)
-      // These are approximate rates - actual rates vary by lender
-      if (lvr <= 85) {
-        lmiAmount = loanAmount * 0.0084; // 0.84%
+      // More accurate LMI calculation based on Australian lender rates
+      // Rates vary by LVR, loan amount, and borrower type
+      let lmiRate = 0;
+      
+      // Determine loan amount tier
+      const isLowLoan = loanAmount <= 300000;
+      const isMidLoan = loanAmount > 300000 && loanAmount <= 600000;
+      const isHighLoan = loanAmount > 600000 && loanAmount <= 1000000;
+      const isVeryHighLoan = loanAmount > 1000000;
+      
+      // Adjust rates for first home buyers (typically 10-15% lower)
+      const fhbDiscount = isFirstHomeBuyer === "yes" ? 0.9 : 1.0;
+      
+      // Adjust rates for investors (typically 10-20% higher)
+      const investorMultiplier = occupancyType === "investor" ? 1.15 : 1.0;
+      
+      // Calculate base rate based on LVR tiers (approximating QBE/Genworth rates)
+      if (lvr <= 81) {
+        lmiRate = isLowLoan ? 0.0053 : isMidLoan ? 0.0056 : isHighLoan ? 0.0077 : 0.0089;
+      } else if (lvr <= 82) {
+        lmiRate = isLowLoan ? 0.0053 : isMidLoan ? 0.0056 : isHighLoan ? 0.0077 : 0.0089;
+      } else if (lvr <= 83) {
+        lmiRate = isLowLoan ? 0.0065 : isMidLoan ? 0.0084 : isHighLoan ? 0.0108 : 0.0108;
+      } else if (lvr <= 84) {
+        lmiRate = isLowLoan ? 0.0065 : isMidLoan ? 0.0084 : isHighLoan ? 0.0108 : 0.011;
+      } else if (lvr <= 85) {
+        lmiRate = isLowLoan ? 0.0086 : isMidLoan ? 0.0106 : isHighLoan ? 0.0134 : 0.0134;
+      } else if (lvr <= 86) {
+        lmiRate = isLowLoan ? 0.0089 : isMidLoan ? 0.0107 : isHighLoan ? 0.0134 : 0.0139;
+      } else if (lvr <= 87) {
+        lmiRate = isLowLoan ? 0.0103 : isMidLoan ? 0.0127 : isHighLoan ? 0.0155 : 0.0155;
+      } else if (lvr <= 88) {
+        lmiRate = isLowLoan ? 0.0103 : isMidLoan ? 0.0127 : isHighLoan ? 0.016 : 0.0179;
+      } else if (lvr <= 89) {
+        lmiRate = isLowLoan ? 0.013 : isMidLoan ? 0.0171 : isHighLoan ? 0.0215 : 0.0227;
       } else if (lvr <= 90) {
-        lmiAmount = loanAmount * 0.0228; // 2.28%
+        lmiRate = isLowLoan ? 0.0156 : isMidLoan ? 0.0187 : isHighLoan ? 0.0231 : 0.0265;
+      } else if (lvr <= 91) {
+        lmiRate = isLowLoan ? 0.0202 : isMidLoan ? 0.0265 : isHighLoan ? 0.0353 : 0.0353;
+      } else if (lvr <= 92) {
+        lmiRate = isLowLoan ? 0.0202 : isMidLoan ? 0.0265 : isHighLoan ? 0.0353 : 0.0353;
+      } else if (lvr <= 93) {
+        lmiRate = isLowLoan ? 0.0228 : isMidLoan ? 0.0298 : isHighLoan ? 0.0381 : 0.0407;
+      } else if (lvr <= 94) {
+        lmiRate = isLowLoan ? 0.0253 : isMidLoan ? 0.0298 : isHighLoan ? 0.0419 : 0.0438;
       } else if (lvr <= 95) {
-        lmiAmount = loanAmount * 0.0368; // 3.68%
+        lmiRate = isLowLoan ? 0.0264 : isMidLoan ? 0.033 : isHighLoan ? 0.0443 : 0.0457;
       } else {
-        lmiAmount = loanAmount * 0.045; // 4.5%
+        // Above 95% LVR - use highest tier
+        lmiRate = isLowLoan ? 0.0264 : isMidLoan ? 0.033 : isHighLoan ? 0.0443 : 0.0457;
       }
+      
+      // Apply adjustments
+      lmiRate = lmiRate * fhbDiscount * investorMultiplier;
+      lmiAmount = loanAmount * lmiRate;
     }
 
     const totalLoanWithLMI = loanAmount + lmiAmount;
