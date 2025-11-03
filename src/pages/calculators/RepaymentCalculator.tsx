@@ -14,7 +14,6 @@ import { Link } from "react-router-dom";
 
 const RepaymentCalculator = () => {
   const [loanAmount, setLoanAmount] = useState(600000);
-  const [deposit, setDeposit] = useState(0);
   const [repaymentType, setRepaymentType] = useState("principal-interest");
   const [interestRate, setInterestRate] = useState(6.5);
   const [loanTerm, setLoanTerm] = useState(30);
@@ -124,20 +123,6 @@ const RepaymentCalculator = () => {
                     type="number"
                     value={loanAmount}
                     onChange={(e) => setLoanAmount(Number(e.target.value))}
-                    className="pl-7"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="deposit">My Deposit</Label>
-                <div className="relative mt-2">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                  <Input
-                    id="deposit"
-                    type="number"
-                    value={deposit}
-                    onChange={(e) => setDeposit(Number(e.target.value))}
                     className="pl-7"
                   />
                 </div>
