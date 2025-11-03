@@ -552,6 +552,117 @@ const StampDutyCalculator = () => {
           </CardContent>
         </Card>
 
+        {/* Official Sources */}
+        <Card className="mt-8 border-2 bg-blue-50/50 dark:bg-blue-950/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span>📚</span> Official Government Sources
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">
+              All calculations are based on official government rates and regulations:
+            </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <h3 className="font-semibold text-sm mb-2">New South Wales</h3>
+                <a 
+                  href="https://www.revenue.nsw.gov.au/taxes-duties-levies-royalties/transfer-duty" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline block"
+                >
+                  NSW Revenue - Transfer Duty
+                </a>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-sm mb-2">Victoria</h3>
+                <a 
+                  href="https://www.sro.vic.gov.au/duty" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline block"
+                >
+                  State Revenue Office Victoria
+                </a>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-sm mb-2">Queensland</h3>
+                <a 
+                  href="https://www.qld.gov.au/housing/buying-owning-home/advice-buying-home/transfer-duty" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline block"
+                >
+                  Queensland Government - Transfer Duty
+                </a>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-sm mb-2">South Australia</h3>
+                <a 
+                  href="https://www.revenuesa.sa.gov.au/taxes-and-duties/stamp-duty/stamp-duty-on-conveyances" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline block"
+                >
+                  RevenueSA - Stamp Duty on Conveyances
+                </a>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-sm mb-2">Western Australia</h3>
+                <a 
+                  href="https://www.wa.gov.au/service/financial-services/taxation/transfer-duty-property" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline block"
+                >
+                  WA Government - Transfer Duty
+                </a>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-sm mb-2">Tasmania</h3>
+                <a 
+                  href="https://www.sro.tas.gov.au/property-taxes/duty/property-conveyance-duty" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline block"
+                >
+                  State Revenue Office Tasmania
+                </a>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-sm mb-2">Northern Territory</h3>
+                <a 
+                  href="https://territorystories.nt.gov.au/10070/990618/0/151" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline block"
+                >
+                  NT Territory Revenue Office
+                </a>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-sm mb-2">Australian Capital Territory</h3>
+                <a 
+                  href="https://www.revenue.act.gov.au/duties" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline block"
+                >
+                  ACT Revenue Office - Duties
+                </a>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Disclaimer */}
         <Card className="mt-8 bg-muted/50">
           <CardContent className="pt-6">
