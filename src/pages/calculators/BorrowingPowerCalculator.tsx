@@ -3,12 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { TrendingUp, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const BorrowingPowerCalculator = () => {
+  const [numApplicants, setNumApplicants] = useState("one");
+  const [loanPurpose, setLoanPurpose] = useState("live");
+  const [payingRent, setPayingRent] = useState("no");
+  const [rentAmount, setRentAmount] = useState(0);
   const [income, setIncome] = useState(100000);
   const [otherIncome, setOtherIncome] = useState(0);
   const [expenses, setExpenses] = useState(3000);
@@ -57,9 +62,67 @@ const BorrowingPowerCalculator = () => {
           {/* Input Section */}
           <Card className="border-2">
             <CardHeader>
-              <CardTitle>Your Financial Details</CardTitle>
+              <CardTitle>Tell us about yourself</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              <div>
+                <Label className="text-base font-semibold mb-3 block">How many people are applying?</Label>
+                <RadioGroup value={numApplicants} onValueChange={setNumApplicants} className="flex gap-4">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="one" id="one" />
+                    <Label htmlFor="one" className="cursor-pointer">Just me</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="two" id="two" />
+                    <Label htmlFor="two" className="cursor-pointer">Two of us</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div>
+                <Label className="text-base font-semibold mb-3 block">What is the purpose of this loan?</Label>
+                <RadioGroup value={loanPurpose} onValueChange={setLoanPurpose} className="flex gap-4">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="live" id="live" />
+                    <Label htmlFor="live" className="cursor-pointer">To live in</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="invest" id="invest" />
+                    <Label htmlFor="invest" className="cursor-pointer">To invest</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div>
+                <Label className="text-base font-semibold mb-3 block">Will you be paying rent after taking out this loan?</Label>
+                <RadioGroup value={payingRent} onValueChange={setPayingRent} className="flex gap-4">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="rent-yes" />
+                    <Label htmlFor="rent-yes" className="cursor-pointer">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="rent-no" />
+                    <Label htmlFor="rent-no" className="cursor-pointer">No</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {payingRent === "yes" && (
+                <div>
+                  <Label htmlFor="rentAmount">How much rent per month?</Label>
+                  <div className="relative mt-2">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                    <Input
+                      id="rentAmount"
+                      type="number"
+                      value={rentAmount}
+                      onChange={(e) => setRentAmount(Number(e.target.value))}
+                      className="pl-7"
+                    />
+                  </div>
+                </div>
+              )}
+
               <div>
                 <Label htmlFor="income">Annual Income (before tax)</Label>
                 <div className="relative mt-2">
