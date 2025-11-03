@@ -21,8 +21,10 @@ const LMICalculator = () => {
   const [result, setResult] = useState<any>(null);
 
   const calculateLMI = () => {
+    console.log("Calculate LMI clicked", { propertyValue, deposit });
     const property = parseFloat(propertyValue);
     const depositAmount = parseFloat(deposit);
+    console.log("Parsed values:", { property, depositAmount });
     
     // Validate inputs
     if (!propertyValue || !deposit) {
