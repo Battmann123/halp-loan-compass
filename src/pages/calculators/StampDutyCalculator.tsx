@@ -44,15 +44,23 @@ const StampDutyCalculator = () => {
         }
         // First Home Buyer concession NSW
         if (firstHomeBuyer && propertyType === "primary") {
-          if (propertyValue <= 650000) {
-            concession = stampDuty;
-            stampDuty = 0;
-          } else if (propertyValue <= 800000) {
-            // NSW uses a concessional rate for properties between $650k-$800k
-            // The duty is calculated at the concessional rate, not as a reduction
-            const concessionAmount = (propertyValue - 650000);
-            stampDuty = concessionAmount * 0.002293; // Concessional rate
-            concession = 0; // The benefit is built into the lower rate
+          if (propertyCategory === "new" || propertyCategory === "vacant") {
+            // New homes or vacant land: Full exemption up to $800k
+            if (propertyValue <= 800000) {
+              concession = stampDuty;
+              stampDuty = 0;
+            } else if (propertyValue <= 1000000) {
+              // Concessional rate between $800k-$1M for new homes
+              const concessionAmount = (propertyValue - 800000);
+              stampDuty = concessionAmount * 0.002293;
+              concession = 0;
+            }
+          } else {
+            // Established homes: Full exemption up to $650k only
+            if (propertyValue <= 650000) {
+              concession = stampDuty;
+              stampDuty = 0;
+            }
           }
         }
         // Foreign purchaser surcharge NSW (8% additional)
