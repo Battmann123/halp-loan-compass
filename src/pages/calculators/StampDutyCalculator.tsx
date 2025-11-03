@@ -28,19 +28,19 @@ const StampDutyCalculator = () => {
     // Calculate stamp duty based on state
     switch (state) {
       case "nsw":
-        // NSW Stamp Duty
-        if (propertyValue <= 16000) {
-          stampDuty = propertyValue * 0.0125;
-        } else if (propertyValue <= 35000) {
-          stampDuty = 200 + (propertyValue - 16000) * 0.015;
-        } else if (propertyValue <= 93000) {
-          stampDuty = 485 + (propertyValue - 35000) * 0.0175;
-        } else if (propertyValue <= 351000) {
-          stampDuty = 1500 + (propertyValue - 93000) * 0.035;
-        } else if (propertyValue <= 1168000) {
-          stampDuty = 10530 + (propertyValue - 351000) * 0.045;
+        // NSW Stamp Duty (Effective 1 July 2025)
+        if (propertyValue <= 17000) {
+          stampDuty = Math.max(20, propertyValue * 0.0125);
+        } else if (propertyValue <= 37000) {
+          stampDuty = 212 + (propertyValue - 17000) * 0.015;
+        } else if (propertyValue <= 99000) {
+          stampDuty = 512 + (propertyValue - 37000) * 0.0175;
+        } else if (propertyValue <= 372000) {
+          stampDuty = 1597 + (propertyValue - 99000) * 0.035;
+        } else if (propertyValue <= 1240000) {
+          stampDuty = 11152 + (propertyValue - 372000) * 0.045;
         } else {
-          stampDuty = 47295 + (propertyValue - 1168000) * 0.055;
+          stampDuty = 50212 + (propertyValue - 1240000) * 0.055;
         }
         // First Home Buyer concession NSW (rules from 1 July 2023)
         if (firstHomeBuyer && propertyType === "primary") {
