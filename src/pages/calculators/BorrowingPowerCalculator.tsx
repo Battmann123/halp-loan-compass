@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { TrendingUp, ArrowLeft } from "lucide-react";
@@ -12,6 +13,9 @@ import { Link } from "react-router-dom";
 const BorrowingPowerCalculator = () => {
   const [numApplicants, setNumApplicants] = useState("one");
   const [loanPurpose, setLoanPurpose] = useState("live");
+  const [depositFunds, setDepositFunds] = useState(0);
+  const [buyingState, setBuyingState] = useState("VIC");
+  const [firstHomeBuyer, setFirstHomeBuyer] = useState("no");
   const [payingRent, setPayingRent] = useState("no");
   const [rentAmount, setRentAmount] = useState(0);
   const [income, setIncome] = useState(100000);
@@ -89,6 +93,53 @@ const BorrowingPowerCalculator = () => {
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="invest" id="invest" />
                     <Label htmlFor="invest" className="cursor-pointer">To invest</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div>
+                <Label htmlFor="depositFunds">Total funds available for your deposit?</Label>
+                <div className="relative mt-2">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                  <Input
+                    id="depositFunds"
+                    type="number"
+                    value={depositFunds}
+                    onChange={(e) => setDepositFunds(Number(e.target.value))}
+                    className="pl-7"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="buyingState">What state are you looking to buy?</Label>
+                <Select value={buyingState} onValueChange={setBuyingState}>
+                  <SelectTrigger className="mt-2">
+                    <SelectValue placeholder="Select a state" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="VIC">VIC</SelectItem>
+                    <SelectItem value="NSW">NSW</SelectItem>
+                    <SelectItem value="QLD">QLD</SelectItem>
+                    <SelectItem value="SA">SA</SelectItem>
+                    <SelectItem value="WA">WA</SelectItem>
+                    <SelectItem value="TAS">TAS</SelectItem>
+                    <SelectItem value="NT">NT</SelectItem>
+                    <SelectItem value="ACT">ACT</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-base font-semibold mb-3 block">Are you a first home buyer?</Label>
+                <RadioGroup value={firstHomeBuyer} onValueChange={setFirstHomeBuyer} className="flex gap-4">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="fhb-yes" />
+                    <Label htmlFor="fhb-yes" className="cursor-pointer">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="fhb-no" />
+                    <Label htmlFor="fhb-no" className="cursor-pointer">No</Label>
                   </div>
                 </RadioGroup>
               </div>
