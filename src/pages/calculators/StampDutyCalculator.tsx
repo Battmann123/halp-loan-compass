@@ -62,11 +62,14 @@ const StampDutyCalculator = () => {
               concession = stampDuty;
               stampDuty = 0;
             } else if (propertyValue <= 1000000) {
-              // Sliding scale between $800k-$1M
-              const fullDuty = stampDuty;
-              const excessAmount = propertyValue - 800000;
-              stampDuty = excessAmount * 0.045;
-              concession = fullDuty - stampDuty;
+              // Concessional sliding scale between $800k-$1M
+              // Formula: Pay proportion of full $1M duty based on position in range
+              const fullDutyAt1M = 11152 + (1000000 - 372000) * 0.045; // $39,412
+              const proportionThroughRange = (propertyValue - 800000) / (1000000 - 800000);
+              stampDuty = fullDutyAt1M * proportionThroughRange;
+              concession = stampDuty; // The concession is the difference from full duty
+              const fullDutyAtPrice = 11152 + (propertyValue - 372000) * 0.045;
+              concession = fullDutyAtPrice - stampDuty;
             }
           }
         }
