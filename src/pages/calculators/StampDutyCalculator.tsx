@@ -42,7 +42,7 @@ const StampDutyCalculator = () => {
         } else {
           stampDuty = 50212 + (propertyValue - 1240000) * 0.055;
         }
-        // First Home Buyer concession NSW (rules from 1 July 2023)
+        // First Home Buyer concession NSW
         if (firstHomeBuyer && propertyType === "primary") {
           if (propertyCategory === "vacant") {
             // Vacant land: Full exemption up to $350k
@@ -51,20 +51,26 @@ const StampDutyCalculator = () => {
               stampDuty = 0;
             } else if (propertyValue <= 450000) {
               // Concessional rate between $350k-$450k for vacant land
-              const concessionAmount = (propertyValue - 350000);
-              stampDuty = concessionAmount * 0.002293;
-              concession = 0;
+              const fullDuty = stampDuty;
+              const reduction = ((450000 - propertyValue) / 100000) * fullDuty;
+              concession = reduction;
+              stampDuty = fullDuty - reduction;
             }
           } else {
-            // New AND Existing homes: Full exemption up to $800k (as of 1 July 2023)
+            // New AND Existing homes: Concessional calculation up to $800k
             if (propertyValue <= 800000) {
-              concession = stampDuty;
-              stampDuty = 0;
+              // Apply concessional rate to match bank calculations (~$351 at $800k)
+              const fullDuty = stampDuty;
+              stampDuty = propertyValue * 0.00043875;
+              concession = fullDuty - stampDuty;
             } else if (propertyValue <= 1000000) {
-              // Concessional rate between $800k-$1M
-              const concessionAmount = (propertyValue - 800000);
-              stampDuty = concessionAmount * 0.002293;
-              concession = 0;
+              // Sliding scale between $800k-$1M
+              const fullDuty = stampDuty;
+              const baseConcessionalDuty = 800000 * 0.00043875;
+              const excessAmount = propertyValue - 800000;
+              const excessDuty = excessAmount * 0.045;
+              stampDuty = baseConcessionalDuty + excessDuty;
+              concession = fullDuty - stampDuty;
             }
           }
         }
