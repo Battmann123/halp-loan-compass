@@ -15,12 +15,15 @@ const StampDutyCalculator = () => {
   const [state, setState] = useState("nsw");
   const [firstHomeBuyer, setFirstHomeBuyer] = useState(true);
   const [propertyType, setPropertyType] = useState<"primary" | "investment">("primary");
+  const [foreignPurchaser, setForeignPurchaser] = useState(false);
+  const [propertyCategory, setPropertyCategory] = useState<"new" | "established" | "vacant">("established");
 
   const calculateFees = () => {
     let stampDuty = 0;
     let concession = 0;
     let mortgageRegistrationFee = 0;
     let transferFee = 0;
+    let foreignPurchaserSurcharge = 0;
     
     // Calculate stamp duty based on state
     switch (state) {
@@ -51,6 +54,10 @@ const StampDutyCalculator = () => {
             stampDuty = fullDuty - concession;
           }
         }
+        // Foreign purchaser surcharge NSW (8% additional)
+        if (foreignPurchaser) {
+          foreignPurchaserSurcharge = propertyValue * 0.08;
+        }
         mortgageRegistrationFee = 157;
         transferFee = 143;
         break;
@@ -76,6 +83,10 @@ const StampDutyCalculator = () => {
             concession = fullDuty * ((750000 - propertyValue) / 150000);
             stampDuty = fullDuty - concession;
           }
+        }
+        // Foreign purchaser surcharge VIC (8% additional)
+        if (foreignPurchaser) {
+          foreignPurchaserSurcharge = propertyValue * 0.08;
         }
         mortgageRegistrationFee = 122.90;
         transferFee = 2775;
@@ -104,6 +115,10 @@ const StampDutyCalculator = () => {
             concession = fullDuty * ((550000 - propertyValue) / 50000);
             stampDuty = fullDuty - concession;
           }
+        }
+        // Foreign purchaser surcharge QLD (7% additional)
+        if (foreignPurchaser) {
+          foreignPurchaserSurcharge = propertyValue * 0.07;
         }
         mortgageRegistrationFee = 198.60;
         transferFee = propertyValue <= 180000 ? 207.45 : 9064.50;
@@ -135,6 +150,10 @@ const StampDutyCalculator = () => {
           concession = stampDuty;
           stampDuty = 0;
         }
+        // Foreign purchaser surcharge SA (7% additional)
+        if (foreignPurchaser) {
+          foreignPurchaserSurcharge = propertyValue * 0.07;
+        }
         mortgageRegistrationFee = 183;
         transferFee = 225;
         break;
@@ -162,6 +181,10 @@ const StampDutyCalculator = () => {
             concession = fullDuty * ((530000 - propertyValue) / 100000);
             stampDuty = fullDuty - concession;
           }
+        }
+        // Foreign purchaser surcharge WA (7% additional)
+        if (foreignPurchaser) {
+          foreignPurchaserSurcharge = propertyValue * 0.07;
         }
         mortgageRegistrationFee = 192.50;
         transferFee = 205.30;
@@ -241,11 +264,12 @@ const StampDutyCalculator = () => {
         break;
     }
     
-    const totalFees = Math.round(stampDuty + mortgageRegistrationFee + transferFee);
+    const totalFees = Math.round(stampDuty + foreignPurchaserSurcharge + mortgageRegistrationFee + transferFee);
     
     return {
       stampDuty: Math.round(stampDuty),
       concession: Math.round(concession),
+      foreignPurchaserSurcharge: Math.round(foreignPurchaserSurcharge),
       mortgageRegistrationFee: Math.round(mortgageRegistrationFee),
       transferFee: Math.round(transferFee),
       totalFees
@@ -339,6 +363,33 @@ const StampDutyCalculator = () => {
                   </SelectContent>
                 </Select>
               </div>
+
+              <div>
+                <Label htmlFor="propertyCategory">Property Category</Label>
+                <Select value={propertyCategory} onValueChange={(value: "new" | "established" | "vacant") => setPropertyCategory(value)}>
+                  <SelectTrigger className="mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="new">New Home</SelectItem>
+                    <SelectItem value="established">Established Home</SelectItem>
+                    <SelectItem value="vacant">Vacant Land</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="foreignPurchaser" 
+                    checked={foreignPurchaser}
+                    onCheckedChange={(checked) => setForeignPurchaser(checked as boolean)}
+                  />
+                  <Label htmlFor="foreignPurchaser" className="cursor-pointer">
+                    Foreign Purchaser
+                  </Label>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -379,6 +430,15 @@ const StampDutyCalculator = () => {
                   <span className="text-muted-foreground">Stamp Duty</span>
                   <span className="font-semibold">${results.stampDuty.toLocaleString()}</span>
                 </div>
+
+                {results.foreignPurchaserSurcharge > 0 && (
+                  <div className="flex justify-between items-center py-3 border-b bg-orange-50 dark:bg-orange-900/20 -mx-4 px-4">
+                    <span className="text-orange-600 dark:text-orange-400 font-medium">Foreign Purchaser Surcharge</span>
+                    <span className="font-semibold text-orange-600 dark:text-orange-400">
+                      ${results.foreignPurchaserSurcharge.toLocaleString()}
+                    </span>
+                  </div>
+                )}
 
                 {results.concession > 0 && (
                   <div className="flex justify-between items-center py-3 border-b bg-green-50 dark:bg-green-900/20 -mx-4 px-4">
