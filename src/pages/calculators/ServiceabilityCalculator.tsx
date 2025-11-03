@@ -34,12 +34,21 @@ const ServiceabilityCalculator = () => {
     
     // Assessment rate (typically 3% buffer above actual rate)
     const assessmentRate = 0.08; // 8% assessment rate
+    const monthlyAssessmentRate = assessmentRate / 12;
     
-    // Maximum monthly repayment capacity (30% of gross income rule)
-    const maxRepayment = monthlyIncome * 0.3;
+    // Loan term assumption (30 years)
+    const loanTermYears = 30;
+    const numberOfPayments = loanTermYears * 12;
     
-    // Maximum loan amount based on serviceability
-    const maxLoanAmount = (surplus * 12) / assessmentRate;
+    // Maximum monthly repayment capacity (use the lower of surplus or 30% of gross income)
+    const maxRepaymentFromIncome = monthlyIncome * 0.3;
+    const maxRepayment = Math.min(surplus, maxRepaymentFromIncome);
+    
+    // Calculate maximum loan amount using loan repayment formula
+    // P = M × [1 - (1 + r)^-n] / r
+    const maxLoanAmount = maxRepayment > 0 
+      ? maxRepayment * (1 - Math.pow(1 + monthlyAssessmentRate, -numberOfPayments)) / monthlyAssessmentRate
+      : 0;
     
     // Serviceability ratio
     const serviceabilityRatio = (totalCommitments / monthlyIncome) * 100;
@@ -48,7 +57,7 @@ const ServiceabilityCalculator = () => {
       monthlyIncome,
       totalCommitments,
       surplus: Math.max(0, surplus),
-      maxRepayment,
+      maxRepayment: Math.max(0, maxRepayment),
       maxLoanAmount: Math.max(0, maxLoanAmount),
       serviceabilityRatio,
       passesTest: surplus > 0 && serviceabilityRatio < 70,
