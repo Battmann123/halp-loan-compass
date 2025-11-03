@@ -19,8 +19,14 @@ const LMICalculator = () => {
   const [result, setResult] = useState<any>(null);
 
   const calculateLMI = () => {
-    const property = parseFloat(propertyValue || "0");
-    const depositAmount = parseFloat(deposit || "0");
+    const property = parseFloat(propertyValue);
+    const depositAmount = parseFloat(deposit);
+    
+    // Validate inputs
+    if (!property || !depositAmount || property <= 0 || depositAmount < 0) {
+      return;
+    }
+    
     const loanAmount = property - depositAmount;
     const lvr = (loanAmount / property) * 100;
 
