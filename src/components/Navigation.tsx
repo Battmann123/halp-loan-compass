@@ -29,9 +29,11 @@ const Navigation = () => {
               <BookOpen className="h-4 w-4" />
               <span className="font-medium">Loan Types</span>
             </Link>
-            <Button variant="default" size="lg" className="bg-gradient-to-r from-primary to-accent shadow-lg hover:shadow-xl transition-all">
-              Apply Now
-            </Button>
+            <Link to="/apply">
+              <Button variant="default" size="lg" className="bg-gradient-to-r from-primary to-accent shadow-lg hover:shadow-xl transition-all">
+                Apply Now
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -72,9 +74,11 @@ const Navigation = () => {
               <span className="font-medium">Loan Types</span>
             </Link>
             <div className="px-4">
-              <Button variant="default" size="lg" className="w-full bg-gradient-to-r from-primary to-accent shadow-lg">
-                Apply Now
-              </Button>
+              <Link to="/apply" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="default" size="lg" className="w-full bg-gradient-to-r from-primary to-accent shadow-lg">
+                  Apply Now
+                </Button>
+              </Link>
             </div>
           </div>
         )}

@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import CTASection from "@/components/CTASection";
 import { Building, CheckCircle, Calculator, ArrowRight } from "lucide-react";
 
 const ConstructionLoans = () => {
@@ -176,6 +177,11 @@ const ConstructionLoans = () => {
           </div>
         </div>
       </section>
+
+      <CTASection 
+        title="Ready to Start Your Construction Journey?"
+        description="Connect with a licensed broker who specializes in construction loans and house & land packages."
+      />
 
       <Footer />
     </div>

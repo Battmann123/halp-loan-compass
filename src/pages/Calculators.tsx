@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import CTASection from "@/components/CTASection";
 import {
   Calculator,
   DollarSign,
@@ -251,6 +252,12 @@ const Calculators = () => {
           </div>
         </div>
       </section>
+
+      <CTASection 
+        title="Need Help Choosing the Right Calculator?"
+        description="Speak with a licensed mortgage broker to get personalized advice and accurate calculations for your situation."
+        showCalculators={false}
+      />
 
       <Footer />
     </div>

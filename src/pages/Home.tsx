@@ -31,12 +31,16 @@ const Home = () => {
             Specialists in new properties, house & land packages, and off-the-plan developments across Australia
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-lg px-8 py-6 h-auto shadow-xl hover:shadow-2xl">
-              Apply Now
-            </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-6 h-auto bg-white/10 border-white text-white hover:bg-white hover:text-primary shadow-xl">
-              <Link to="/calculators">Use Calculators</Link>
-            </Button>
+            <Link to="/apply">
+              <Button size="lg" variant="secondary" className="text-lg px-8 py-6 h-auto shadow-xl hover:shadow-2xl">
+                Apply Now
+              </Button>
+            </Link>
+            <Link to="/calculators">
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6 h-auto bg-white/10 border-white text-white hover:bg-white hover:text-primary shadow-xl">
+                Use Calculators
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -251,10 +255,12 @@ const Home = () => {
             Connect with licensed mortgage brokers through HALP. We'll match you with 
             the right finance solution for your house & land package or new property purchase.
           </p>
-          <Button size="lg" className="text-lg px-8 py-6 h-auto bg-gradient-to-r from-primary to-accent shadow-xl">
-            <DollarSign className="h-5 w-5 mr-2" />
-            Apply for Pre-Approval
-          </Button>
+          <Link to="/apply">
+            <Button size="lg" className="text-lg px-8 py-6 h-auto bg-gradient-to-r from-primary to-accent shadow-xl">
+              <DollarSign className="h-5 w-5 mr-2" />
+              Apply for Pre-Approval
+            </Button>
+          </Link>
         </div>
       </section>
 

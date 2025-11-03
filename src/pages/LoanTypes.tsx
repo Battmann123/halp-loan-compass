@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import CTASection from "@/components/CTASection";
 import {
   Building,
   Home,
@@ -159,9 +160,11 @@ const LoanTypes = () => {
             for your specific circumstances and property goals.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-to-r from-primary to-accent shadow-xl">
-              Speak to a Broker
-            </Button>
+            <Link to="/apply">
+              <Button size="lg" className="bg-gradient-to-r from-primary to-accent shadow-xl">
+                Speak to a Broker
+              </Button>
+            </Link>
             <Link to="/calculators">
               <Button size="lg" variant="outline">
                 Use Our Calculators

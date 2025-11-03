@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import CTASection from "@/components/CTASection";
 import { Calculator, BookOpen, ArrowLeft } from "lucide-react";
 
 const ServiceabilityGuide = () => {
@@ -36,6 +37,7 @@ const ServiceabilityGuide = () => {
           </div>
         </div>
       </section>
+      <CTASection />
       <Footer />
     </div>
   );

@@ -21,6 +21,9 @@ import ExtraRepaymentsCalculator from "./pages/calculators/ExtraRepaymentsCalcul
 import LenderComparisonCalculator from "./pages/calculators/LenderComparisonCalculator";
 import Disclaimer from "./pages/Disclaimer";
 import NotFound from "./pages/NotFound";
+import Apply from "./pages/Apply";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 import ConstructionLoans from "./pages/loan-types/ConstructionLoans";
 import OffThePlanLoans from "./pages/loan-types/OffThePlanLoans";
 import FirstHomeBuyerLoans from "./pages/loan-types/FirstHomeBuyerLoans";
@@ -86,6 +89,9 @@ const App = () => (
           <Route path="/guides/extra-repayments" element={<ExtraRepaymentsGuide />} />
           <Route path="/guides/lender-comparison" element={<LenderComparisonGuide />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
+          <Route path="/apply" element={<Apply />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -166,9 +166,11 @@ const RepaymentCalculator = () => {
                 </div>
               </div>
 
-              <Button className="w-full bg-gradient-to-r from-primary to-accent">
-                Apply for This Loan
-              </Button>
+              <Link to="/apply">
+                <Button className="w-full bg-gradient-to-r from-primary to-accent">
+                  Apply for This Loan
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
