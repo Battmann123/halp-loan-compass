@@ -21,6 +21,12 @@ import ExtraRepaymentsCalculator from "./pages/calculators/ExtraRepaymentsCalcul
 import LenderComparisonCalculator from "./pages/calculators/LenderComparisonCalculator";
 import Disclaimer from "./pages/Disclaimer";
 import NotFound from "./pages/NotFound";
+import ConstructionLoans from "./pages/loan-types/ConstructionLoans";
+import OffThePlanLoans from "./pages/loan-types/OffThePlanLoans";
+import FirstHomeBuyerLoans from "./pages/loan-types/FirstHomeBuyerLoans";
+import InvestmentLoans from "./pages/loan-types/InvestmentLoans";
+import RefinanceLoans from "./pages/loan-types/RefinanceLoans";
+import LowDocLoans from "./pages/loan-types/LowDocLoans";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +53,12 @@ const App = () => (
           <Route path="/calculators/extra-repayments" element={<ExtraRepaymentsCalculator />} />
           <Route path="/calculators/lender-comparison" element={<LenderComparisonCalculator />} />
           <Route path="/loan-types" element={<LoanTypes />} />
+          <Route path="/loan-types/construction" element={<ConstructionLoans />} />
+          <Route path="/loan-types/off-the-plan" element={<OffThePlanLoans />} />
+          <Route path="/loan-types/first-home-buyer" element={<FirstHomeBuyerLoans />} />
+          <Route path="/loan-types/investment" element={<InvestmentLoans />} />
+          <Route path="/loan-types/refinance" element={<RefinanceLoans />} />
+          <Route path="/loan-types/low-doc" element={<LowDocLoans />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
