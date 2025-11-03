@@ -89,7 +89,7 @@ const StampDutyCalculator = () => {
           foreignPurchaserSurcharge = propertyValue * 0.08;
         }
         mortgageRegistrationFee = 122.90;
-        transferFee = 2775;
+        transferFee = 1974;
         break;
 
       case "qld":
