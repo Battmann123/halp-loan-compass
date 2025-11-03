@@ -27,6 +27,19 @@ import FirstHomeBuyerLoans from "./pages/loan-types/FirstHomeBuyerLoans";
 import InvestmentLoans from "./pages/loan-types/InvestmentLoans";
 import RefinanceLoans from "./pages/loan-types/RefinanceLoans";
 import LowDocLoans from "./pages/loan-types/LowDocLoans";
+import RepaymentGuide from "./pages/guides/RepaymentGuide";
+import BorrowingPowerGuide from "./pages/guides/BorrowingPowerGuide";
+import StampDutyGuide from "./pages/guides/StampDutyGuide";
+import GovernmentGrantsGuide from "./pages/guides/GovernmentGrantsGuide";
+import InvestmentPropertyGuide from "./pages/guides/InvestmentPropertyGuide";
+import RefinanceGuide from "./pages/guides/RefinanceGuide";
+import DepreciationGuide from "./pages/guides/DepreciationGuide";
+import LMIGuide from "./pages/guides/LMIGuide";
+import UpfrontCostsGuide from "./pages/guides/UpfrontCostsGuide";
+import ServiceabilityGuide from "./pages/guides/ServiceabilityGuide";
+import CapitalGainsGuide from "./pages/guides/CapitalGainsGuide";
+import ExtraRepaymentsGuide from "./pages/guides/ExtraRepaymentsGuide";
+import LenderComparisonGuide from "./pages/guides/LenderComparisonGuide";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +72,19 @@ const App = () => (
           <Route path="/loan-types/investment" element={<InvestmentLoans />} />
           <Route path="/loan-types/refinance" element={<RefinanceLoans />} />
           <Route path="/loan-types/low-doc" element={<LowDocLoans />} />
+          <Route path="/guides/repayment" element={<RepaymentGuide />} />
+          <Route path="/guides/borrowing-power" element={<BorrowingPowerGuide />} />
+          <Route path="/guides/stamp-duty" element={<StampDutyGuide />} />
+          <Route path="/guides/government-grants" element={<GovernmentGrantsGuide />} />
+          <Route path="/guides/investment-property" element={<InvestmentPropertyGuide />} />
+          <Route path="/guides/refinance" element={<RefinanceGuide />} />
+          <Route path="/guides/depreciation" element={<DepreciationGuide />} />
+          <Route path="/guides/lmi" element={<LMIGuide />} />
+          <Route path="/guides/upfront-costs" element={<UpfrontCostsGuide />} />
+          <Route path="/guides/serviceability" element={<ServiceabilityGuide />} />
+          <Route path="/guides/capital-gains" element={<CapitalGainsGuide />} />
+          <Route path="/guides/extra-repayments" element={<ExtraRepaymentsGuide />} />
+          <Route path="/guides/lender-comparison" element={<LenderComparisonGuide />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
