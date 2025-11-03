@@ -6,6 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import { calculatorSchema, generateBreadcrumb } from "@/lib/structuredData";
 import { Calculator, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -50,8 +52,31 @@ const RepaymentCalculator = () => {
 
   const results = calculateRepayments();
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      calculatorSchema(
+        "Home Loan Repayment Calculator",
+        "Calculate your monthly, fortnightly, or weekly home loan repayments for house & land packages and new properties in Australia",
+        "https://halp-loan-compass.lovable.app/calculators/repayment"
+      ),
+      generateBreadcrumb([
+        { name: "Home", url: "/" },
+        { name: "Calculators", url: "/calculators" },
+        { name: "Repayment Calculator", url: "/calculators/repayment" }
+      ])
+    ]
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Home Loan Repayment Calculator Australia | Monthly, Fortnightly & Weekly"
+        description="Free Australian home loan repayment calculator. Calculate monthly, fortnightly or weekly mortgage repayments for house & land packages. Compare payment frequencies and total interest costs."
+        keywords="home loan repayment calculator, mortgage repayment calculator, monthly repayment calculator, fortnightly repayment, weekly repayment, loan calculator Australia"
+        canonical="https://halp-loan-compass.lovable.app/calculators/repayment"
+        structuredData={structuredData}
+      />
       <Navigation />
 
       <div className="container mx-auto px-4 py-8 max-w-5xl">

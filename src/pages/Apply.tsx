@@ -1,11 +1,18 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import LeadForm from "@/components/LeadForm";
+import SEO from "@/components/SEO";
 import { CheckCircle, Shield, Clock, Award } from "lucide-react";
 
 const Apply = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Apply for Home Loan Pre-Approval | Licensed Mortgage Brokers"
+        description="Connect with licensed mortgage brokers for house & land packages, construction loans, and new property finance. Free consultation, 24-hour response, no obligation."
+        keywords="apply home loan, mortgage pre-approval, licensed mortgage broker, house and land finance, construction loan application"
+        canonical="https://halp-loan-compass.lovable.app/apply"
+      />
       <Navigation />
       
       <section className="bg-gradient-to-br from-primary via-accent to-primary py-16 px-4">

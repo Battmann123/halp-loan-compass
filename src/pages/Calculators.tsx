@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import CTASection from "@/components/CTASection";
+import SEO from "@/components/SEO";
 import {
   Calculator,
   DollarSign,
@@ -125,8 +126,23 @@ const calculatorCategories = [
 ];
 
 const Calculators = () => {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Home Loan Calculators Australia",
+    "description": "13 specialized mortgage calculators for Australian property buyers",
+    "url": "https://halp-loan-compass.lovable.app/calculators"
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="13 Home Loan Calculators Australia | Mortgage & Property Finance Tools"
+        description="Australia's most comprehensive mortgage calculator suite. Calculate repayments, borrowing power, stamp duty, LMI, government grants, and investment returns. Specialized for house & land packages."
+        keywords="home loan calculator, mortgage calculator Australia, stamp duty calculator, borrowing power calculator, LMI calculator, repayment calculator, investment property calculator"
+        canonical="https://halp-loan-compass.lovable.app/calculators"
+        structuredData={structuredData}
+      />
       <Navigation />
 
       {/* Hero Section */}

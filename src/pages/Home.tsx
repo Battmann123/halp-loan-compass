@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import { organizationSchema, serviceSchema } from "@/lib/structuredData";
 import {
   Calculator,
   Home as HomeIcon,
@@ -17,8 +19,20 @@ import {
 } from "lucide-react";
 
 const Home = () => {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [organizationSchema, serviceSchema]
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="House & Land Package Finance Specialists | Australian Mortgage Calculators"
+        description="Expert home loan solutions for house & land packages, new properties, and first home buyers in Australia. 13 specialized mortgage calculators, 5% deposit scheme, and government grants up to $45,000."
+        keywords="house and land packages, home loans Australia, mortgage calculator, first home buyer, construction loans, 5% deposit, government grants, stamp duty calculator"
+        canonical="https://halp-loan-compass.lovable.app/"
+        structuredData={structuredData}
+      />
       <Navigation />
 
       {/* Hero Section */}
