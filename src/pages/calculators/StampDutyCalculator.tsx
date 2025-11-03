@@ -233,8 +233,10 @@ const StampDutyCalculator = () => {
         if (foreignPurchaser) {
           foreignPurchaserSurcharge = propertyValue * 0.07;
         }
-        mortgageRegistrationFee = 183;
-        transferFee = 225;
+        // SA Fees (FY 2025/26)
+        mortgageRegistrationFee = 198.00;
+        // Transfer fee includes lodgement fee ($198) + transaction fee (1% of property value)
+        transferFee = 198.00 + (propertyValue * 0.01);
         break;
 
       case "wa":
