@@ -54,9 +54,20 @@ const LMICalculator = () => {
     
     const loanAmount = property - depositAmount;
     const lvr = (loanAmount / property) * 100;
+    const depositPercentage = (depositAmount / property) * 100;
 
     // LMI is typically required for LVR > 80%
     let lmiAmount = 0;
+    let lmiWaivedByScheme = false;
+    
+    // Check if eligible for First Home Guarantee or similar schemes
+    // First Home Guarantee allows 5% deposit without LMI for eligible buyers
+    if (isFirstHomeBuyer === "yes" && occupancyType === "owner-occupier") {
+      if (depositPercentage >= 5 && depositPercentage < 20) {
+        // Potentially eligible for First Home Guarantee
+        lmiWaivedByScheme = true;
+      }
+    }
     
     if (lvr > 80) {
       // More accurate LMI calculation based on Australian lender rates
@@ -124,14 +135,16 @@ const LMICalculator = () => {
       deposit: depositAmount,
       loanAmount,
       lvr,
-      lmiRequired: lvr > 80,
-      lmiAmount,
-      totalLoanWithLMI,
-      newLVR,
-      depositPercentage: (depositAmount / property) * 100,
+      lmiRequired: lvr > 80 && !lmiWaivedByScheme,
+      lmiAmount: lmiWaivedByScheme ? 0 : lmiAmount,
+      lmiAmountWithoutScheme: lmiAmount,
+      totalLoanWithLMI: lmiWaivedByScheme ? loanAmount : loanAmount + lmiAmount,
+      newLVR: lmiWaivedByScheme ? lvr : (loanAmount + lmiAmount) / property * 100,
+      depositPercentage,
       isFirstHomeBuyer,
       occupancyType,
       state,
+      lmiWaivedByScheme,
     });
   };
 
@@ -241,10 +254,29 @@ const LMICalculator = () => {
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    {result.lmiRequired ? "LMI Required" : "No LMI Required"}
+                    {result.lmiWaivedByScheme 
+                      ? "LMI May Be Waived - First Home Guarantee" 
+                      : result.lmiRequired 
+                        ? "LMI Required" 
+                        : "No LMI Required"}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {result.lmiWaivedByScheme && (
+                    <div className="bg-green-50 dark:bg-green-950/30 p-4 rounded-lg mb-4">
+                      <p className="text-green-700 dark:text-green-400 font-semibold mb-2">
+                        ✓ You may be eligible for the First Home Guarantee!
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        As a first home buyer with a 5%+ deposit purchasing an owner-occupied property, 
+                        you may qualify for the Australian Government's First Home Guarantee scheme, which waives LMI.
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Without this scheme, your LMI would be approximately ${result.lmiAmountWithoutScheme.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </p>
+                    </div>
+                  )}
+
                   <div className="bg-muted/50 p-4 rounded-lg mb-4">
                     <p className="text-sm text-muted-foreground mb-1">LVR Ratio</p>
                     <p className="text-3xl font-bold">
@@ -294,10 +326,10 @@ const LMICalculator = () => {
                       <div className="text-sm space-y-2">
                         <p className="font-semibold">Ways to Avoid LMI:</p>
                         <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                          <li>First Home Guarantee scheme (5% deposit, no LMI)</li>
                           <li>Save a 20% deposit</li>
                           <li>Use a family guarantee</li>
-                          <li>First home buyer schemes (5% deposit)</li>
-                          <li>Professional package discounts</li>
+                          <li>Professional package discounts (doctors, lawyers, etc.)</li>
                         </ul>
                       </div>
                     </>
@@ -345,6 +377,25 @@ const LMICalculator = () => {
                 Yes! Most lenders allow you to add LMI to your home loan rather than paying it upfront. This is called 
                 "capitalizing" the LMI. While this means you pay interest on the LMI over the life of your loan, it allows 
                 you to purchase sooner.
+              </p>
+
+              <h3 className="text-lg font-semibold mb-2 mt-4">First Home Guarantee - Avoid LMI</h3>
+              <p>
+                The Australian Government's First Home Guarantee allows eligible first home buyers to purchase with as little 
+                as a 5% deposit without paying LMI. The government guarantees up to 15% of the property value, protecting the lender.
+              </p>
+              <p className="mt-2">
+                <strong>Eligibility criteria include:</strong>
+              </p>
+              <ul className="space-y-1 mt-2">
+                <li>• Must be an Australian citizen aged 18+</li>
+                <li>• Never owned property in Australia before</li>
+                <li>• Purchasing an owner-occupied home</li>
+                <li>• Property value must be under regional price caps</li>
+                <li>• Meet income limits (currently $125k for singles, $200k for couples)</li>
+              </ul>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Contact a mortgage broker to check your eligibility and apply for this valuable scheme.
               </p>
             </CardContent>
           </Card>
