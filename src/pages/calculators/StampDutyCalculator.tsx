@@ -132,13 +132,13 @@ const StampDutyCalculator = () => {
         if (propertyType === "primary") {
           // Home Concession Rates
           if (propertyValue <= 350000) {
-            stampDuty = 0;
+            stampDuty = propertyValue * 0.01;
           } else if (propertyValue <= 540000) {
-            stampDuty = (propertyValue - 350000) * 0.015;
+            stampDuty = 3500 + (propertyValue - 350000) * 0.035;
           } else if (propertyValue <= 1000000) {
-            stampDuty = 2850 + (propertyValue - 540000) * 0.035;
+            stampDuty = 10150 + (propertyValue - 540000) * 0.045;
           } else {
-            stampDuty = 18950 + (propertyValue - 1000000) * 0.045;
+            stampDuty = 30850 + (propertyValue - 1000000) * 0.0575;
           }
         } else {
           // Standard Transfer Duty Rates
@@ -155,15 +155,36 @@ const StampDutyCalculator = () => {
           }
         }
         // First Home Buyer concession QLD (from 9 June 2024)
+        // Calculate using home concession rate, then deduct fixed concession amount
         if (firstHomeBuyer && propertyType === "primary") {
-          if (propertyValue <= 700000) {
-            concession = stampDuty;
-            stampDuty = 0;
-          } else if (propertyValue <= 800000) {
-            // Sliding scale
-            const fullDuty = stampDuty;
-            concession = fullDuty * ((800000 - propertyValue) / 100000);
-            stampDuty = fullDuty - concession;
+          // Determine concession amount based on price bracket
+          let fhbConcession = 0;
+          if (propertyValue <= 709999.99) {
+            fhbConcession = 17350;
+          } else if (propertyValue <= 719999.99) {
+            fhbConcession = 15615;
+          } else if (propertyValue <= 729999.99) {
+            fhbConcession = 13880;
+          } else if (propertyValue <= 739999.99) {
+            fhbConcession = 12145;
+          } else if (propertyValue <= 749999.99) {
+            fhbConcession = 10410;
+          } else if (propertyValue <= 759999.99) {
+            fhbConcession = 8675;
+          } else if (propertyValue <= 769999.99) {
+            fhbConcession = 6940;
+          } else if (propertyValue <= 779999.99) {
+            fhbConcession = 5205;
+          } else if (propertyValue <= 789999.99) {
+            fhbConcession = 3470;
+          } else if (propertyValue <= 799999.99) {
+            fhbConcession = 1735;
+          }
+          // Apply concession
+          if (fhbConcession > 0) {
+            const dutyBeforeConcession = stampDuty;
+            stampDuty = Math.max(0, stampDuty - fhbConcession);
+            concession = dutyBeforeConcession - stampDuty;
           }
         }
         // Foreign purchaser surcharge QLD (7% additional)
