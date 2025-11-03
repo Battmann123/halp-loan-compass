@@ -338,16 +338,33 @@ const StampDutyCalculator = () => {
                 </Select>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="firstHomeBuyer" 
-                    checked={firstHomeBuyer}
-                    onCheckedChange={(checked) => setFirstHomeBuyer(checked as boolean)}
-                  />
-                  <Label htmlFor="firstHomeBuyer" className="cursor-pointer">
-                    First Home Buyer
-                  </Label>
+              <div>
+                <Label>First Home Buyer</Label>
+                <div className="flex gap-4 mt-2">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      id="firstHomeBuyerYes"
+                      checked={firstHomeBuyer === true}
+                      onChange={() => setFirstHomeBuyer(true)}
+                      className="cursor-pointer"
+                    />
+                    <Label htmlFor="firstHomeBuyerYes" className="cursor-pointer font-normal">
+                      Yes
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      id="firstHomeBuyerNo"
+                      checked={firstHomeBuyer === false}
+                      onChange={() => setFirstHomeBuyer(false)}
+                      className="cursor-pointer"
+                    />
+                    <Label htmlFor="firstHomeBuyerNo" className="cursor-pointer font-normal">
+                      No
+                    </Label>
+                  </div>
                 </div>
               </div>
 
@@ -378,16 +395,33 @@ const StampDutyCalculator = () => {
                 </Select>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="foreignPurchaser" 
-                    checked={foreignPurchaser}
-                    onCheckedChange={(checked) => setForeignPurchaser(checked as boolean)}
-                  />
-                  <Label htmlFor="foreignPurchaser" className="cursor-pointer">
-                    Foreign Purchaser
-                  </Label>
+              <div>
+                <Label>Foreign Purchaser</Label>
+                <div className="flex gap-4 mt-2">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      id="foreignPurchaserYes"
+                      checked={foreignPurchaser === true}
+                      onChange={() => setForeignPurchaser(true)}
+                      className="cursor-pointer"
+                    />
+                    <Label htmlFor="foreignPurchaserYes" className="cursor-pointer font-normal">
+                      Yes
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      id="foreignPurchaserNo"
+                      checked={foreignPurchaser === false}
+                      onChange={() => setForeignPurchaser(false)}
+                      className="cursor-pointer"
+                    />
+                    <Label htmlFor="foreignPurchaserNo" className="cursor-pointer font-normal">
+                      No
+                    </Label>
+                  </div>
                 </div>
               </div>
             </CardContent>
