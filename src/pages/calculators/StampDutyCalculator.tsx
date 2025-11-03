@@ -57,19 +57,15 @@ const StampDutyCalculator = () => {
               stampDuty = fullDuty - reduction;
             }
           } else {
-            // New AND Existing homes: Concessional calculation up to $800k
+            // New AND Existing homes: Full exemption up to $800k
             if (propertyValue <= 800000) {
-              // Apply concessional rate to match bank calculations (~$351 at $800k)
-              const fullDuty = stampDuty;
-              stampDuty = propertyValue * 0.00043875;
-              concession = fullDuty - stampDuty;
+              concession = stampDuty;
+              stampDuty = 0;
             } else if (propertyValue <= 1000000) {
               // Sliding scale between $800k-$1M
               const fullDuty = stampDuty;
-              const baseConcessionalDuty = 800000 * 0.00043875;
               const excessAmount = propertyValue - 800000;
-              const excessDuty = excessAmount * 0.045;
-              stampDuty = baseConcessionalDuty + excessDuty;
+              stampDuty = excessAmount * 0.045;
               concession = fullDuty - stampDuty;
             }
           }
@@ -78,8 +74,8 @@ const StampDutyCalculator = () => {
         if (foreignPurchaser) {
           foreignPurchaserSurcharge = propertyValue * 0.08;
         }
-        mortgageRegistrationFee = 157;
-        transferFee = 143;
+        mortgageRegistrationFee = 176;
+        transferFee = 176;
         break;
 
       case "vic":
