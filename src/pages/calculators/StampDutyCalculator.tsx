@@ -191,8 +191,16 @@ const StampDutyCalculator = () => {
         if (foreignPurchaser) {
           foreignPurchaserSurcharge = propertyValue * 0.07;
         }
-        mortgageRegistrationFee = 198.60;
-        transferFee = propertyValue <= 180000 ? 207.45 : 9064.50;
+        // QLD Registration Fees (FY 2025/26)
+        mortgageRegistrationFee = 238.14;
+        // Transfer fee: Base $238.14 + $44.71 for each $10,000 (or part) over $180,000
+        if (propertyValue <= 180000) {
+          transferFee = 238.14;
+        } else {
+          const excessAmount = propertyValue - 180000;
+          const increments = Math.ceil(excessAmount / 10000);
+          transferFee = 238.14 + (increments * 44.71);
+        }
         break;
 
       case "sa":
