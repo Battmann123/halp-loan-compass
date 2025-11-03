@@ -25,13 +25,23 @@ const RepaymentCalculator = () => {
     const monthlyRate = interestRate / 100 / 12;
     const numberOfPayments = loanTerm * 12;
 
-    // Monthly repayment calculation
-    const monthlyRepayment =
-      (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
-      (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+    let monthlyRepayment;
+    let totalPayments;
+    let totalInterest;
 
-    const totalPayments = monthlyRepayment * numberOfPayments;
-    const totalInterest = totalPayments - principal;
+    if (repaymentType === "interest-only") {
+      // Interest only calculation
+      monthlyRepayment = principal * monthlyRate;
+      totalPayments = monthlyRepayment * numberOfPayments;
+      totalInterest = totalPayments; // All payments are interest
+    } else {
+      // Principal & Interest calculation
+      monthlyRepayment =
+        (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
+        (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+      totalPayments = monthlyRepayment * numberOfPayments;
+      totalInterest = totalPayments - principal;
+    }
 
     // Adjust for payment frequency
     let repayment = monthlyRepayment;
