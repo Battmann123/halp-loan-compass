@@ -9,8 +9,10 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { FileText, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const LMICalculator = () => {
+  const { toast } = useToast();
   const [propertyValue, setPropertyValue] = useState("");
   const [deposit, setDeposit] = useState("");
   const [isFirstHomeBuyer, setIsFirstHomeBuyer] = useState<string>("no");
@@ -23,7 +25,30 @@ const LMICalculator = () => {
     const depositAmount = parseFloat(deposit);
     
     // Validate inputs
-    if (!property || !depositAmount || property <= 0 || depositAmount < 0) {
+    if (!propertyValue || !deposit) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter both property value and deposit amount.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (isNaN(property) || isNaN(depositAmount) || property <= 0 || depositAmount < 0) {
+      toast({
+        title: "Invalid Input",
+        description: "Please enter valid numbers for property value and deposit.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (depositAmount > property) {
+      toast({
+        title: "Invalid Deposit",
+        description: "Deposit cannot be greater than property value.",
+        variant: "destructive",
+      });
       return;
     }
     
