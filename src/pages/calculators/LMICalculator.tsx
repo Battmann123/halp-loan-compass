@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { FileText, Calculator } from "lucide-react";
@@ -11,6 +13,9 @@ import { Link } from "react-router-dom";
 const LMICalculator = () => {
   const [propertyValue, setPropertyValue] = useState("");
   const [deposit, setDeposit] = useState("");
+  const [isFirstHomeBuyer, setIsFirstHomeBuyer] = useState<string>("no");
+  const [occupancyType, setOccupancyType] = useState<string>("owner-occupier");
+  const [state, setState] = useState<string>("NSW");
   const [result, setResult] = useState<any>(null);
 
   const calculateLMI = () => {
@@ -49,6 +54,9 @@ const LMICalculator = () => {
       totalLoanWithLMI,
       newLVR,
       depositPercentage: (depositAmount / property) * 100,
+      isFirstHomeBuyer,
+      occupancyType,
+      state,
     });
   };
 
@@ -78,7 +86,7 @@ const LMICalculator = () => {
                   Property Details
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6">
                 <div>
                   <Label htmlFor="propertyValue">Property Value ($)</Label>
                   <Input
@@ -101,6 +109,53 @@ const LMICalculator = () => {
                   />
                 </div>
 
+                <div className="space-y-3">
+                  <Label>Are you a first home buyer?</Label>
+                  <RadioGroup value={isFirstHomeBuyer} onValueChange={setIsFirstHomeBuyer}>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="yes" id="fhb-yes" />
+                      <Label htmlFor="fhb-yes" className="font-normal cursor-pointer">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="no" id="fhb-no" />
+                      <Label htmlFor="fhb-no" className="font-normal cursor-pointer">No</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <div className="space-y-3">
+                  <Label>Property Type</Label>
+                  <RadioGroup value={occupancyType} onValueChange={setOccupancyType}>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="owner-occupier" id="owner-occupier" />
+                      <Label htmlFor="owner-occupier" className="font-normal cursor-pointer">Owner Occupier</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="investor" id="investor" />
+                      <Label htmlFor="investor" className="font-normal cursor-pointer">Investor</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <div className="space-y-3">
+                  <Label htmlFor="state">What state are you buying in?</Label>
+                  <Select value={state} onValueChange={setState}>
+                    <SelectTrigger id="state">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="NSW">New South Wales</SelectItem>
+                      <SelectItem value="VIC">Victoria</SelectItem>
+                      <SelectItem value="QLD">Queensland</SelectItem>
+                      <SelectItem value="SA">South Australia</SelectItem>
+                      <SelectItem value="WA">Western Australia</SelectItem>
+                      <SelectItem value="TAS">Tasmania</SelectItem>
+                      <SelectItem value="NT">Northern Territory</SelectItem>
+                      <SelectItem value="ACT">Australian Capital Territory</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <Button onClick={calculateLMI} className="w-full">
                   Calculate LMI
                 </Button>
@@ -115,6 +170,13 @@ const LMICalculator = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div className="bg-muted/50 p-4 rounded-lg mb-4">
+                    <p className="text-sm text-muted-foreground mb-1">LVR Ratio</p>
+                    <p className="text-3xl font-bold">
+                      {result.lvr.toFixed(1)}%
+                    </p>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-muted-foreground">Loan Amount</p>
@@ -129,15 +191,15 @@ const LMICalculator = () => {
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">LVR</p>
-                      <p className="text-2xl font-bold">
-                        {result.lvr.toFixed(1)}%
-                      </p>
-                    </div>
-                    <div>
                       <p className="text-sm text-muted-foreground">LMI Amount</p>
                       <p className={`text-2xl font-bold ${result.lmiRequired ? 'text-orange-600' : 'text-green-600'}`}>
                         ${result.lmiAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Property Type</p>
+                      <p className="text-lg font-semibold">
+                        {result.occupancyType === "owner-occupier" ? "Owner Occupier" : "Investor"}
                       </p>
                     </div>
                   </div>
