@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Scale, Check, X } from "lucide-react";
@@ -11,10 +12,11 @@ import { Link } from "react-router-dom";
 
 const LenderComparisonCalculator = () => {
   const [loanAmount, setLoanAmount] = useState("500000");
+  const [loanType, setLoanType] = useState("variable");
   const [showComparison, setShowComparison] = useState(false);
 
   // Sample lender data (in real implementation, this would come from an API)
-  const lenders = [
+  const allLenders = [
     {
       name: "Commonwealth Bank",
       rate: 6.24,
@@ -25,6 +27,7 @@ const LenderComparisonCalculator = () => {
       monthlyFee: 10,
       features: ["Offset account", "Redraw", "Split loans", "Mobile app"],
       rating: 4.5,
+      loanTypes: ["variable", "fixed", "split", "investment", "firstHome"],
     },
     {
       name: "Westpac",
@@ -36,6 +39,7 @@ const LenderComparisonCalculator = () => {
       monthlyFee: 10,
       features: ["Offset account", "Redraw", "Rate lock", "Lifestyle benefits"],
       rating: 4.3,
+      loanTypes: ["variable", "fixed", "split", "investment", "firstHome"],
     },
     {
       name: "ANZ",
@@ -47,6 +51,7 @@ const LenderComparisonCalculator = () => {
       monthlyFee: 15,
       features: ["Offset account", "Redraw", "Break fee cashback", "Mobile app"],
       rating: 4.4,
+      loanTypes: ["variable", "fixed", "split", "investment", "firstHome"],
     },
     {
       name: "NAB",
@@ -58,6 +63,7 @@ const LenderComparisonCalculator = () => {
       monthlyFee: 0,
       features: ["Offset account", "Redraw", "No monthly fee", "Extra repayments"],
       rating: 4.2,
+      loanTypes: ["variable", "fixed", "split", "investment", "firstHome"],
     },
     {
       name: "Macquarie Bank",
@@ -69,6 +75,7 @@ const LenderComparisonCalculator = () => {
       monthlyFee: 0,
       features: ["Offset account", "No fees", "Online only", "Fast approval"],
       rating: 4.6,
+      loanTypes: ["variable", "fixed", "split", "investment"],
     },
     {
       name: "ING",
@@ -80,8 +87,120 @@ const LenderComparisonCalculator = () => {
       monthlyFee: 0,
       features: ["No fees", "Redraw", "Extra repayments", "Online banking"],
       rating: 4.5,
+      loanTypes: ["variable", "fixed", "firstHome"],
+    },
+    {
+      name: "Suncorp Bank",
+      rate: 6.15,
+      comparisonRate: 6.22,
+      offset: true,
+      redraw: true,
+      applicationFee: 400,
+      monthlyFee: 8,
+      features: ["Offset account", "Redraw", "Insurance discounts", "Extra repayments"],
+      rating: 4.3,
+      loanTypes: ["variable", "fixed", "split", "investment", "firstHome"],
+    },
+    {
+      name: "Bank of Queensland",
+      rate: 6.27,
+      comparisonRate: 6.33,
+      offset: true,
+      redraw: true,
+      applicationFee: 0,
+      monthlyFee: 10,
+      features: ["Offset account", "Redraw", "Regional expertise", "Mobile app"],
+      rating: 4.1,
+      loanTypes: ["variable", "fixed", "split", "investment"],
+    },
+    {
+      name: "Bankwest",
+      rate: 6.12,
+      comparisonRate: 6.19,
+      offset: true,
+      redraw: true,
+      applicationFee: 600,
+      monthlyFee: 10,
+      features: ["Offset account", "Redraw", "Extra repayments", "Split loans"],
+      rating: 4.4,
+      loanTypes: ["variable", "fixed", "split", "investment", "firstHome"],
+    },
+    {
+      name: "UBank",
+      rate: 5.94,
+      comparisonRate: 6.04,
+      offset: false,
+      redraw: true,
+      applicationFee: 0,
+      monthlyFee: 0,
+      features: ["No fees", "Redraw", "Online banking", "Fast approval"],
+      rating: 4.5,
+      loanTypes: ["variable", "fixed", "firstHome"],
+    },
+    {
+      name: "Adelaide Bank",
+      rate: 6.31,
+      comparisonRate: 6.38,
+      offset: true,
+      redraw: true,
+      applicationFee: 350,
+      monthlyFee: 10,
+      features: ["Offset account", "Redraw", "Local service", "Extra repayments"],
+      rating: 4.2,
+      loanTypes: ["variable", "fixed", "split", "investment"],
+    },
+    {
+      name: "Bendigo Bank",
+      rate: 6.28,
+      comparisonRate: 6.35,
+      offset: true,
+      redraw: true,
+      applicationFee: 600,
+      monthlyFee: 10,
+      features: ["Offset account", "Redraw", "Community banking", "Mobile app"],
+      rating: 4.3,
+      loanTypes: ["variable", "fixed", "split", "investment", "firstHome"],
+    },
+    {
+      name: "AMP Bank",
+      rate: 6.17,
+      comparisonRate: 6.24,
+      offset: true,
+      redraw: true,
+      applicationFee: 600,
+      monthlyFee: 10,
+      features: ["Offset account", "Redraw", "Extra repayments", "Fast settlement"],
+      rating: 4.2,
+      loanTypes: ["variable", "fixed", "split", "investment"],
+    },
+    {
+      name: "Athena Home Loans",
+      rate: 5.89,
+      comparisonRate: 5.97,
+      offset: false,
+      redraw: true,
+      applicationFee: 0,
+      monthlyFee: 0,
+      features: ["No fees", "Digital only", "Rate tracker", "Fast approval"],
+      rating: 4.7,
+      loanTypes: ["variable", "firstHome"],
+    },
+    {
+      name: "Pepper Money",
+      rate: 6.45,
+      comparisonRate: 6.52,
+      offset: false,
+      redraw: true,
+      applicationFee: 995,
+      monthlyFee: 12,
+      features: ["Alt-doc loans", "Redraw", "Self-employed", "Flexible criteria"],
+      rating: 4.0,
+      loanTypes: ["variable", "investment"],
     },
   ];
+
+  // Filter lenders based on selected loan type
+  const lenders = allLenders.filter(lender => lender.loanTypes.includes(loanType));
 
   const calculateRepayment = (rate: number) => {
     const principal = parseFloat(loanAmount || "500000");
@@ -118,8 +237,8 @@ const LenderComparisonCalculator = () => {
               <CardTitle>Your Loan Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex gap-4 items-end">
-                <div className="flex-1">
+              <div className="grid md:grid-cols-3 gap-4 items-end">
+                <div>
                   <Label htmlFor="loanAmount">Loan Amount ($)</Label>
                   <Input
                     id="loanAmount"
@@ -128,6 +247,21 @@ const LenderComparisonCalculator = () => {
                     onChange={(e) => setLoanAmount(e.target.value)}
                     placeholder="500000"
                   />
+                </div>
+                <div>
+                  <Label htmlFor="loanType">Loan Type</Label>
+                  <Select value={loanType} onValueChange={setLoanType}>
+                    <SelectTrigger id="loanType">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="variable">Variable Rate</SelectItem>
+                      <SelectItem value="fixed">Fixed Rate</SelectItem>
+                      <SelectItem value="split">Split Loan</SelectItem>
+                      <SelectItem value="investment">Investment Property</SelectItem>
+                      <SelectItem value="firstHome">First Home Buyer</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <Button onClick={() => setShowComparison(true)}>
                   Compare Lenders
@@ -245,8 +379,12 @@ const LenderComparisonCalculator = () => {
                         </div>
 
                         <div className="mt-4 pt-4 border-t flex gap-2">
-                          <Button className="flex-1">Get This Rate</Button>
-                          <Button variant="outline" className="flex-1">More Details</Button>
+                          <Link to="/apply" className="flex-1">
+                            <Button className="w-full">Get This Rate</Button>
+                          </Link>
+                          <Link to="/apply" className="flex-1">
+                            <Button variant="outline" className="w-full">More Details</Button>
+                          </Link>
                         </div>
                       </CardContent>
                     </Card>
