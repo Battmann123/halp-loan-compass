@@ -18,6 +18,8 @@ const UpfrontCostsCalculator = () => {
   const calculateStampDuty = (value: number, state: string, isFirstHome: boolean) => {
     // Calculate stamp duty using tiered brackets (accurate as of 2024)
     let stampDuty = 0;
+    
+    console.log("calculateStampDuty called with:", { value, state, isFirstHome });
 
     switch(state) {
       case "NSW":
@@ -46,6 +48,7 @@ const UpfrontCostsCalculator = () => {
       case "VIC":
         // First Home Buyer exemptions (new homes only)
         if (isFirstHome && value <= 600000) {
+          console.log("VIC: First home buyer exemption applied");
           return 0;
         }
         // Victoria tiered rates (as per SRO official rates)
@@ -60,6 +63,7 @@ const UpfrontCostsCalculator = () => {
         } else {
           stampDuty = 110000 + (value - 2000000) * 0.065;
         }
+        console.log("VIC: Calculated stamp duty:", stampDuty);
         break;
 
       case "QLD":
@@ -168,6 +172,7 @@ const UpfrontCostsCalculator = () => {
         stampDuty = value * 0.04;
     }
 
+    console.log("calculateStampDuty returning:", stampDuty);
     return Math.round(stampDuty);
   };
 
@@ -175,7 +180,9 @@ const UpfrontCostsCalculator = () => {
     const value = parseFloat(propertyValue || "0");
     const isFirstHome = firstHomeBuyer === "yes";
 
+    console.log("Calculate Costs Debug:", { value, state, isFirstHome });
     const stampDuty = calculateStampDuty(value, state, isFirstHome);
+    console.log("Stamp Duty Result:", stampDuty);
     const legalFees = 2000; // Average conveyancing fees
     const buildingInspection = 600;
     const pestInspection = 300;
