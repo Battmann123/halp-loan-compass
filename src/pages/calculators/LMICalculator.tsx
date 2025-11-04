@@ -127,7 +127,44 @@ const LMICalculator = () => {
       lmiAmount = loanAmount * lmiRate;
     }
 
-    const totalLoanWithLMI = loanAmount + lmiAmount;
+    // Add stamp duty on LMI (varies by state)
+    let lmiStampDuty = 0;
+    let lmiStampDutyRate = 0;
+    
+    if (lmiAmount > 0 && !lmiWaivedByScheme) {
+      switch(state) {
+        case "NSW":
+          lmiStampDutyRate = 0; // No stamp duty on LMI in NSW
+          break;
+        case "VIC":
+          lmiStampDutyRate = 0.10;
+          break;
+        case "QLD":
+          lmiStampDutyRate = 0.09;
+          break;
+        case "SA":
+          lmiStampDutyRate = 0.11;
+          break;
+        case "WA":
+          lmiStampDutyRate = 0.10;
+          break;
+        case "TAS":
+          lmiStampDutyRate = 0.10;
+          break;
+        case "NT":
+          lmiStampDutyRate = 0.10;
+          break;
+        case "ACT":
+          lmiStampDutyRate = 0; // Abolished
+          break;
+        default:
+          lmiStampDutyRate = 0;
+      }
+      lmiStampDuty = lmiAmount * lmiStampDutyRate;
+    }
+
+    const totalLMICost = lmiAmount + lmiStampDuty;
+    const totalLoanWithLMI = loanAmount + totalLMICost;
     const newLVR = (totalLoanWithLMI / property) * 100;
 
     setResult({
@@ -138,8 +175,11 @@ const LMICalculator = () => {
       lmiRequired: lvr > 80 && !lmiWaivedByScheme,
       lmiAmount: lmiWaivedByScheme ? 0 : lmiAmount,
       lmiAmountWithoutScheme: lmiAmount,
-      totalLoanWithLMI: lmiWaivedByScheme ? loanAmount : loanAmount + lmiAmount,
-      newLVR: lmiWaivedByScheme ? lvr : (loanAmount + lmiAmount) / property * 100,
+      lmiStampDuty: lmiWaivedByScheme ? 0 : lmiStampDuty,
+      lmiStampDutyRate,
+      totalLMICost: lmiWaivedByScheme ? 0 : totalLMICost,
+      totalLoanWithLMI: lmiWaivedByScheme ? loanAmount : totalLoanWithLMI,
+      newLVR: lmiWaivedByScheme ? lvr : newLVR,
       depositPercentage,
       isFirstHomeBuyer,
       occupancyType,
@@ -298,11 +338,29 @@ const LMICalculator = () => {
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">LMI Amount</p>
+                      <p className="text-sm text-muted-foreground">LMI Premium</p>
                       <p className={`text-2xl font-bold ${result.lmiRequired ? 'text-orange-600' : 'text-green-600'}`}>
                         ${result.lmiAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                       </p>
                     </div>
+                    {result.lmiStampDuty > 0 && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">
+                          {result.state} Stamp Duty on LMI ({(result.lmiStampDutyRate * 100).toFixed(0)}%)
+                        </p>
+                        <p className="text-2xl font-bold text-orange-600">
+                          ${result.lmiStampDuty.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                        </p>
+                      </div>
+                    )}
+                    {result.totalLMICost > result.lmiAmount && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Total LMI Cost</p>
+                        <p className="text-2xl font-bold text-orange-600">
+                          ${result.totalLMICost.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                        </p>
+                      </div>
+                    )}
                     <div>
                       <p className="text-sm text-muted-foreground">Property Type</p>
                       <p className="text-lg font-semibold">
@@ -314,13 +372,18 @@ const LMICalculator = () => {
                   {result.lmiRequired && (
                     <>
                       <div className="bg-orange-50 dark:bg-orange-950/30 p-4 rounded-lg">
-                        <p className="text-sm text-muted-foreground mb-1">Total Loan (inc. LMI)</p>
+                        <p className="text-sm text-muted-foreground mb-1">Total Loan (inc. LMI{result.lmiStampDuty > 0 ? ' + Stamp Duty' : ''})</p>
                         <p className="text-3xl font-bold text-orange-600">
                           ${result.totalLoanWithLMI.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                         </p>
                         <p className="text-xs text-muted-foreground mt-2">
                           New LVR: {result.newLVR.toFixed(1)}%
                         </p>
+                        {result.lmiStampDuty > 0 && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Includes {result.state} stamp duty on LMI: ${result.lmiStampDuty.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                          </p>
+                        )}
                       </div>
 
                       <div className="text-sm space-y-2">
