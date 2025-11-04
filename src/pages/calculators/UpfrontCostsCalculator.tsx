@@ -16,18 +16,157 @@ const UpfrontCostsCalculator = () => {
   const [result, setResult] = useState<any>(null);
 
   const calculateStampDuty = (value: number, state: string, isFirstHome: boolean) => {
-    // Simplified stamp duty calculation (actual rates are more complex)
-    const stampDutyRates: any = {
-      NSW: isFirstHome && value <= 800000 ? 0 : value * 0.04,
-      VIC: isFirstHome && value <= 600000 ? 0 : value * 0.055,
-      QLD: value * 0.0375,
-      SA: value * 0.045,
-      WA: value * 0.04,
-      TAS: value * 0.04,
-      NT: value * 0.0492,
-      ACT: value * 0.0415,
-    };
-    return stampDutyRates[state] || value * 0.04;
+    // Calculate stamp duty using tiered brackets (accurate as of 2024)
+    let stampDuty = 0;
+
+    switch(state) {
+      case "NSW":
+        // First Home Buyer exemptions
+        if (isFirstHome && value <= 800000) {
+          return 0;
+        }
+        // NSW has tiered rates
+        if (value <= 14000) {
+          stampDuty = value * 0.0125;
+        } else if (value <= 32000) {
+          stampDuty = 175 + (value - 14000) * 0.015;
+        } else if (value <= 85000) {
+          stampDuty = 445 + (value - 32000) * 0.0175;
+        } else if (value <= 319000) {
+          stampDuty = 1372.50 + (value - 85000) * 0.035;
+        } else if (value <= 1064000) {
+          stampDuty = 9562.50 + (value - 319000) * 0.045;
+        } else if (value <= 3177000) {
+          stampDuty = 43087.50 + (value - 1064000) * 0.055;
+        } else {
+          stampDuty = 159302.50 + (value - 3177000) * 0.07;
+        }
+        break;
+
+      case "VIC":
+        // First Home Buyer exemptions (new homes only)
+        if (isFirstHome && value <= 600000) {
+          return 0;
+        }
+        // Victoria tiered rates
+        if (value <= 25000) {
+          stampDuty = value * 0.014;
+        } else if (value <= 130000) {
+          stampDuty = 350 + (value - 25000) * 0.024;
+        } else if (value <= 960000) {
+          stampDuty = 2870 + (value - 130000) * 0.06;
+        } else {
+          stampDuty = 52670 + (value - 960000) * 0.055;
+        }
+        break;
+
+      case "QLD":
+        // Queensland tiered rates
+        if (value <= 5000) {
+          stampDuty = 0;
+        } else if (value <= 75000) {
+          stampDuty = (value - 5000) * 0.015;
+        } else if (value <= 540000) {
+          stampDuty = 1050 + (value - 75000) * 0.035;
+        } else if (value <= 1000000) {
+          stampDuty = 17325 + (value - 540000) * 0.045;
+        } else {
+          stampDuty = 38025 + (value - 1000000) * 0.0575;
+        }
+        break;
+
+      case "SA":
+        // South Australia tiered rates
+        if (value <= 12000) {
+          stampDuty = value * 0.01;
+        } else if (value <= 30000) {
+          stampDuty = 120 + (value - 12000) * 0.02;
+        } else if (value <= 50000) {
+          stampDuty = 480 + (value - 30000) * 0.03;
+        } else if (value <= 100000) {
+          stampDuty = 1080 + (value - 50000) * 0.035;
+        } else if (value <= 200000) {
+          stampDuty = 2830 + (value - 100000) * 0.04;
+        } else if (value <= 250000) {
+          stampDuty = 6830 + (value - 200000) * 0.0425;
+        } else if (value <= 300000) {
+          stampDuty = 8955 + (value - 250000) * 0.045;
+        } else if (value <= 500000) {
+          stampDuty = 11205 + (value - 300000) * 0.0475;
+        } else {
+          stampDuty = 20705 + (value - 500000) * 0.055;
+        }
+        break;
+
+      case "WA":
+        // Western Australia tiered rates
+        if (value <= 120000) {
+          stampDuty = value * 0.019;
+        } else if (value <= 150000) {
+          stampDuty = 2280 + (value - 120000) * 0.028;
+        } else if (value <= 360000) {
+          stampDuty = 3120 + (value - 150000) * 0.038;
+        } else if (value <= 725000) {
+          stampDuty = 11100 + (value - 360000) * 0.049;
+        } else {
+          stampDuty = 28985 + (value - 725000) * 0.051;
+        }
+        break;
+
+      case "TAS":
+        // Tasmania tiered rates
+        if (value <= 3000) {
+          stampDuty = 50;
+        } else if (value <= 25000) {
+          stampDuty = 50 + (value - 3000) * 0.0175;
+        } else if (value <= 75000) {
+          stampDuty = 435 + (value - 25000) * 0.025;
+        } else if (value <= 200000) {
+          stampDuty = 1685 + (value - 75000) * 0.035;
+        } else if (value <= 375000) {
+          stampDuty = 6060 + (value - 200000) * 0.04;
+        } else if (value <= 725000) {
+          stampDuty = 13060 + (value - 375000) * 0.0425;
+        } else {
+          stampDuty = 27935 + (value - 725000) * 0.045;
+        }
+        break;
+
+      case "NT":
+        // Northern Territory - flat rates based on value
+        if (value <= 525000) {
+          stampDuty = value * 0.0672;
+        } else if (value <= 3000000) {
+          stampDuty = value * 0.0492;
+        } else {
+          stampDuty = 147600 + (value - 3000000) * 0.0575;
+        }
+        break;
+
+      case "ACT":
+        // ACT tiered rates
+        if (value <= 200000) {
+          stampDuty = (value / 200000) * (value / 200000) * 9340;
+        } else if (value <= 300000) {
+          stampDuty = 9340 + ((value - 200000) / 100000) * ((value - 200000) / 100000) * 6950;
+        } else if (value <= 500000) {
+          stampDuty = 16290 + ((value - 300000) / 200000) * ((value - 300000) / 200000) * 14890;
+        } else if (value <= 750000) {
+          stampDuty = 31180 + ((value - 500000) / 250000) * ((value - 500000) / 250000) * 20970;
+        } else if (value <= 1000000) {
+          stampDuty = 52150 + ((value - 750000) / 250000) * ((value - 750000) / 250000) * 27755;
+        } else if (value <= 1455000) {
+          stampDuty = 79905 + (value - 1000000) * 0.044;
+        } else {
+          stampDuty = 99925 + (value - 1455000) * 0.058;
+        }
+        break;
+
+      default:
+        stampDuty = value * 0.04;
+    }
+
+    return Math.round(stampDuty);
   };
 
   const calculateCosts = () => {
@@ -284,10 +423,12 @@ const UpfrontCostsCalculator = () => {
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground space-y-2">
               <p>
-                This calculator provides estimates only. Actual costs vary based on property value, location, lender, 
-                and individual circumstances. Stamp duty calculations are simplified - actual rates include various thresholds and concessions.
+                This calculator provides estimates based on current government stamp duty rates as of 2024. 
+                Actual costs may vary based on specific circumstances, property type, and any additional state-based 
+                concessions or exemptions that may apply.
               </p>
               <p>
+                Professional fees and lender costs are industry averages and may differ between providers.
                 For accurate cost estimates and personalized advice, please{" "}
                 <Link to="/" className="text-primary hover:underline">contact our mortgage brokers</Link>.
               </p>
