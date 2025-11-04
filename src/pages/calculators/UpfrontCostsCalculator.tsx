@@ -48,15 +48,17 @@ const UpfrontCostsCalculator = () => {
         if (isFirstHome && value <= 600000) {
           return 0;
         }
-        // Victoria tiered rates
+        // Victoria tiered rates (as per SRO official rates)
         if (value <= 25000) {
           stampDuty = value * 0.014;
         } else if (value <= 130000) {
           stampDuty = 350 + (value - 25000) * 0.024;
         } else if (value <= 960000) {
           stampDuty = 2870 + (value - 130000) * 0.06;
+        } else if (value <= 2000000) {
+          stampDuty = value * 0.055;
         } else {
-          stampDuty = 52670 + (value - 960000) * 0.055;
+          stampDuty = 110000 + (value - 2000000) * 0.065;
         }
         break;
 
