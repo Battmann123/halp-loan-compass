@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Calculator, Home, BookOpen, Menu, X, Percent, HelpCircle, FileText } from "lucide-react";
+import { Calculator, Home, BookOpen, Menu, X, GitCompare, HelpCircle, FileText, Handshake } from "lucide-react";
 import { useState } from "react";
 import halpLogo from "@/assets/halp-home-loans-logo.png";
 
@@ -29,9 +29,13 @@ const Navigation = () => {
               <BookOpen className="h-4 w-4" />
               <span className="font-medium">Loan Types</span>
             </Link>
-            <Link to="/interest-rates" className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors">
-              <Percent className="h-4 w-4" />
-              <span className="font-medium">Interest Rates</span>
+            <Link to="/calculators/lender-comparison" className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors">
+              <GitCompare className="h-4 w-4" />
+              <span className="font-medium">Compare Loans</span>
+            </Link>
+            <Link to="/sponsors" className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors">
+              <Handshake className="h-4 w-4" />
+              <span className="font-medium">Sponsors</span>
             </Link>
             <Link to="/faq" className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors">
               <HelpCircle className="h-4 w-4" />
@@ -86,12 +90,20 @@ const Navigation = () => {
               <span className="font-medium">Loan Types</span>
             </Link>
             <Link 
-              to="/interest-rates" 
+              to="/calculators/lender-comparison" 
               className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-secondary rounded-lg transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <Percent className="h-4 w-4" />
-              <span className="font-medium">Interest Rates</span>
+              <GitCompare className="h-4 w-4" />
+              <span className="font-medium">Compare Loans</span>
+            </Link>
+            <Link 
+              to="/sponsors" 
+              className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-secondary rounded-lg transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Handshake className="h-4 w-4" />
+              <span className="font-medium">Sponsors</span>
             </Link>
             <Link 
               to="/faq" 

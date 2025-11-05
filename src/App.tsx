@@ -44,9 +44,9 @@ import ServiceabilityGuide from "./pages/guides/ServiceabilityGuide";
 import CapitalGainsGuide from "./pages/guides/CapitalGainsGuide";
 import ExtraRepaymentsGuide from "./pages/guides/ExtraRepaymentsGuide";
 import LenderComparisonGuide from "./pages/guides/LenderComparisonGuide";
-import InterestRates from "./pages/InterestRates";
 import FAQ from "./pages/FAQ";
 import Guides from "./pages/Guides";
+import Sponsors from "./pages/Sponsors";
 
 const queryClient = new QueryClient();
 
@@ -93,9 +93,9 @@ const App = () => (
           <Route path="/guides/capital-gains" element={<CapitalGainsGuide />} />
           <Route path="/guides/extra-repayments" element={<ExtraRepaymentsGuide />} />
           <Route path="/guides/lender-comparison" element={<LenderComparisonGuide />} />
-          <Route path="/interest-rates" element={<InterestRates />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/guides" element={<Guides />} />
+          <Route path="/sponsors" element={<Sponsors />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
           <Route path="/apply" element={<Apply />} />
           <Route path="/privacy" element={<Privacy />} />
