@@ -1,304 +1,540 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Building, Calculator } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
-const InvestmentPropertyCalculator = () => {
-  const [purchasePrice, setPurchasePrice] = useState("");
-  const [weeklyRent, setWeeklyRent] = useState("");
-  const [deposit, setDeposit] = useState("");
-  const [interestRate, setInterestRate] = useState("6.5");
+export default function InvestmentPropertyCalculator() {
+  // Property and Loan Details
+  const [purchasePrice, setPurchasePrice] = useState<number>(500000);
+  const [loanAmount, setLoanAmount] = useState<number>(400000);
+  const [interestRate, setInterestRate] = useState<number>(5.5);
+  const [loanTerm, setLoanTerm] = useState<number>(30);
+  const [repaymentType, setRepaymentType] = useState<string>("interest-only");
+  
+  // Income Details
+  const [weeklyRent, setWeeklyRent] = useState<number>(500);
+  const [annualSalary, setAnnualSalary] = useState<number>(80000);
+  const [rentalIncrease, setRentalIncrease] = useState<number>(2.5);
+  
+  // Annual Expenses
+  const [councilRates, setCouncilRates] = useState<number>(1500);
+  const [strataFees, setStrataFees] = useState<number>(0);
+  const [insurance, setInsurance] = useState<number>(800);
+  const [propertyManagement, setPropertyManagement] = useState<number>(2600);
+  const [repairsMaintenance, setRepairsMaintenance] = useState<number>(1000);
+  const [landTax, setLandTax] = useState<number>(0);
+  const [waterRates, setWaterRates] = useState<number>(800);
+  const [depreciation, setDepreciation] = useState<number>(0);
+  const [inflation, setInflation] = useState<number>(2.0);
+  
   const [result, setResult] = useState<any>(null);
 
   const calculateInvestment = () => {
-    const price = parseFloat(purchasePrice || "0");
-    const rent = parseFloat(weeklyRent || "0");
-    const depositAmount = parseFloat(deposit || "0");
-    const rate = parseFloat(interestRate || "6.5") / 100;
-
-    const loanAmount = price - depositAmount;
-    const monthlyRate = rate / 12;
-    const numPayments = 30 * 12;
-
-    // Monthly repayment (P&I)
-    const monthlyRepayment = loanAmount * 
-      (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
-      (Math.pow(1 + monthlyRate, numPayments) - 1);
-
-    // Income
-    const annualRent = rent * 52;
-    const monthlyRent = annualRent / 12;
-
-    // Expenses (estimated)
-    const councilRates = 150; // monthly
-    const waterRates = 80; // monthly
-    const insurance = 100; // monthly
-    const maintenance = monthlyRent * 0.08; // 8% of rent
-    const propertyManagement = monthlyRent * 0.07; // 7% of rent
-    const strata = 0; // Assuming house
-
-    const totalMonthlyExpenses = councilRates + waterRates + insurance + 
-                                 maintenance + propertyManagement + strata;
-
-    const monthlyCashFlow = monthlyRent - monthlyRepayment - totalMonthlyExpenses;
-    const annualCashFlow = monthlyCashFlow * 12;
-
-    // Rental yield
-    const grossYield = (annualRent / price) * 100;
-    const netYield = ((annualRent - (totalMonthlyExpenses * 12)) / price) * 100;
-
-    // Tax benefits (simplified - assuming 37% marginal rate)
-    const taxableIncome = annualRent - (totalMonthlyExpenses * 12) - (loanAmount * rate);
-    const taxBenefit = taxableIncome < 0 ? Math.abs(taxableIncome) * 0.37 : 0;
-
-    const netCashFlowAfterTax = annualCashFlow + taxBenefit;
-
+    const annualRent = weeklyRent * 52;
+    const monthlyInterestRate = interestRate / 100 / 12;
+    const numberOfPayments = loanTerm * 12;
+    
+    // Calculate monthly repayment
+    let monthlyRepayment;
+    if (repaymentType === "interest-only") {
+      monthlyRepayment = loanAmount * monthlyInterestRate;
+    } else {
+      monthlyRepayment = loanAmount * 
+        (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) / 
+        (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
+    }
+    
+    const annualRepayment = monthlyRepayment * 12;
+    
+    // Total annual expenses
+    const totalExpenses = councilRates + strataFees + insurance + propertyManagement + 
+                         repairsMaintenance + landTax + waterRates + depreciation;
+    const totalCosts = annualRepayment + totalExpenses - depreciation; // Depreciation is non-cash
+    
+    // Cash flow
+    const annualCashFlow = annualRent - totalCosts;
+    const monthlyCashFlow = annualCashFlow / 12;
+    const weeklyCashFlow = annualCashFlow / 52;
+    
+    // Yields
+    const grossYield = (annualRent / purchasePrice) * 100;
+    const netYield = ((annualRent - totalExpenses) / purchasePrice) * 100;
+    
+    // Tax calculation (Australian tax brackets 2024-25)
+    const calculateTax = (income: number) => {
+      if (income <= 18200) return 0;
+      if (income <= 45000) return (income - 18200) * 0.19;
+      if (income <= 120000) return 5092 + (income - 45000) * 0.325;
+      if (income <= 180000) return 29467 + (income - 120000) * 0.37;
+      return 51667 + (income - 180000) * 0.45;
+    };
+    
+    const taxWithoutProperty = calculateTax(annualSalary);
+    const deductibleExpenses = totalExpenses + annualRepayment; // All deductible for investment
+    const taxableIncomeWithProperty = annualSalary + annualRent - deductibleExpenses;
+    const taxWithProperty = calculateTax(taxableIncomeWithProperty);
+    const taxBenefit = taxWithoutProperty - taxWithProperty;
+    
+    const cashFlowAfterTax = annualCashFlow + taxBenefit;
+    const monthlyCashFlowAfterTax = cashFlowAfterTax / 12;
+    
+    // Multi-year projections
+    const projections = [];
+    for (let year of [1, 5, 10, 30]) {
+      const rentYear = annualRent * Math.pow(1 + rentalIncrease / 100, year - 1);
+      const expensesYear = totalExpenses * Math.pow(1 + inflation / 100, year - 1);
+      const cashFlowYear = rentYear - annualRepayment - expensesYear + depreciation;
+      projections.push({ year, rent: rentYear, expenses: expensesYear, cashFlow: cashFlowYear });
+    }
+    
+    // Capital growth estimate (5% p.a.)
+    const capitalGrowthRate = 0.05;
+    const yearOneGrowth = purchasePrice * capitalGrowthRate;
+    const fiveYearValue = purchasePrice * Math.pow(1 + capitalGrowthRate, 5);
+    const tenYearValue = purchasePrice * Math.pow(1 + capitalGrowthRate, 10);
+    
     setResult({
-      monthlyRent,
+      annualRent,
       monthlyRepayment,
-      totalMonthlyExpenses,
-      monthlyCashFlow,
+      annualRepayment,
+      totalExpenses,
+      totalCosts,
       annualCashFlow,
+      monthlyCashFlow,
+      weeklyCashFlow,
       grossYield,
       netYield,
+      yearOneGrowth,
+      fiveYearValue,
+      tenYearValue,
       taxBenefit,
-      netCashFlowAfterTax,
+      cashFlowAfterTax,
+      monthlyCashFlowAfterTax,
       loanAmount,
-      positiveGeared: monthlyCashFlow > 0,
-      expenseBreakdown: {
-        councilRates,
-        waterRates,
-        insurance,
-        maintenance,
-        propertyManagement,
-      },
+      projections,
+      taxWithoutProperty,
+      taxWithProperty
     });
   };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
-
-      <section className="bg-gradient-to-br from-primary via-accent to-primary py-12 px-4">
-        <div className="container mx-auto text-center text-white max-w-4xl">
-          <Building className="h-12 w-12 mx-auto mb-4" />
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">
-            Investment Property Calculator
-          </h1>
-          <p className="text-lg opacity-95">
-            Analyze rental returns and cash flow
-          </p>
-        </div>
-      </section>
-
-      <section className="py-12 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calculator className="h-5 w-5" />
-                  Investment Details
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="purchasePrice">Purchase Price ($)</Label>
-                  <Input
-                    id="purchasePrice"
-                    type="number"
-                    value={purchasePrice}
-                    onChange={(e) => setPurchasePrice(e.target.value)}
-                    placeholder="650000"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="weeklyRent">Weekly Rent ($)</Label>
-                  <Input
-                    id="weeklyRent"
-                    type="number"
-                    value={weeklyRent}
-                    onChange={(e) => setWeeklyRent(e.target.value)}
-                    placeholder="550"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="deposit">Deposit ($)</Label>
-                  <Input
-                    id="deposit"
-                    type="number"
-                    value={deposit}
-                    onChange={(e) => setDeposit(e.target.value)}
-                    placeholder="130000"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="interestRate">Interest Rate (%)</Label>
-                  <Input
-                    id="interestRate"
-                    type="number"
-                    step="0.1"
-                    value={interestRate}
-                    onChange={(e) => setInterestRate(e.target.value)}
-                    placeholder="6.5"
-                  />
-                </div>
-
-                <Button onClick={calculateInvestment} className="w-full">
-                  Calculate Returns
-                </Button>
-              </CardContent>
-            </Card>
-
-            {result && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className={result.positiveGeared ? "text-green-600" : "text-orange-600"}>
-                    {result.positiveGeared ? "Positively Geared" : "Negatively Geared"}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Monthly Rent</p>
-                      <p className="text-2xl font-bold text-green-600">
-                        ${result.monthlyRent.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Monthly Repayment</p>
-                      <p className="text-2xl font-bold text-red-600">
-                        ${result.monthlyRepayment.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Gross Yield</p>
-                      <p className="text-2xl font-bold">
-                        {result.grossYield.toFixed(2)}%
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Net Yield</p>
-                      <p className="text-2xl font-bold">
-                        {result.netYield.toFixed(2)}%
-                      </p>
+      
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <Link 
+          to="/calculators" 
+          className="inline-flex items-center text-primary hover:underline mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to All Calculators
+        </Link>
+        
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold mb-4">Investment Property Calculator</h1>
+            <p className="text-xl text-muted-foreground">
+              Estimate income, expenses, and returns for your investment property
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-6">
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4">Property & Mortgage Information</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Property Price</label>
+                    <Input
+                      type="number"
+                      value={purchasePrice}
+                      onChange={(e) => setPurchasePrice(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Loan Amount</label>
+                    <Input
+                      type="number"
+                      value={loanAmount}
+                      onChange={(e) => setLoanAmount(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Interest Rate (%)</label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      value={interestRate}
+                      onChange={(e) => setInterestRate(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Loan Term (years)</label>
+                    <Input
+                      type="number"
+                      value={loanTerm}
+                      onChange={(e) => setLoanTerm(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Repayment Type</label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          value="interest-only"
+                          checked={repaymentType === "interest-only"}
+                          onChange={(e) => setRepaymentType(e.target.value)}
+                          className="mr-2"
+                        />
+                        Interest Only
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          value="principal-interest"
+                          checked={repaymentType === "principal-interest"}
+                          onChange={(e) => setRepaymentType(e.target.value)}
+                          className="mr-2"
+                        />
+                        Principal & Interest
+                      </label>
                     </div>
                   </div>
-
-                  <div className="bg-primary/10 p-4 rounded-lg">
-                    <p className="text-sm text-muted-foreground mb-1">Monthly Cash Flow</p>
-                    <p className={`text-3xl font-bold ${result.monthlyCashFlow >= 0 ? 'text-green-600' : 'text-orange-600'}`}>
-                      ${result.monthlyCashFlow.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Annual: ${result.annualCashFlow.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                    </p>
-                  </div>
-
-                  <div className="space-y-2 text-sm">
-                    <p className="font-semibold">Monthly Expenses:</p>
-                    <div className="space-y-1 text-muted-foreground">
-                      <div className="flex justify-between">
-                        <span>Council Rates</span>
-                        <span>${result.expenseBreakdown.councilRates}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Water Rates</span>
-                        <span>${result.expenseBreakdown.waterRates}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Insurance</span>
-                        <span>${result.expenseBreakdown.insurance}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Maintenance (8%)</span>
-                        <span>${result.expenseBreakdown.maintenance.toFixed(0)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Property Management (7%)</span>
-                        <span>${result.expenseBreakdown.propertyManagement.toFixed(0)}</span>
-                      </div>
-                      <div className="flex justify-between font-semibold border-t pt-1">
-                        <span>Total</span>
-                        <span>${result.totalMonthlyExpenses.toFixed(0)}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {result.taxBenefit > 0 && (
-                    <div className="bg-green-50 dark:bg-green-950/30 p-4 rounded-lg">
-                      <p className="text-sm font-semibold mb-1">Tax Benefits (37% rate)</p>
-                      <p className="text-xl font-bold text-green-600">
-                        ${result.taxBenefit.toLocaleString(undefined, { maximumFractionDigits: 0 })}/year
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Net cash flow after tax: ${result.netCashFlowAfterTax.toLocaleString(undefined, { maximumFractionDigits: 0 })}/year
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
+                </div>
               </Card>
+              
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4">Income Details</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Weekly Rental Income ($)</label>
+                    <Input
+                      type="number"
+                      value={weeklyRent}
+                      onChange={(e) => setWeeklyRent(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Annual Salary / Other Taxable Income ($)</label>
+                    <Input
+                      type="number"
+                      value={annualSalary}
+                      onChange={(e) => setAnnualSalary(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Annual Rental Increase (%)</label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      value={rentalIncrease}
+                      onChange={(e) => setRentalIncrease(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </Card>
+              
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4">Annual Cash Expenses</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Council Rates ($)</label>
+                    <Input
+                      type="number"
+                      value={councilRates}
+                      onChange={(e) => setCouncilRates(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Strata Fees ($)</label>
+                    <Input
+                      type="number"
+                      value={strataFees}
+                      onChange={(e) => setStrataFees(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Insurance ($)</label>
+                    <Input
+                      type="number"
+                      value={insurance}
+                      onChange={(e) => setInsurance(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Property Manager Fees ($)</label>
+                    <Input
+                      type="number"
+                      value={propertyManagement}
+                      onChange={(e) => setPropertyManagement(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Repairs & Maintenance ($)</label>
+                    <Input
+                      type="number"
+                      value={repairsMaintenance}
+                      onChange={(e) => setRepairsMaintenance(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Land Tax ($)</label>
+                    <Input
+                      type="number"
+                      value={landTax}
+                      onChange={(e) => setLandTax(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Water Rates ($)</label>
+                    <Input
+                      type="number"
+                      value={waterRates}
+                      onChange={(e) => setWaterRates(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Property Depreciation ($)</label>
+                    <Input
+                      type="number"
+                      value={depreciation}
+                      onChange={(e) => setDepreciation(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Inflation Rate (%)</label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      value={inflation}
+                      onChange={(e) => setInflation(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </Card>
+              
+              <Button onClick={calculateInvestment} className="w-full" size="lg">
+                Calculate Investment Returns
+              </Button>
+            </div>
+            
+            {result && (
+              <div className="space-y-6">
+                <Card className="p-6">
+                  <h3 className="text-lg font-semibold mb-4">Summary</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground">Annual Repayments ({repaymentType === "interest-only" ? "Interest only" : "P&I"})</p>
+                      <p className="text-2xl font-bold">${result.annualRepayment.toLocaleString()} / year</p>
+                    </div>
+                    <div className="p-4 bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground">Total Property Income</p>
+                      <p className="text-2xl font-bold">${result.annualRent.toLocaleString()} / year</p>
+                    </div>
+                    <div className="p-4 bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground">Other Taxable Income</p>
+                      <p className="text-2xl font-bold">${annualSalary.toLocaleString()} / year</p>
+                    </div>
+                    <div className="p-4 bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground">Weekly Cash Flow</p>
+                      <p className={`text-2xl font-bold ${result.weeklyCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        ${Math.abs(result.weeklyCashFlow).toFixed(2)}
+                        {result.weeklyCashFlow >= 0 ? ' surplus' : ' shortfall'}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+                
+                <Card className="p-6">
+                  <h3 className="text-lg font-semibold mb-4">Multi-Year Projections</h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-2"></th>
+                          {result.projections.map((p: any) => (
+                            <th key={p.year} className="text-right py-2">Year {p.year}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b">
+                          <td className="py-2">Annual rental income</td>
+                          {result.projections.map((p: any) => (
+                            <td key={p.year} className="text-right py-2">${p.rent.toLocaleString()}</td>
+                          ))}
+                        </tr>
+                        <tr className="border-b">
+                          <td className="py-2">Annual repayments</td>
+                          {result.projections.map((p: any) => (
+                            <td key={p.year} className="text-right py-2">${result.annualRepayment.toLocaleString()}</td>
+                          ))}
+                        </tr>
+                        <tr className="border-b">
+                          <td className="py-2">Annual cash expenses</td>
+                          {result.projections.map((p: any) => (
+                            <td key={p.year} className="text-right py-2">${p.expenses.toLocaleString()}</td>
+                          ))}
+                        </tr>
+                        <tr className="border-b font-semibold">
+                          <td className="py-2">Pre-tax cash flow</td>
+                          {result.projections.map((p: any) => (
+                            <td key={p.year} className={`text-right py-2 ${p.cashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              ${Math.abs(p.cashFlow).toLocaleString()}
+                            </td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+                
+                <Card className="p-6">
+                  <h3 className="text-lg font-semibold mb-4">Tax Analysis</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between p-3 bg-muted rounded">
+                      <span>Tax without property</span>
+                      <span className="font-medium">${result.taxWithoutProperty.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between p-3 bg-muted rounded">
+                      <span>Tax with property</span>
+                      <span className="font-medium">${result.taxWithProperty.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between p-3 bg-green-50 dark:bg-green-950 rounded">
+                      <span className="font-semibold">Annual tax benefit</span>
+                      <span className="font-bold text-green-600">${result.taxBenefit.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between p-3 bg-muted rounded">
+                      <span>Monthly cash flow (after tax)</span>
+                      <span className={`font-medium ${result.monthlyCashFlowAfterTax >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        ${Math.abs(result.monthlyCashFlowAfterTax).toLocaleString()}
+                        {result.monthlyCashFlowAfterTax >= 0 ? ' surplus' : ' shortfall'}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+                
+                <Card className="p-6">
+                  <h3 className="text-lg font-semibold mb-4">Investment Metrics</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span>Gross Rental Yield</span>
+                      <span className="font-medium">{result.grossYield.toFixed(2)}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Net Rental Yield</span>
+                      <span className="font-medium">{result.netYield.toFixed(2)}%</span>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between">
+                      <span>Estimated Year 1 Capital Growth (5% p.a.)</span>
+                      <span className="font-medium">${result.yearOneGrowth.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Estimated 5-Year Property Value</span>
+                      <span className="font-medium">${Math.round(result.fiveYearValue).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Estimated 10-Year Property Value</span>
+                      <span className="font-medium">${Math.round(result.tenYearValue).toLocaleString()}</span>
+                    </div>
+                  </div>
+                </Card>
+                
+                <Button className="w-full" size="lg">
+                  Apply for Investment Loan
+                </Button>
+              </div>
             )}
           </div>
-
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle>Understanding Investment Property Returns</CardTitle>
-            </CardHeader>
-            <CardContent className="prose max-w-none">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Key Metrics</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li><strong>Gross Yield:</strong> Annual rent ÷ property price</li>
-                    <li><strong>Net Yield:</strong> Annual rent minus expenses ÷ property price</li>
-                    <li><strong>Cash Flow:</strong> Rent minus all costs (repayments + expenses)</li>
-                    <li><strong>Positive Gearing:</strong> Rent covers all costs</li>
-                    <li><strong>Negative Gearing:</strong> Tax deductions offset losses</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Investment Strategy</h3>
-                  <ul className="space-y-2 text-sm">
-                    <li><strong>Capital Growth:</strong> Focus on property appreciation</li>
-                    <li><strong>Cash Flow:</strong> Maximize rental income</li>
-                    <li><strong>Tax Benefits:</strong> Leverage negative gearing deductions</li>
-                    <li><strong>Balance:</strong> Combine growth and income</li>
-                  </ul>
-                </div>
+          
+          <Card className="p-6 mt-8">
+            <h3 className="text-lg font-semibold mb-4">Understanding Key Metrics</h3>
+            <div className="grid md:grid-cols-2 gap-6 text-sm">
+              <div>
+                <h4 className="font-semibold mb-2">Rental Yield</h4>
+                <p className="text-muted-foreground mb-2">
+                  Measures the return on investment from rental income as a percentage of the property value.
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                  <li><strong>Gross Yield:</strong> Annual rent ÷ property price</li>
+                  <li><strong>Net Yield:</strong> (Annual rent - expenses) ÷ property price</li>
+                </ul>
               </div>
-            </CardContent>
+              
+              <div>
+                <h4 className="font-semibold mb-2">Cash Flow</h4>
+                <p className="text-muted-foreground mb-2">
+                  The difference between rental income and all property costs including loan repayments and expenses.
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                  <li><strong>Positive:</strong> Income exceeds costs</li>
+                  <li><strong>Negative:</strong> Costs exceed income (may benefit from tax deductions)</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold mb-2">Capital Growth</h4>
+                <p className="text-muted-foreground">
+                  The increase in property value over time. Historical averages in Australian capital cities have been around 5-7% per annum, though this varies significantly by location and market conditions.
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold mb-2">Total Return</h4>
+                <p className="text-muted-foreground">
+                  Combines both rental income (cash flow) and capital growth to give a complete picture of investment performance. Successful property investment considers both factors.
+                </p>
+              </div>
+            </div>
           </Card>
-
-          <Card className="mt-8 bg-secondary/30">
-            <CardHeader>
-              <CardTitle>Important Disclaimer</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground space-y-2">
-              <p>
-                This calculator provides estimates only. Actual returns vary based on location, property condition, 
-                tenant quality, vacancy rates, and market conditions. Tax benefits depend on your individual tax situation.
-              </p>
-              <p>
-                For personalized investment property advice and finance options, please{" "}
-                <Link to="/" className="text-primary hover:underline">contact our mortgage brokers</Link>.
-              </p>
-            </CardContent>
+          
+          <Card className="p-6 mt-6 bg-muted">
+            <h3 className="text-lg font-semibold mb-2">Important Disclaimer</h3>
+            <p className="text-sm text-muted-foreground">
+              This calculator provides estimates only and should not be considered financial advice. Actual costs, returns, and tax implications vary based on individual circumstances, property location, market conditions, and current tax laws. Tax calculations use 2024-25 Australian tax brackets as a guide. For personalized advice, please consult with a qualified mortgage broker, accountant, or financial adviser.
+            </p>
           </Card>
         </div>
-      </section>
-
+      </main>
+      
       <Footer />
     </div>
   );
-};
-
-export default InvestmentPropertyCalculator;
+}

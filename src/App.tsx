@@ -15,6 +15,7 @@ import ServiceabilityCalculator from "./pages/calculators/ServiceabilityCalculat
 import LMICalculator from "./pages/calculators/LMICalculator";
 import UpfrontCostsCalculator from "./pages/calculators/UpfrontCostsCalculator";
 import InvestmentPropertyCalculator from "./pages/calculators/InvestmentPropertyCalculator";
+import NegativeGearingCalculator from "./pages/calculators/NegativeGearingCalculator";
 import CapitalGainsCalculator from "./pages/calculators/CapitalGainsCalculator";
 import DepreciationCalculator from "./pages/calculators/DepreciationCalculator";
 import RefinanceCalculator from "./pages/calculators/RefinanceCalculator";
@@ -68,6 +69,7 @@ const App = () => (
           <Route path="/calculators/lmi" element={<LMICalculator />} />
           <Route path="/calculators/upfront-costs" element={<UpfrontCostsCalculator />} />
           <Route path="/calculators/investment-property" element={<InvestmentPropertyCalculator />} />
+          <Route path="/calculators/negative-gearing" element={<NegativeGearingCalculator />} />
           <Route path="/calculators/capital-gains" element={<CapitalGainsCalculator />} />
           <Route path="/calculators/depreciation" element={<DepreciationCalculator />} />
           <Route path="/calculators/refinance" element={<RefinanceCalculator />} />

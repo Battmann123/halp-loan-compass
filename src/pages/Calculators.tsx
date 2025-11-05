@@ -9,6 +9,7 @@ import {
   DollarSign,
   Home,
   TrendingUp,
+  TrendingDown,
   FileText,
   PiggyBank,
   Calendar,
@@ -84,6 +85,12 @@ const calculatorCategories = [
         name: "Investment Property Calculator",
         description: "Analyze rental returns and cash flow",
         icon: Building,
+      },
+      {
+        id: "negative-gearing",
+        name: "Negative Gearing Calculator",
+        description: "Calculate tax benefits of negatively geared properties",
+        icon: TrendingDown,
       },
       {
         id: "capital-gains",
