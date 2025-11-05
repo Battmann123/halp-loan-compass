@@ -33,10 +33,6 @@ const Navigation = () => {
               <GitCompare className="h-4 w-4" />
               <span className="font-medium">Compare Loans</span>
             </Link>
-            <Link to="/sponsors" className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors">
-              <Handshake className="h-4 w-4" />
-              <span className="font-medium">Sponsors</span>
-            </Link>
             <Link to="/faq" className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors">
               <HelpCircle className="h-4 w-4" />
               <span className="font-medium">FAQ's</span>
@@ -44,6 +40,10 @@ const Navigation = () => {
             <Link to="/guides" className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors">
               <FileText className="h-4 w-4" />
               <span className="font-medium">Guides</span>
+            </Link>
+            <Link to="/sponsors" className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors">
+              <Handshake className="h-4 w-4" />
+              <span className="font-medium">Sponsors</span>
             </Link>
             <Link to="/apply">
               <Button variant="default" size="lg" className="bg-gradient-to-r from-primary to-accent shadow-lg hover:shadow-xl transition-all">
@@ -98,14 +98,6 @@ const Navigation = () => {
               <span className="font-medium">Compare Loans</span>
             </Link>
             <Link 
-              to="/sponsors" 
-              className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-secondary rounded-lg transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Handshake className="h-4 w-4" />
-              <span className="font-medium">Sponsors</span>
-            </Link>
-            <Link 
               to="/faq" 
               className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-secondary rounded-lg transition-colors"
               onClick={() => setMobileMenuOpen(false)}
@@ -120,6 +112,14 @@ const Navigation = () => {
             >
               <FileText className="h-4 w-4" />
               <span className="font-medium">Guides</span>
+            </Link>
+            <Link 
+              to="/sponsors" 
+              className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-secondary rounded-lg transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Handshake className="h-4 w-4" />
+              <span className="font-medium">Sponsors</span>
             </Link>
             <div className="px-4">
               <Link to="/apply" onClick={() => setMobileMenuOpen(false)}>
