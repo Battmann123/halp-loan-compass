@@ -24,7 +24,7 @@ const Sponsors = () => {
   const benefits = [
     {
       icon: Globe,
-      title: "25+ Premium Domains",
+      title: "20+ Premium Domains",
       description: "Comprehensive keyword coverage across the Australian property market"
     },
     {
@@ -62,10 +62,10 @@ const Sponsors = () => {
                 Sponsorship Opportunities
               </h1>
               <p className="text-xl text-muted-foreground mb-8">
-                Partner with Australia's premier property website portfolio and reach high-intent property buyers
+                Partner with Australia's soon to be premier property website portfolio and reach high-intent property buyers
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Badge variant="secondary" className="text-base px-4 py-2">25+ Premium Domains</Badge>
+                <Badge variant="secondary" className="text-base px-4 py-2">20+ Premium Domains</Badge>
                 <Badge variant="secondary" className="text-base px-4 py-2">#2 Google Ranking</Badge>
                 <Badge variant="secondary" className="text-base px-4 py-2">High-Intent Traffic</Badge>
               </div>
