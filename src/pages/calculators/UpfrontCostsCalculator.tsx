@@ -48,10 +48,24 @@ const UpfrontCostsCalculator = () => {
         break;
 
       case "VIC":
-        // First Home Buyer exemptions (new homes only, owner occupier)
-        if (isFirstHome && propType === "owner-occupier" && value <= 600000) {
-          console.log("VIC: First home buyer exemption applied");
-          return 0;
+        // First Home Buyer exemptions and concessions (owner occupier only)
+        if (isFirstHome && propType === "owner-occupier") {
+          if (value <= 600000) {
+            console.log("VIC: First home buyer full exemption applied");
+            return 0;
+          } else if (value <= 750000) {
+            // Concession tapers from full exemption at $600k to $0 duty at $750k
+            // Calculate duty then apply tapering concession
+            let fullDuty = 0;
+            if (value <= 960000) {
+              fullDuty = 2870 + (value - 130000) * 0.06;
+            }
+            // Concession reduces proportionally: at $750k duty is $0, reducing linearly from $600k
+            const concessionFactor = (750000 - value) / (750000 - 600000);
+            stampDuty = fullDuty * (1 - concessionFactor);
+            console.log("VIC: First home buyer concession applied, duty:", stampDuty);
+            return Math.round(stampDuty);
+          }
         }
         // Victoria tiered rates (as per SRO official rates)
         if (value <= 25000) {
