@@ -36,9 +36,11 @@ const GovernmentGrantsCalculator = () => {
         stampDutyExemption = propertyValue * 0.04; // Approximate
       }
 
-      // 5% Deposit Scheme eligibility
+      // 5% Deposit Scheme eligibility (updated October 2025)
+      // NSW has different caps: Sydney/Regional Centres $1.5M, Other $800K
+      // Using higher cap as calculator doesn't distinguish specific locations
       const depositPercentage = (deposit / propertyValue) * 100;
-      if (firstHomeBuyer && depositPercentage >= 5 && depositPercentage < 20 && propertyValue <= 800000) {
+      if (firstHomeBuyer && depositPercentage >= 5 && depositPercentage < 20 && propertyValue <= 1500000) {
         depositScheme = true;
       }
     }
@@ -82,49 +84,49 @@ const GovernmentGrantsCalculator = () => {
         fhog: 10000,
         limit: 800000,
         stampLimit: 800000,
-        depositScheme: 800000,
+        depositScheme: 1500000, // Updated Oct 2025: Sydney/Regional Centres cap
       },
       vic: {
         fhog: 10000,
         limit: 750000,
         stampLimit: 600000,
-        depositScheme: 800000,
+        depositScheme: 950000, // Updated Oct 2025: Melbourne/Regional Centres cap
       },
       qld: {
         fhog: 30000,
         limit: 750000,
         stampLimit: 500000,
-        depositScheme: 800000,
+        depositScheme: 700000, // Brisbane cap
       },
       sa: {
         fhog: 15000,
         limit: 650000,
         stampLimit: 650000,
-        depositScheme: 800000,
+        depositScheme: 600000, // Adelaide cap
       },
       wa: {
         fhog: 10000,
         limit: 750000,
         stampLimit: 430000,
-        depositScheme: 800000,
+        depositScheme: 600000, // Perth cap
       },
       tas: {
         fhog: 20000,
         limit: 750000,
         stampLimit: 600000,
-        depositScheme: 800000,
+        depositScheme: 600000, // Hobart cap
       },
       nt: {
         fhog: 10000,
         limit: 650000,
         stampLimit: 650000,
-        depositScheme: 800000,
+        depositScheme: 600000, // Darwin cap
       },
       act: {
         fhog: 0,
         limit: 0,
         stampLimit: 0,
-        depositScheme: 800000,
+        depositScheme: 800000, // Canberra cap
       },
     };
     return details[state as keyof typeof details];
@@ -318,7 +320,7 @@ const GovernmentGrantsCalculator = () => {
                   <li>• Must be an Australian citizen (18+ years)</li>
                   <li>• First home buyer (never owned property)</li>
                   <li>• Minimum 5% genuine savings deposit</li>
-                  <li>• Property value under $800,000 (most states)</li>
+                  <li>• Property value under location-specific cap (see below)</li>
                   <li>• Must move in within 12 months</li>
                   <li>• Income limits may apply</li>
                 </ul>
@@ -340,41 +342,69 @@ const GovernmentGrantsCalculator = () => {
             </div>
 
             <div className="bg-white p-4 rounded-lg mt-6">
-              <h3 className="font-semibold mb-3">Property Price Caps by Location</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <h3 className="font-semibold mb-3">Property Price Caps by Location (Effective October 1, 2025)</h3>
+              <div className="space-y-4">
                 <div>
-                  <p className="text-muted-foreground">Sydney</p>
-                  <p className="font-semibold">$900,000</p>
+                  <p className="font-semibold text-primary mb-2">New South Wales</p>
+                  <div className="grid grid-cols-2 gap-3 text-sm ml-4">
+                    <div>
+                      <p className="text-muted-foreground">Sydney & Regional Centres</p>
+                      <p className="font-semibold">$1,500,000</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Other Areas</p>
+                      <p className="font-semibold">$800,000</p>
+                    </div>
+                  </div>
                 </div>
+                
                 <div>
-                  <p className="text-muted-foreground">Melbourne</p>
-                  <p className="font-semibold">$800,000</p>
+                  <p className="font-semibold text-primary mb-2">Victoria</p>
+                  <div className="grid grid-cols-2 gap-3 text-sm ml-4">
+                    <div>
+                      <p className="text-muted-foreground">Melbourne & Regional Centres</p>
+                      <p className="font-semibold">$950,000</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Other Areas</p>
+                      <p className="font-semibold">$650,000</p>
+                    </div>
+                  </div>
                 </div>
+
                 <div>
-                  <p className="text-muted-foreground">Brisbane</p>
-                  <p className="font-semibold">$700,000</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Adelaide</p>
-                  <p className="font-semibold">$600,000</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Perth</p>
-                  <p className="font-semibold">$600,000</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Hobart</p>
-                  <p className="font-semibold">$600,000</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Canberra</p>
-                  <p className="font-semibold">$800,000</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Regional</p>
-                  <p className="font-semibold">$500,000+</p>
+                  <p className="font-semibold text-primary mb-2">Other Regions</p>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm ml-4">
+                    <div>
+                      <p className="text-muted-foreground">Brisbane</p>
+                      <p className="font-semibold">$700,000</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Adelaide</p>
+                      <p className="font-semibold">$600,000</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Perth</p>
+                      <p className="font-semibold">$600,000</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Hobart</p>
+                      <p className="font-semibold">$600,000</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Canberra</p>
+                      <p className="font-semibold">$800,000</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Darwin</p>
+                      <p className="font-semibold">$600,000</p>
+                    </div>
+                  </div>
                 </div>
               </div>
+              <p className="text-xs text-muted-foreground mt-4">
+                * Price caps vary by specific location within NSW and VIC. Contact us for precise eligibility for your property location.
+              </p>
             </div>
           </CardContent>
         </Card>
