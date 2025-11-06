@@ -295,6 +295,11 @@ const UpfrontCostsCalculator = () => {
                     onChange={(e) => setDepositAmount(e.target.value)}
                     placeholder="65000"
                   />
+                  {propertyValue && depositAmount && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Deposit: {((parseFloat(depositAmount) / parseFloat(propertyValue)) * 100).toFixed(1)}%
+                    </p>
+                  )}
                 </div>
 
                 <div>
