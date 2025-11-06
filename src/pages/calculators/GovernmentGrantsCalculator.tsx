@@ -23,22 +23,22 @@ const GovernmentGrantsCalculator = () => {
     let stampDutyExemption = 0;
     let totalGrants = 0;
 
-    // NSW Example
+    // NSW
     if (state === "nsw") {
-      // First Home Owner Grant - new homes only
-      if (firstHomeBuyer && newProperty && propertyValue <= 800000) {
+      // FHOG: $10,000 for new homes up to $600k, OR up to $750k if building/owner-builder
+      if (firstHomeBuyer && newProperty && propertyValue <= 750000) {
         fhog = 10000;
       }
 
-      // Stamp Duty exemption for new homes
-      if (firstHomeBuyer && newProperty && propertyValue <= 800000) {
-        // Simplified calculation
-        stampDutyExemption = propertyValue * 0.04; // Approximate
+      // Transfer duty exemption: up to $800k for new/existing homes
+      if (firstHomeBuyer && propertyValue <= 800000) {
+        stampDutyExemption = propertyValue * 0.04;
+      } else if (firstHomeBuyer && propertyValue <= 1000000) {
+        // Concession available between $800k-$1M
+        stampDutyExemption = propertyValue * 0.02;
       }
 
-      // 5% Deposit Scheme eligibility (updated October 2025)
-      // NSW has different caps: Sydney/Regional Centres $1.5M, Other $800K
-      // Using higher cap as calculator doesn't distinguish specific locations
+      // 5% Deposit Scheme eligibility
       const depositPercentage = (deposit / propertyValue) * 100;
       if (firstHomeBuyer && depositPercentage >= 5 && depositPercentage < 20 && propertyValue <= 1500000) {
         depositScheme = true;
@@ -47,21 +47,90 @@ const GovernmentGrantsCalculator = () => {
 
     // Victoria
     if (state === "vic") {
+      // FHOG: $10,000 for new homes up to $750k
       if (firstHomeBuyer && newProperty && propertyValue <= 750000) {
         fhog = 10000;
       }
+      
+      // Stamp duty exempt up to $600k, concession $600k-$750k
       if (firstHomeBuyer && propertyValue <= 600000) {
         stampDutyExemption = propertyValue * 0.055;
+      } else if (firstHomeBuyer && propertyValue <= 750000) {
+        stampDutyExemption = propertyValue * 0.03;
       }
     }
 
     // Queensland
     if (state === "qld") {
+      // FHOG: $30,000 for new homes up to $750k (Nov 2023 - June 2026)
       if (firstHomeBuyer && newProperty && propertyValue <= 750000) {
-        fhog = 30000; // QLD has higher grant
+        fhog = 30000;
       }
-      if (firstHomeBuyer && propertyValue <= 500000) {
+      
+      // Transfer duty concession for new homes
+      if (firstHomeBuyer && newProperty && propertyValue <= 750000) {
         stampDutyExemption = propertyValue * 0.035;
+      }
+    }
+
+    // South Australia
+    if (state === "sa") {
+      // FHOG: $15,000 for new homes - NO property value cap (removed June 2024)
+      if (firstHomeBuyer && newProperty) {
+        fhog = 15000;
+      }
+      
+      // Stamp duty relief available (simplified calculation)
+      if (firstHomeBuyer && newProperty) {
+        stampDutyExemption = propertyValue * 0.03;
+      }
+    }
+
+    // Western Australia
+    if (state === "wa") {
+      // FHOG: $10,000 for new homes up to $750k (south of 26th parallel) or $1M (north)
+      if (firstHomeBuyer && newProperty && propertyValue <= 1000000) {
+        fhog = 10000;
+      }
+      
+      // Stamp duty concessions up to $700k (Perth/Peel) or $750k (other)
+      if (firstHomeBuyer && propertyValue <= 700000) {
+        stampDutyExemption = propertyValue * 0.04;
+      }
+    }
+
+    // Tasmania
+    if (state === "tas") {
+      // FHOG: $10,000 for new/off-the-plan properties
+      if (firstHomeBuyer && newProperty && propertyValue <= 750000) {
+        fhog = 10000;
+      }
+      
+      // 100% stamp duty discount on established homes up to $750k
+      if (firstHomeBuyer && propertyValue <= 750000) {
+        stampDutyExemption = propertyValue * 0.04;
+      }
+    }
+
+    // Northern Territory
+    if (state === "nt") {
+      // HomeGrown Territory Grant: $50,000 for new homes
+      if (firstHomeBuyer && newProperty) {
+        fhog = 50000;
+      } else if (firstHomeBuyer && !newProperty) {
+        // $10,000 for established homes
+        fhog = 10000;
+      }
+    }
+
+    // Australian Capital Territory
+    if (state === "act") {
+      // No FHOG - replaced with Home Buyer Concession Scheme (stamp duty concession)
+      fhog = 0;
+      
+      // Full stamp duty concession available
+      if (firstHomeBuyer) {
+        stampDutyExemption = propertyValue * 0.04;
       }
     }
 
@@ -82,51 +151,51 @@ const GovernmentGrantsCalculator = () => {
     const details = {
       nsw: {
         fhog: 10000,
-        limit: 800000,
+        limit: 750000,
         stampLimit: 800000,
-        depositScheme: 1500000, // Updated Oct 2025: Sydney/Regional Centres cap
+        depositScheme: 1500000,
       },
       vic: {
         fhog: 10000,
         limit: 750000,
         stampLimit: 600000,
-        depositScheme: 950000, // Updated Oct 2025: Melbourne/Regional Centres cap
+        depositScheme: 950000,
       },
       qld: {
         fhog: 30000,
         limit: 750000,
-        stampLimit: 500000,
-        depositScheme: 700000, // Brisbane cap
+        stampLimit: 750000,
+        depositScheme: 700000,
       },
       sa: {
         fhog: 15000,
-        limit: 650000,
-        stampLimit: 650000,
-        depositScheme: 600000, // Adelaide cap
+        limit: 0, // No cap as of June 2024
+        stampLimit: 0,
+        depositScheme: 600000,
       },
       wa: {
         fhog: 10000,
-        limit: 750000,
-        stampLimit: 430000,
-        depositScheme: 600000, // Perth cap
+        limit: 1000000, // $1M north, $750k south
+        stampLimit: 700000,
+        depositScheme: 600000,
       },
       tas: {
-        fhog: 20000,
+        fhog: 10000,
         limit: 750000,
-        stampLimit: 600000,
-        depositScheme: 600000, // Hobart cap
+        stampLimit: 750000,
+        depositScheme: 600000,
       },
       nt: {
-        fhog: 10000,
-        limit: 650000,
-        stampLimit: 650000,
-        depositScheme: 600000, // Darwin cap
-      },
-      act: {
-        fhog: 0,
+        fhog: 50000, // $50k for new, $10k for established
         limit: 0,
         stampLimit: 0,
-        depositScheme: 800000, // Canberra cap
+        depositScheme: 600000,
+      },
+      act: {
+        fhog: 0, // No FHOG - Home Buyer Concession Scheme instead
+        limit: 0,
+        stampLimit: 0,
+        depositScheme: 800000,
       },
     };
     return details[state as keyof typeof details];
@@ -412,7 +481,7 @@ const GovernmentGrantsCalculator = () => {
         {/* State Grants Comparison */}
         <Card className="mt-8 border-2">
           <CardHeader>
-            <CardTitle>State-by-State Government Grants (2024-25)</CardTitle>
+            <CardTitle>State-by-State Government Grants (2024-26)</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -429,7 +498,7 @@ const GovernmentGrantsCalculator = () => {
                   <tr>
                     <td className="py-3">NSW</td>
                     <td className="text-right py-3">$10,000</td>
-                    <td className="text-right py-3">$800,000</td>
+                    <td className="text-right py-3">$600k-$750k*</td>
                     <td className="text-right py-3">New only</td>
                   </tr>
                   <tr>
@@ -447,41 +516,48 @@ const GovernmentGrantsCalculator = () => {
                   <tr>
                     <td className="py-3">SA</td>
                     <td className="text-right py-3">$15,000</td>
-                    <td className="text-right py-3">$650,000</td>
+                    <td className="text-right py-3">No cap**</td>
                     <td className="text-right py-3">New only</td>
                   </tr>
                   <tr>
                     <td className="py-3">WA</td>
                     <td className="text-right py-3">$10,000</td>
-                    <td className="text-right py-3">$750,000</td>
-                    <td className="text-right py-3">New only</td>
-                  </tr>
-                  <tr className="bg-primary/5">
-                    <td className="py-3">TAS</td>
-                    <td className="text-right py-3 font-semibold text-primary">$20,000</td>
-                    <td className="text-right py-3">$750,000</td>
+                    <td className="text-right py-3">$750k-$1M***</td>
                     <td className="text-right py-3">New only</td>
                   </tr>
                   <tr>
-                    <td className="py-3">NT</td>
+                    <td className="py-3">TAS</td>
                     <td className="text-right py-3">$10,000</td>
-                    <td className="text-right py-3">$650,000</td>
-                    <td className="text-right py-3">New/existing</td>
+                    <td className="text-right py-3">$750,000</td>
+                    <td className="text-right py-3">New/off-plan</td>
+                  </tr>
+                  <tr className="bg-primary/5">
+                    <td className="py-3">NT</td>
+                    <td className="text-right py-3 font-semibold text-primary">$50,000</td>
+                    <td className="text-right py-3">No cap</td>
+                    <td className="text-right py-3">New homes</td>
                   </tr>
                   <tr>
                     <td className="py-3">ACT</td>
+                    <td className="text-right py-3">Stamp Duty****</td>
                     <td className="text-right py-3">N/A</td>
-                    <td className="text-right py-3">N/A</td>
-                    <td className="text-right py-3">-</td>
+                    <td className="text-right py-3">Concession</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <p className="text-xs text-muted-foreground mt-4">
-              * Rates current as of 2024-25. Additional regional grants and schemes may be available. 
-              Queensland and Tasmania offer the highest First Home Owner Grants in Australia.
-            </p>
+            <div className="space-y-2 text-xs text-muted-foreground mt-4">
+              <p>* NSW: $600k for new homes, $750k if building/owner-builder</p>
+              <p>** SA: No property value cap removed from June 6, 2024</p>
+              <p>*** WA: $750k south of 26th parallel, $1M north of 26th parallel</p>
+              <p>**** ACT: No FHOG but offers Home Buyer Concession Scheme (full stamp duty concession)</p>
+              <p className="mt-3">
+                <strong>Note:</strong> NT offers $10,000 for established homes. QLD grant ($30,000) applies to contracts 
+                signed between November 20, 2023 and June 30, 2026. Additional stamp duty concessions and eligibility 
+                criteria apply in all states. Contact HALP for detailed information.
+              </p>
+            </div>
           </CardContent>
         </Card>
 
