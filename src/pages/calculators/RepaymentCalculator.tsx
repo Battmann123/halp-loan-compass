@@ -13,16 +13,19 @@ import { Calculator, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const RepaymentCalculator = () => {
-  const [loanAmount, setLoanAmount] = useState(600000);
+  const [loanAmount, setLoanAmount] = useState("");
   const [repaymentType, setRepaymentType] = useState("principal-interest");
-  const [interestRate, setInterestRate] = useState(6.5);
-  const [loanTerm, setLoanTerm] = useState(30);
+  const [interestRate, setInterestRate] = useState("");
+  const [loanTerm, setLoanTerm] = useState("");
   const [paymentFrequency, setPaymentFrequency] = useState("monthly");
 
   const calculateRepayments = () => {
-    const principal = loanAmount;
-    const monthlyRate = interestRate / 100 / 12;
-    const numberOfPayments = loanTerm * 12;
+    const principal = Number(loanAmount) || 0;
+    const rate = Number(interestRate) || 0;
+    const term = Number(loanTerm) || 0;
+    
+    const monthlyRate = rate / 100 / 12;
+    const numberOfPayments = term * 12;
 
     let monthlyRepayment;
     let totalPayments;
@@ -122,8 +125,9 @@ const RepaymentCalculator = () => {
                     id="loanAmount"
                     type="number"
                     value={loanAmount}
-                    onChange={(e) => setLoanAmount(Number(e.target.value))}
+                    onChange={(e) => setLoanAmount(e.target.value)}
                     className="pl-7"
+                    placeholder="0"
                   />
                 </div>
               </div>
@@ -150,7 +154,8 @@ const RepaymentCalculator = () => {
                     type="number"
                     step="0.01"
                     value={interestRate}
-                    onChange={(e) => setInterestRate(Number(e.target.value))}
+                    onChange={(e) => setInterestRate(e.target.value)}
+                    placeholder="0"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
                 </div>
@@ -162,8 +167,9 @@ const RepaymentCalculator = () => {
                   id="loanTerm"
                   type="number"
                   value={loanTerm}
-                  onChange={(e) => setLoanTerm(Number(e.target.value))}
+                  onChange={(e) => setLoanTerm(e.target.value)}
                   className="mt-2"
+                  placeholder="0"
                 />
               </div>
 
@@ -213,7 +219,7 @@ const RepaymentCalculator = () => {
 
                 <div className="flex justify-between items-center py-3">
                   <span className="text-muted-foreground">Number of Payments</span>
-                  <span className="font-semibold text-lg">{loanTerm * results.paymentsPerYear}</span>
+                  <span className="font-semibold text-lg">{(Number(loanTerm) || 0) * results.paymentsPerYear}</span>
                 </div>
               </div>
 

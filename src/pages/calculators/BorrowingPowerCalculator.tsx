@@ -13,21 +13,27 @@ import { Link } from "react-router-dom";
 const BorrowingPowerCalculator = () => {
   const [numApplicants, setNumApplicants] = useState("one");
   const [loanPurpose, setLoanPurpose] = useState("live");
-  const [depositFunds, setDepositFunds] = useState(0);
+  const [depositFunds, setDepositFunds] = useState("");
   const [buyingState, setBuyingState] = useState("VIC");
   const [firstHomeBuyer, setFirstHomeBuyer] = useState("no");
   const [payingRent, setPayingRent] = useState("no");
-  const [rentAmount, setRentAmount] = useState(0);
-  const [income, setIncome] = useState(100000);
-  const [otherIncome, setOtherIncome] = useState(0);
-  const [expenses, setExpenses] = useState(3000);
-  const [debts, setDebts] = useState(500);
-  const [dependents, setDependents] = useState(0);
+  const [rentAmount, setRentAmount] = useState("");
+  const [income, setIncome] = useState("");
+  const [otherIncome, setOtherIncome] = useState("");
+  const [expenses, setExpenses] = useState("");
+  const [debts, setDebts] = useState("");
+  const [dependents, setDependents] = useState("");
 
   const calculateBorrowingPower = () => {
-    const totalIncome = income + otherIncome;
+    const parsedIncome = Number(income) || 0;
+    const parsedOtherIncome = Number(otherIncome) || 0;
+    const parsedExpenses = Number(expenses) || 0;
+    const parsedDebts = Number(debts) || 0;
+    const parsedDependents = Number(dependents) || 0;
+    
+    const totalIncome = parsedIncome + parsedOtherIncome;
     const monthlyIncome = totalIncome / 12;
-    const totalExpenses = expenses + debts;
+    const totalExpenses = parsedExpenses + parsedDebts;
     
     // Simple calculation: Net income after expenses * multiplier
     // Real lenders use more complex assessments
@@ -35,7 +41,7 @@ const BorrowingPowerCalculator = () => {
     const borrowingCapacity = netIncome * 12 * 5.5; // Simplified multiplier
     
     // Adjust for dependents
-    const adjustedCapacity = borrowingCapacity - (dependents * 50000);
+    const adjustedCapacity = borrowingCapacity - (parsedDependents * 50000);
 
     return Math.max(0, adjustedCapacity);
   };
@@ -105,8 +111,9 @@ const BorrowingPowerCalculator = () => {
                     id="depositFunds"
                     type="number"
                     value={depositFunds}
-                    onChange={(e) => setDepositFunds(Number(e.target.value))}
+                    onChange={(e) => setDepositFunds(e.target.value)}
                     className="pl-7"
+                    placeholder="0"
                   />
                 </div>
               </div>
@@ -152,8 +159,9 @@ const BorrowingPowerCalculator = () => {
                     id="income"
                     type="number"
                     value={income}
-                    onChange={(e) => setIncome(Number(e.target.value))}
+                    onChange={(e) => setIncome(e.target.value)}
                     className="pl-7"
+                    placeholder="0"
                   />
                 </div>
               </div>
@@ -166,8 +174,9 @@ const BorrowingPowerCalculator = () => {
                     id="otherIncome"
                     type="number"
                     value={otherIncome}
-                    onChange={(e) => setOtherIncome(Number(e.target.value))}
+                    onChange={(e) => setOtherIncome(e.target.value)}
                     className="pl-7"
+                    placeholder="0"
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">Rental income, dividends, etc.</p>
@@ -181,8 +190,9 @@ const BorrowingPowerCalculator = () => {
                     id="expenses"
                     type="number"
                     value={expenses}
-                    onChange={(e) => setExpenses(Number(e.target.value))}
+                    onChange={(e) => setExpenses(e.target.value)}
                     className="pl-7"
+                    placeholder="0"
                   />
                 </div>
               </div>
@@ -195,8 +205,9 @@ const BorrowingPowerCalculator = () => {
                     id="debts"
                     type="number"
                     value={debts}
-                    onChange={(e) => setDebts(Number(e.target.value))}
+                    onChange={(e) => setDebts(e.target.value)}
                     className="pl-7"
+                    placeholder="0"
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">Credit cards, car loans, personal loans</p>
@@ -208,8 +219,9 @@ const BorrowingPowerCalculator = () => {
                   id="dependents"
                   type="number"
                   value={dependents}
-                  onChange={(e) => setDependents(Number(e.target.value))}
+                  onChange={(e) => setDependents(e.target.value)}
                   className="mt-2"
+                  placeholder="0"
                 />
               </div>
 
@@ -236,8 +248,9 @@ const BorrowingPowerCalculator = () => {
                       id="rentAmount"
                       type="number"
                       value={rentAmount}
-                      onChange={(e) => setRentAmount(Number(e.target.value))}
+                      onChange={(e) => setRentAmount(e.target.value)}
                       className="pl-7"
+                      placeholder="0"
                     />
                   </div>
                 </div>
