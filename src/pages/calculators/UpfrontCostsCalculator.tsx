@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 
 const UpfrontCostsCalculator = () => {
   const [propertyValue, setPropertyValue] = useState("");
+  const [depositAmount, setDepositAmount] = useState("");
   const [state, setState] = useState("NSW");
   const [firstHomeBuyer, setFirstHomeBuyer] = useState("no");
   const [result, setResult] = useState<any>(null);
@@ -178,11 +179,10 @@ const UpfrontCostsCalculator = () => {
 
   const calculateCosts = () => {
     const value = parseFloat(propertyValue || "0");
+    const deposit = parseFloat(depositAmount || "0");
     const isFirstHome = firstHomeBuyer === "yes";
 
-    console.log("Calculate Costs Debug:", { value, state, isFirstHome });
     const stampDuty = calculateStampDuty(value, state, isFirstHome);
-    console.log("Stamp Duty Result:", stampDuty);
     const legalFees = 2000; // Average conveyancing fees
     const buildingInspection = 600;
     const pestInspection = 300;
@@ -191,11 +191,31 @@ const UpfrontCostsCalculator = () => {
     const titleSearch = 150;
     const transferFee = 200;
     
-    // LMI calculation (assuming 10% deposit)
-    const deposit = value * 0.1;
+    // LMI calculation with proper LVR-based rates
     const loanAmount = value - deposit;
-    const lvr = 90;
-    const lmi = lvr > 80 ? loanAmount * 0.0228 : 0;
+    const lvr = (loanAmount / value) * 100;
+    let lmi = 0;
+    
+    if (lvr > 80) {
+      // Use tiered LMI rates based on LVR and loan amount (matching LMICalculator logic)
+      const isLowLoan = loanAmount <= 300000;
+      const isMidLoan = loanAmount > 300000 && loanAmount <= 600000;
+      const isHighLoan = loanAmount > 600000 && loanAmount <= 1000000;
+      
+      let lmiRate = 0;
+      
+      if (lvr <= 85) {
+        lmiRate = isLowLoan ? 0.0086 : isMidLoan ? 0.0106 : 0.0134;
+      } else if (lvr <= 90) {
+        lmiRate = isLowLoan ? 0.0156 : isMidLoan ? 0.0187 : 0.0231;
+      } else if (lvr <= 95) {
+        lmiRate = isLowLoan ? 0.0264 : isMidLoan ? 0.033 : 0.0443;
+      } else {
+        lmiRate = isLowLoan ? 0.0264 : isMidLoan ? 0.033 : 0.0443;
+      }
+      
+      lmi = loanAmount * lmiRate;
+    }
 
     const totalUpfront = stampDuty + legalFees + buildingInspection + pestInspection + 
                         loanApplicationFee + valuationFee + titleSearch + transferFee;
@@ -214,6 +234,8 @@ const UpfrontCostsCalculator = () => {
       transferFee,
       lmi,
       deposit,
+      lvr,
+      loanAmount,
       totalUpfront,
       totalWithDeposit,
       totalWithLMI,
@@ -239,6 +261,11 @@ const UpfrontCostsCalculator = () => {
 
       <section className="py-12 px-4">
         <div className="container mx-auto max-w-6xl">
+          <div className="mb-6">
+            <Link to="/calculators">
+              <Button variant="outline">← Back to All Calculators</Button>
+            </Link>
+          </div>
           <div className="grid lg:grid-cols-2 gap-8">
             <Card>
               <CardHeader>
@@ -256,6 +283,17 @@ const UpfrontCostsCalculator = () => {
                     value={propertyValue}
                     onChange={(e) => setPropertyValue(e.target.value)}
                     placeholder="650000"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="depositAmount">Deposit Amount ($)</Label>
+                  <Input
+                    id="depositAmount"
+                    type="number"
+                    value={depositAmount}
+                    onChange={(e) => setDepositAmount(e.target.value)}
+                    placeholder="65000"
                   />
                 </div>
 
@@ -338,7 +376,7 @@ const UpfrontCostsCalculator = () => {
                     </div>
                     {result.lmi > 0 && (
                       <div className="flex justify-between border-b pb-2">
-                        <span className="text-muted-foreground">LMI (optional)</span>
+                        <span className="text-muted-foreground">LMI (LVR: {result.lvr.toFixed(1)}%)</span>
                         <span className="font-semibold text-orange-600">${result.lmi.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                       </div>
                     )}
@@ -352,7 +390,7 @@ const UpfrontCostsCalculator = () => {
                       </span>
                     </div>
                     <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>With Deposit (10%)</span>
+                      <span>With Deposit ({((result.deposit / result.propertyValue) * 100).toFixed(1)}%)</span>
                       <span className="font-semibold">
                         ${result.totalWithDeposit.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                       </span>

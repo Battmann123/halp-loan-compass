@@ -82,6 +82,11 @@ const ServiceabilityCalculator = () => {
 
       <section className="py-12 px-4">
         <div className="container mx-auto max-w-6xl">
+          <div className="mb-6">
+            <Link to="/calculators">
+              <Button variant="outline">← Back to All Calculators</Button>
+            </Link>
+          </div>
           <div className="grid lg:grid-cols-2 gap-8">
             <Card>
               <CardHeader>
