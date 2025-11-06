@@ -65,6 +65,25 @@ export default function InvestmentPropertyCalculator() {
     const grossYield = (annualRent / purchasePrice) * 100;
     const netYield = ((annualRent - totalExpenses) / purchasePrice) * 100;
     
+    // Calculate annual interest paid (only interest is tax deductible, not principal)
+    let annualInterest;
+    if (repaymentType === "interest-only") {
+      // For interest-only, all repayments are interest
+      annualInterest = annualRepayment;
+    } else {
+      // For P&I, calculate first year's interest on reducing balance
+      // Approximate by calculating interest on average balance over the year
+      let remainingBalance = loanAmount;
+      let yearlyInterest = 0;
+      for (let month = 0; month < 12; month++) {
+        const monthInterest = remainingBalance * monthlyInterestRate;
+        yearlyInterest += monthInterest;
+        const principalPaid = monthlyRepayment - monthInterest;
+        remainingBalance -= principalPaid;
+      }
+      annualInterest = yearlyInterest;
+    }
+    
     // Tax calculation (Australian tax brackets 2024-25)
     const calculateTax = (income: number) => {
       if (income <= 18200) return 0;
@@ -75,7 +94,7 @@ export default function InvestmentPropertyCalculator() {
     };
     
     const taxWithoutProperty = calculateTax(annualSalary);
-    const deductibleExpenses = totalExpenses + annualRepayment; // All deductible for investment
+    const deductibleExpenses = totalExpenses + annualInterest; // Only interest is deductible
     const taxableIncomeWithProperty = annualSalary + annualRent - deductibleExpenses;
     const taxWithProperty = calculateTax(taxableIncomeWithProperty);
     const taxBenefit = taxWithoutProperty - taxWithProperty;
