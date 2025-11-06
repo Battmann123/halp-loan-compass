@@ -231,6 +231,7 @@ const LMICalculator = () => {
                   />
                 </div>
 
+
                 <div>
                   <Label htmlFor="deposit">Deposit Amount ($)</Label>
                   <Input
@@ -240,40 +241,17 @@ const LMICalculator = () => {
                     onChange={(e) => setDeposit(e.target.value)}
                     placeholder="65000"
                   />
+                  {propertyValue && deposit && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Deposit: {((parseFloat(deposit) / parseFloat(propertyValue)) * 100).toFixed(1)}%
+                    </p>
+                  )}
                 </div>
 
-                <div className="space-y-3">
-                  <Label>Are you a first home buyer?</Label>
-                  <RadioGroup value={isFirstHomeBuyer} onValueChange={setIsFirstHomeBuyer}>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="yes" id="fhb-yes" />
-                      <Label htmlFor="fhb-yes" className="font-normal cursor-pointer">Yes</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="no" id="fhb-no" />
-                      <Label htmlFor="fhb-no" className="font-normal cursor-pointer">No</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div className="space-y-3">
-                  <Label>Property Type</Label>
-                  <RadioGroup value={occupancyType} onValueChange={setOccupancyType}>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="owner-occupier" id="owner-occupier" />
-                      <Label htmlFor="owner-occupier" className="font-normal cursor-pointer">Owner Occupier</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="investor" id="investor" />
-                      <Label htmlFor="investor" className="font-normal cursor-pointer">Investor</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div className="space-y-3">
-                  <Label htmlFor="state">What state are you buying in?</Label>
+                <div>
+                  <Label htmlFor="state">State</Label>
                   <Select value={state} onValueChange={setState}>
-                    <SelectTrigger id="state">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -285,6 +263,32 @@ const LMICalculator = () => {
                       <SelectItem value="TAS">Tasmania</SelectItem>
                       <SelectItem value="NT">Northern Territory</SelectItem>
                       <SelectItem value="ACT">Australian Capital Territory</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="propertyType">Property Type</Label>
+                  <Select value={occupancyType} onValueChange={setOccupancyType}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="owner-occupier">Owner Occupier</SelectItem>
+                      <SelectItem value="investor">Investor</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="firstHomeBuyer">First Home Buyer?</Label>
+                  <Select value={isFirstHomeBuyer} onValueChange={setIsFirstHomeBuyer}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

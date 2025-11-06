@@ -14,9 +14,10 @@ const UpfrontCostsCalculator = () => {
   const [depositAmount, setDepositAmount] = useState("");
   const [state, setState] = useState("NSW");
   const [firstHomeBuyer, setFirstHomeBuyer] = useState("no");
+  const [propertyType, setPropertyType] = useState("owner-occupier");
   const [result, setResult] = useState<any>(null);
 
-  const calculateStampDuty = (value: number, state: string, isFirstHome: boolean) => {
+  const calculateStampDuty = (value: number, state: string, isFirstHome: boolean, propType: string) => {
     // Calculate stamp duty using tiered brackets (accurate as of 2024)
     let stampDuty = 0;
     
@@ -24,8 +25,8 @@ const UpfrontCostsCalculator = () => {
 
     switch(state) {
       case "NSW":
-        // First Home Buyer exemptions
-        if (isFirstHome && value <= 800000) {
+        // First Home Buyer exemptions (owner occupier only)
+        if (isFirstHome && propType === "owner-occupier" && value <= 800000) {
           return 0;
         }
         // NSW has tiered rates
@@ -47,8 +48,8 @@ const UpfrontCostsCalculator = () => {
         break;
 
       case "VIC":
-        // First Home Buyer exemptions (new homes only)
-        if (isFirstHome && value <= 600000) {
+        // First Home Buyer exemptions (new homes only, owner occupier)
+        if (isFirstHome && propType === "owner-occupier" && value <= 600000) {
           console.log("VIC: First home buyer exemption applied");
           return 0;
         }
@@ -182,7 +183,7 @@ const UpfrontCostsCalculator = () => {
     const deposit = parseFloat(depositAmount || "0");
     const isFirstHome = firstHomeBuyer === "yes";
 
-    const stampDuty = calculateStampDuty(value, state, isFirstHome);
+    const stampDuty = calculateStampDuty(value, state, isFirstHome, propertyType);
     const legalFees = 2000; // Average conveyancing fees
     const buildingInspection = 600;
     const pestInspection = 300;
@@ -191,37 +192,105 @@ const UpfrontCostsCalculator = () => {
     const titleSearch = 150;
     const transferFee = 200;
     
-    // LMI calculation with proper LVR-based rates
+    // LMI calculation with detailed LVR-based rates (matching LMI Calculator)
     const loanAmount = value - deposit;
     const lvr = (loanAmount / value) * 100;
     let lmi = 0;
     
     if (lvr > 80) {
-      // Use tiered LMI rates based on LVR and loan amount (matching LMICalculator logic)
+      // Determine loan amount tier
       const isLowLoan = loanAmount <= 300000;
       const isMidLoan = loanAmount > 300000 && loanAmount <= 600000;
       const isHighLoan = loanAmount > 600000 && loanAmount <= 1000000;
+      const isVeryHighLoan = loanAmount > 1000000;
+      
+      // Adjust rates for first home buyers (typically 10% lower)
+      const fhbDiscount = isFirstHome ? 0.9 : 1.0;
+      
+      // Adjust rates for investors (typically 15% higher)
+      const investorMultiplier = propertyType === "investor" ? 1.15 : 1.0;
       
       let lmiRate = 0;
       
-      if (lvr <= 85) {
-        lmiRate = isLowLoan ? 0.0086 : isMidLoan ? 0.0106 : 0.0134;
+      // Calculate base rate based on LVR tiers (approximating QBE/Genworth rates)
+      if (lvr <= 81) {
+        lmiRate = isLowLoan ? 0.0053 : isMidLoan ? 0.0056 : isHighLoan ? 0.0077 : 0.0089;
+      } else if (lvr <= 82) {
+        lmiRate = isLowLoan ? 0.0053 : isMidLoan ? 0.0056 : isHighLoan ? 0.0077 : 0.0089;
+      } else if (lvr <= 83) {
+        lmiRate = isLowLoan ? 0.0065 : isMidLoan ? 0.0084 : isHighLoan ? 0.0108 : 0.0108;
+      } else if (lvr <= 84) {
+        lmiRate = isLowLoan ? 0.0065 : isMidLoan ? 0.0084 : isHighLoan ? 0.0108 : 0.011;
+      } else if (lvr <= 85) {
+        lmiRate = isLowLoan ? 0.0086 : isMidLoan ? 0.0106 : isHighLoan ? 0.0134 : 0.0134;
+      } else if (lvr <= 86) {
+        lmiRate = isLowLoan ? 0.0089 : isMidLoan ? 0.0107 : isHighLoan ? 0.0134 : 0.0139;
+      } else if (lvr <= 87) {
+        lmiRate = isLowLoan ? 0.0103 : isMidLoan ? 0.0127 : isHighLoan ? 0.0155 : 0.0155;
+      } else if (lvr <= 88) {
+        lmiRate = isLowLoan ? 0.0103 : isMidLoan ? 0.0127 : isHighLoan ? 0.016 : 0.0179;
+      } else if (lvr <= 89) {
+        lmiRate = isLowLoan ? 0.013 : isMidLoan ? 0.0171 : isHighLoan ? 0.0215 : 0.0227;
       } else if (lvr <= 90) {
-        lmiRate = isLowLoan ? 0.0156 : isMidLoan ? 0.0187 : 0.0231;
+        lmiRate = isLowLoan ? 0.0156 : isMidLoan ? 0.0187 : isHighLoan ? 0.0231 : 0.0265;
+      } else if (lvr <= 91) {
+        lmiRate = isLowLoan ? 0.0202 : isMidLoan ? 0.0265 : isHighLoan ? 0.0353 : 0.0353;
+      } else if (lvr <= 92) {
+        lmiRate = isLowLoan ? 0.0202 : isMidLoan ? 0.0265 : isHighLoan ? 0.0353 : 0.0353;
+      } else if (lvr <= 93) {
+        lmiRate = isLowLoan ? 0.0228 : isMidLoan ? 0.0298 : isHighLoan ? 0.0381 : 0.0407;
+      } else if (lvr <= 94) {
+        lmiRate = isLowLoan ? 0.0253 : isMidLoan ? 0.0298 : isHighLoan ? 0.0419 : 0.0438;
       } else if (lvr <= 95) {
-        lmiRate = isLowLoan ? 0.0264 : isMidLoan ? 0.033 : 0.0443;
+        lmiRate = isLowLoan ? 0.0264 : isMidLoan ? 0.033 : isHighLoan ? 0.0443 : 0.0457;
       } else {
-        lmiRate = isLowLoan ? 0.0264 : isMidLoan ? 0.033 : 0.0443;
+        // Above 95% LVR - use highest tier
+        lmiRate = isLowLoan ? 0.0264 : isMidLoan ? 0.033 : isHighLoan ? 0.0443 : 0.0457;
       }
       
+      // Apply adjustments
+      lmiRate = lmiRate * fhbDiscount * investorMultiplier;
       lmi = loanAmount * lmiRate;
     }
+    
+    // Add stamp duty on LMI (varies by state)
+    let lmiStampDuty = 0;
+    if (lmi > 0) {
+      switch(state) {
+        case "NSW":
+          lmiStampDuty = 0; // No stamp duty on LMI in NSW
+          break;
+        case "VIC":
+          lmiStampDuty = lmi * 0.10;
+          break;
+        case "QLD":
+          lmiStampDuty = lmi * 0.09;
+          break;
+        case "SA":
+          lmiStampDuty = lmi * 0.11;
+          break;
+        case "WA":
+          lmiStampDuty = lmi * 0.10;
+          break;
+        case "TAS":
+          lmiStampDuty = lmi * 0.10;
+          break;
+        case "NT":
+          lmiStampDuty = lmi * 0.10;
+          break;
+        case "ACT":
+          lmiStampDuty = 0; // Abolished
+          break;
+      }
+    }
+    
+    const totalLMI = lmi + lmiStampDuty;
 
     const totalUpfront = stampDuty + legalFees + buildingInspection + pestInspection + 
                         loanApplicationFee + valuationFee + titleSearch + transferFee;
     
     const totalWithDeposit = totalUpfront + deposit;
-    const totalWithLMI = totalUpfront + lmi;
+    const totalWithLMI = totalUpfront + totalLMI;
 
     setResult({
       stampDuty,
@@ -233,6 +302,8 @@ const UpfrontCostsCalculator = () => {
       titleSearch,
       transferFee,
       lmi,
+      lmiStampDuty,
+      totalLMI,
       deposit,
       lvr,
       loanAmount,
@@ -240,6 +311,7 @@ const UpfrontCostsCalculator = () => {
       totalWithDeposit,
       totalWithLMI,
       propertyValue: value,
+      propertyType,
     });
   };
 
@@ -322,6 +394,19 @@ const UpfrontCostsCalculator = () => {
                 </div>
 
                 <div>
+                  <Label htmlFor="propertyType">Property Type</Label>
+                  <Select value={propertyType} onValueChange={setPropertyType}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="owner-occupier">Owner Occupier</SelectItem>
+                      <SelectItem value="investor">Investor</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
                   <Label htmlFor="firstHomeBuyer">First Home Buyer?</Label>
                   <Select value={firstHomeBuyer} onValueChange={setFirstHomeBuyer}>
                     <SelectTrigger>
@@ -380,10 +465,22 @@ const UpfrontCostsCalculator = () => {
                       <span className="font-semibold">${result.transferFee.toLocaleString()}</span>
                     </div>
                     {result.lmi > 0 && (
-                      <div className="flex justify-between border-b pb-2">
-                        <span className="text-muted-foreground">LMI (LVR: {result.lvr.toFixed(1)}%)</span>
-                        <span className="font-semibold text-orange-600">${result.lmi.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-                      </div>
+                      <>
+                        <div className="flex justify-between border-b pb-2">
+                          <span className="text-muted-foreground">LMI Premium (LVR: {result.lvr.toFixed(1)}%)</span>
+                          <span className="font-semibold text-orange-600">${result.lmi.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                        </div>
+                        {result.lmiStampDuty > 0 && (
+                          <div className="flex justify-between border-b pb-2">
+                            <span className="text-muted-foreground">{state} Stamp Duty on LMI</span>
+                            <span className="font-semibold text-orange-600">${result.lmiStampDuty.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between border-b pb-2">
+                          <span className="text-muted-foreground font-semibold">Total LMI Cost</span>
+                          <span className="font-semibold text-orange-600">${result.totalLMI.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                        </div>
+                      </>
                     )}
                   </div>
 
@@ -400,9 +497,9 @@ const UpfrontCostsCalculator = () => {
                         ${result.totalWithDeposit.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                       </span>
                     </div>
-                    {result.lmi > 0 && (
+                    {result.totalLMI > 0 && (
                       <div className="flex justify-between text-sm text-muted-foreground mt-1">
-                        <span>Including LMI</span>
+                        <span>Including LMI{result.lmiStampDuty > 0 ? ' + Stamp Duty' : ''}</span>
                         <span className="font-semibold">
                           ${result.totalWithLMI.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                         </span>
