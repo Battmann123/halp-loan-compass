@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { PiggyBank, Calculator } from "lucide-react";
@@ -13,6 +14,7 @@ const ExtraRepaymentsCalculator = () => {
   const [loanAmount, setLoanAmount] = useState("");
   const [interestRate, setInterestRate] = useState("");
   const [loanTerm, setLoanTerm] = useState("30");
+  const [paymentType, setPaymentType] = useState("principal-interest");
   const [extraPayment, setExtraPayment] = useState("");
   const [frequency, setFrequency] = useState("monthly");
   const [result, setResult] = useState<any>(null);
@@ -26,10 +28,17 @@ const ExtraRepaymentsCalculator = () => {
     const monthlyRate = annualRate / 12;
     const numPayments = years * 12;
 
-    // Calculate regular repayment
-    const regularRepayment = principal * 
-      (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
-      (Math.pow(1 + monthlyRate, numPayments) - 1);
+    // Calculate regular repayment based on payment type
+    let regularRepayment;
+    if (paymentType === "interest-only") {
+      // Interest-only: only pay the interest
+      regularRepayment = principal * monthlyRate;
+    } else {
+      // Principal & Interest: standard amortization
+      regularRepayment = principal * 
+        (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
+        (Math.pow(1 + monthlyRate, numPayments) - 1);
+    }
 
     // Convert extra payment to monthly equivalent
     let extraMonthly = 0;
@@ -55,17 +64,31 @@ const ExtraRepaymentsCalculator = () => {
 
     while (balance > 0 && monthsPaid < numPayments) {
       const interestCharge = balance * monthlyRate;
-      const principalPayment = regularRepayment + extraMonthly - interestCharge;
       
-      totalInterestWithExtra += interestCharge;
-      balance -= principalPayment;
+      if (paymentType === "interest-only") {
+        // For interest-only, regular payment is just interest, extra goes to principal
+        const principalPayment = extraMonthly;
+        totalInterestWithExtra += interestCharge;
+        balance -= principalPayment;
+      } else {
+        // For P&I, both regular and extra reduce principal
+        const principalPayment = regularRepayment + extraMonthly - interestCharge;
+        totalInterestWithExtra += interestCharge;
+        balance -= principalPayment;
+      }
+      
       monthsPaid++;
-
       if (balance < 0) balance = 0;
     }
 
     // Calculate without extra repayments
-    const totalInterestRegular = (regularRepayment * numPayments) - principal;
+    let totalInterestRegular;
+    if (paymentType === "interest-only") {
+      // Interest-only without extra payments: pay interest forever, principal never reduces
+      totalInterestRegular = regularRepayment * numPayments;
+    } else {
+      totalInterestRegular = (regularRepayment * numPayments) - principal;
+    }
 
     // Savings
     const interestSaved = totalInterestRegular - totalInterestWithExtra;
@@ -160,6 +183,24 @@ const ExtraRepaymentsCalculator = () => {
                       <SelectItem value="30">30 years</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div>
+                  <Label>I'll be paying:</Label>
+                  <RadioGroup value={paymentType} onValueChange={setPaymentType} className="mt-2">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="principal-interest" id="principal-interest" />
+                      <Label htmlFor="principal-interest" className="font-normal cursor-pointer">
+                        Principal & Interest
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="interest-only" id="interest-only" />
+                      <Label htmlFor="interest-only" className="font-normal cursor-pointer">
+                        Interest Only
+                      </Label>
+                    </div>
+                  </RadioGroup>
                 </div>
 
                 <div className="bg-primary/10 p-3 rounded">
