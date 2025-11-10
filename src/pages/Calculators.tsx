@@ -145,7 +145,7 @@ const Calculators = () => {
     <div className="min-h-screen flex flex-col">
       <SEO
         title="13 Home Loan Calculators Australia | Mortgage & Property Finance Tools"
-        description="Australia's most comprehensive mortgage calculator suite. Calculate repayments, borrowing power, stamp duty, LMI, government grants, and investment returns. Specialized for house & land packages."
+        description="A comprehensive mortgage calculator suite. Calculate repayments, borrowing power, stamp duty, LMI, government grants, and investment returns. Specialized for house & land packages."
         keywords="home loan calculator, mortgage calculator Australia, stamp duty calculator, borrowing power calculator, LMI calculator, repayment calculator, investment property calculator"
         canonical="https://halp-loan-compass.lovable.app/calculators"
         structuredData={structuredData}
@@ -160,7 +160,7 @@ const Calculators = () => {
             Home Loan Calculators Australia
           </h1>
           <p className="text-xl md:text-2xl opacity-95 mb-4">
-            Australia's most comprehensive mortgage calculator suite
+            A comprehensive mortgage calculator suite
           </p>
           <p className="text-lg opacity-90">
             Specially designed for house & land packages, new properties, and school zone purchases

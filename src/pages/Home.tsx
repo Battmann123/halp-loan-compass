@@ -181,7 +181,7 @@ const Home = () => {
             13 Specialized Home Loan Calculators
           </h2>
           <p className="text-xl mb-8 opacity-95">
-            Australia's most comprehensive mortgage calculator suite, designed specifically for 
+            A comprehensive mortgage calculator suite, designed specifically for 
             house & land packages, new properties, and school zone purchases.
           </p>
           <Button size="lg" variant="secondary" className="text-lg px-8 py-6 h-auto shadow-xl">
