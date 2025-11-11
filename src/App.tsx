@@ -21,6 +21,7 @@ import DepreciationCalculator from "./pages/calculators/DepreciationCalculator";
 import RefinanceCalculator from "./pages/calculators/RefinanceCalculator";
 import ExtraRepaymentsCalculator from "./pages/calculators/ExtraRepaymentsCalculator";
 import LenderComparisonCalculator from "./pages/calculators/LenderComparisonCalculator";
+import ComprehensiveCalculator from "./pages/calculators/ComprehensiveCalculator";
 import Disclaimer from "./pages/Disclaimer";
 import NotFound from "./pages/NotFound";
 import Apply from "./pages/Apply";
@@ -75,6 +76,7 @@ const App = () => (
           <Route path="/calculators/refinance" element={<RefinanceCalculator />} />
           <Route path="/calculators/extra-repayments" element={<ExtraRepaymentsCalculator />} />
           <Route path="/calculators/lender-comparison" element={<LenderComparisonCalculator />} />
+          <Route path="/calculators/comprehensive" element={<ComprehensiveCalculator />} />
           <Route path="/loan-types" element={<LoanTypes />} />
           <Route path="/loan-types/construction" element={<ConstructionLoans />} />
           <Route path="/loan-types/off-the-plan" element={<OffThePlanLoans />} />

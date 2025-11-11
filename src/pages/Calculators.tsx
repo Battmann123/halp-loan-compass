@@ -19,6 +19,7 @@ import {
   Scale,
   Receipt,
   Gift,
+  Sparkles,
 } from "lucide-react";
 
 const calculatorCategories = [
@@ -203,6 +204,43 @@ const Calculators = () => {
               or a family searching for the perfect home in the right school catchment, our calculators provide the insights you need.
             </p>
           </div>
+
+          {/* Featured Comprehensive Calculator */}
+          <Link to="/calculators/comprehensive" className="block mb-12">
+            <Card className="border-2 border-primary hover:shadow-2xl transition-all cursor-pointer group bg-gradient-to-br from-primary/5 to-accent/5">
+              <CardContent className="p-8">
+                <div className="flex items-start gap-6">
+                  <div className="bg-primary/10 p-4 rounded-xl group-hover:scale-110 transition-transform">
+                    <Sparkles className="h-12 w-12 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-2xl font-bold group-hover:text-primary transition-colors">
+                        Comprehensive Property Finance Calculator
+                      </h3>
+                      <span className="bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded">
+                        NEW
+                      </span>
+                    </div>
+                    <p className="text-muted-foreground mb-4">
+                      All-in-one property finance planning tool that combines loan affordability calculations 
+                      with complete purchase cost analysis. Get repayments, borrowing power, serviceability, 
+                      stamp duty, LMI, and upfront costs all in one comprehensive analysis.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="text-xs bg-secondary px-2 py-1 rounded">Loan Repayments</span>
+                      <span className="text-xs bg-secondary px-2 py-1 rounded">Borrowing Power</span>
+                      <span className="text-xs bg-secondary px-2 py-1 rounded">Serviceability</span>
+                      <span className="text-xs bg-secondary px-2 py-1 rounded">Stamp Duty</span>
+                      <span className="text-xs bg-secondary px-2 py-1 rounded">LMI</span>
+                      <span className="text-xs bg-secondary px-2 py-1 rounded">Upfront Costs</span>
+                      <span className="text-xs bg-secondary px-2 py-1 rounded">Gov Grants</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
           {/* Calculator Categories */}
           {calculatorCategories.map((category, categoryIndex) => (
