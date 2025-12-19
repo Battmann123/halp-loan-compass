@@ -217,7 +217,6 @@ const Home = () => {
               <CardContent className="p-6">
                 <Users className="h-10 w-10 mb-4 text-primary" />
                 <h3 className="text-lg font-semibold mb-2">Migrants & International</h3>
-                <p className="text-sm text-muted-foreground mb-3">945,000+ annually</p>
                 <ul className="text-sm space-y-1 text-muted-foreground">
                   <li>• Overseas income assessment</li>
                   <li>• Temporary visa lending</li>
