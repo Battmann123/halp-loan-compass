@@ -9,10 +9,10 @@ import { RefreshCw, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const RefinanceCalculator = () => {
-  const [currentLoan, setCurrentLoan] = useState("");
-  const [currentRate, setCurrentRate] = useState("");
-  const [currentRepayment, setCurrentRepayment] = useState("");
-  const [newRate, setNewRate] = useState("");
+  const [currentLoan, setCurrentLoan] = useState("500000");
+  const [currentRate, setCurrentRate] = useState("7.5");
+  const [currentRepayment, setCurrentRepayment] = useState("3500");
+  const [newRate, setNewRate] = useState("6.5");
   const [refinanceCosts, setRefinanceCosts] = useState("3000");
   const [result, setResult] = useState<any>(null);
 

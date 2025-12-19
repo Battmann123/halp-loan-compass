@@ -10,12 +10,12 @@ import { Percent, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const CapitalGainsCalculator = () => {
-  const [purchasePrice, setPurchasePrice] = useState("");
-  const [salePrice, setSalePrice] = useState("");
-  const [purchaseCosts, setPurchaseCosts] = useState("");
-  const [saleCosts, setSaleCosts] = useState("");
-  const [ownershipYears, setOwnershipYears] = useState("");
-  const [taxableIncome, setTaxableIncome] = useState("");
+  const [purchasePrice, setPurchasePrice] = useState("500000");
+  const [salePrice, setSalePrice] = useState("700000");
+  const [purchaseCosts, setPurchaseCosts] = useState("25000");
+  const [saleCosts, setSaleCosts] = useState("20000");
+  const [ownershipYears, setOwnershipYears] = useState("5");
+  const [taxableIncome, setTaxableIncome] = useState("100000");
   const [propertyType, setPropertyType] = useState("investment");
   const [result, setResult] = useState<any>(null);
 

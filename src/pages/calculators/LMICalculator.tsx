@@ -13,9 +13,9 @@ import { useToast } from "@/hooks/use-toast";
 
 const LMICalculator = () => {
   const { toast } = useToast();
-  const [propertyValue, setPropertyValue] = useState("");
-  const [deposit, setDeposit] = useState("");
-  const [isFirstHomeBuyer, setIsFirstHomeBuyer] = useState<string>("no");
+  const [propertyValue, setPropertyValue] = useState("650000");
+  const [deposit, setDeposit] = useState("65000");
+  const [isFirstHomeBuyer, setIsFirstHomeBuyer] = useState<string>("yes");
   const [occupancyType, setOccupancyType] = useState<string>("owner-occupier");
   const [state, setState] = useState<string>("NSW");
   const [result, setResult] = useState<any>(null);

@@ -10,10 +10,10 @@ import { Calendar, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const DepreciationCalculator = () => {
-  const [propertyValue, setPropertyValue] = useState("");
-  const [buildingAge, setBuildingAge] = useState("");
+  const [propertyValue, setPropertyValue] = useState("650000");
+  const [buildingAge, setBuildingAge] = useState("5");
   const [propertyType, setPropertyType] = useState("house");
-  const [fitoutValue, setFitoutValue] = useState("");
+  const [fitoutValue, setFitoutValue] = useState("30000");
   const [result, setResult] = useState<any>(null);
 
   const calculateDepreciation = () => {
