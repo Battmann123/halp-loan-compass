@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Phone, Mail, MessageSquare } from "lucide-react";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
 
 const leadFormSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required").max(100, "First name must be less than 100 characters"),
@@ -63,13 +64,29 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
 
     setIsSubmitting(true);
 
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke('create-pipedrive-lead', {
+        body: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          loanAmount: formData.loanAmount || undefined,
+          purpose: formData.purpose || undefined,
+          message: formData.message || undefined,
+          source,
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
       toast({
         title: "Application Received!",
         description: "A licensed mortgage broker will contact you within 24 hours.",
       });
-      setIsSubmitting(false);
+      
       setFormData({
         firstName: "",
         lastName: "",
@@ -79,7 +96,16 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
         purpose: "",
         message: "",
       });
-    }, 1000);
+    } catch (error) {
+      console.error("Error submitting lead:", error);
+      toast({
+        title: "Submission Error",
+        description: "There was a problem submitting your application. Please try again or call us directly.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (field: string, value: string) => {

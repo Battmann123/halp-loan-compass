@@ -1,1 +1,4 @@
 project_id = "jypnpdkobmbulybatbwx"
+
+[functions.create-pipedrive-lead]
+verify_jwt = false
