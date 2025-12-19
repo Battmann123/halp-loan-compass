@@ -13,16 +13,16 @@ import { Link } from "react-router-dom";
 const BorrowingPowerCalculator = () => {
   const [numApplicants, setNumApplicants] = useState("one");
   const [loanPurpose, setLoanPurpose] = useState("live");
-  const [depositFunds, setDepositFunds] = useState("");
+  const [depositFunds, setDepositFunds] = useState("100000");
   const [buyingState, setBuyingState] = useState("VIC");
   const [firstHomeBuyer, setFirstHomeBuyer] = useState("no");
   const [payingRent, setPayingRent] = useState("no");
   const [rentAmount, setRentAmount] = useState("");
-  const [income, setIncome] = useState("");
-  const [otherIncome, setOtherIncome] = useState("");
-  const [expenses, setExpenses] = useState("");
-  const [debts, setDebts] = useState("");
-  const [dependents, setDependents] = useState("");
+  const [income, setIncome] = useState("120000");
+  const [otherIncome, setOtherIncome] = useState("0");
+  const [expenses, setExpenses] = useState("3000");
+  const [debts, setDebts] = useState("500");
+  const [dependents, setDependents] = useState("0");
 
   const calculateBorrowingPower = () => {
     const parsedIncome = Number(income) || 0;

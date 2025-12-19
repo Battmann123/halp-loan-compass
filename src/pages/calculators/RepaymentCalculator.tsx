@@ -13,16 +13,26 @@ import { Calculator, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const RepaymentCalculator = () => {
-  const [loanAmount, setLoanAmount] = useState("");
+  const [loanAmount, setLoanAmount] = useState("600000");
   const [repaymentType, setRepaymentType] = useState("principal-interest");
-  const [interestRate, setInterestRate] = useState("");
-  const [loanTerm, setLoanTerm] = useState("");
+  const [interestRate, setInterestRate] = useState("6.5");
+  const [loanTerm, setLoanTerm] = useState("30");
   const [paymentFrequency, setPaymentFrequency] = useState("monthly");
 
   const calculateRepayments = () => {
     const principal = Number(loanAmount) || 0;
     const rate = Number(interestRate) || 0;
-    const term = Number(loanTerm) || 0;
+    const term = Number(loanTerm) || 1;
+    
+    // Handle edge cases to prevent NaN
+    if (principal <= 0 || rate <= 0 || term <= 0) {
+      return {
+        repayment: "0.00",
+        totalPayments: "0.00",
+        totalInterest: "0.00",
+        paymentsPerYear: 12,
+      };
+    }
     
     const monthlyRate = rate / 100 / 12;
     const numberOfPayments = term * 12;
@@ -38,9 +48,13 @@ const RepaymentCalculator = () => {
       totalInterest = totalPayments; // All payments are interest
     } else {
       // Principal & Interest calculation
-      monthlyRepayment =
-        (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
-        (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+      if (monthlyRate === 0) {
+        monthlyRepayment = principal / numberOfPayments;
+      } else {
+        monthlyRepayment =
+          (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
+          (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+      }
       totalPayments = monthlyRepayment * numberOfPayments;
       totalInterest = totalPayments - principal;
     }
@@ -58,9 +72,9 @@ const RepaymentCalculator = () => {
     }
 
     return {
-      repayment: repayment.toFixed(2),
-      totalPayments: totalPayments.toFixed(2),
-      totalInterest: totalInterest.toFixed(2),
+      repayment: isNaN(repayment) ? "0.00" : repayment.toFixed(2),
+      totalPayments: isNaN(totalPayments) ? "0.00" : totalPayments.toFixed(2),
+      totalInterest: isNaN(totalInterest) ? "0.00" : totalInterest.toFixed(2),
       paymentsPerYear,
     };
   };
@@ -123,9 +137,10 @@ const RepaymentCalculator = () => {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                   <Input
                     id="loanAmount"
-                    type="number"
-                    value={loanAmount}
-                    onChange={(e) => setLoanAmount(e.target.value)}
+                    type="text"
+                    inputMode="numeric"
+                    value={loanAmount ? Number(loanAmount).toLocaleString() : ""}
+                    onChange={(e) => setLoanAmount(e.target.value.replace(/,/g, ""))}
                     className="pl-7"
                     placeholder="0"
                   />

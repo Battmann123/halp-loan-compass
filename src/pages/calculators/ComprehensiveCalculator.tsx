@@ -57,23 +57,23 @@ interface CalculationResult {
 
 const ComprehensiveCalculator = () => {
   // Property Details
-  const [propertyValue, setPropertyValue] = useState("");
+  const [propertyValue, setPropertyValue] = useState("650000");
   const [state, setState] = useState("NSW");
   const [propertyType, setPropertyType] = useState("existing");
   const [isFirstHomeBuyer, setIsFirstHomeBuyer] = useState("yes");
   
   // Loan Details
-  const [deposit, setDeposit] = useState("");
+  const [deposit, setDeposit] = useState("130000");
   const [interestRate, setInterestRate] = useState("6.5");
   const [loanTerm, setLoanTerm] = useState("30");
   const [repaymentType, setRepaymentType] = useState("principal-interest");
   
   // Income Details
-  const [annualIncome, setAnnualIncome] = useState("");
-  const [otherIncome, setOtherIncome] = useState("");
-  const [livingExpenses, setLivingExpenses] = useState("");
-  const [otherLoanRepayments, setOtherLoanRepayments] = useState("");
-  const [creditCardLimits, setCreditCardLimits] = useState("");
+  const [annualIncome, setAnnualIncome] = useState("120000");
+  const [otherIncome, setOtherIncome] = useState("0");
+  const [livingExpenses, setLivingExpenses] = useState("3000");
+  const [otherLoanRepayments, setOtherLoanRepayments] = useState("0");
+  const [creditCardLimits, setCreditCardLimits] = useState("0");
   const [dependents, setDependents] = useState("0");
   
   const [result, setResult] = useState<CalculationResult | null>(null);

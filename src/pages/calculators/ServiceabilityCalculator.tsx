@@ -9,11 +9,11 @@ import { Scale, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const ServiceabilityCalculator = () => {
-  const [income, setIncome] = useState("");
-  const [otherIncome, setOtherIncome] = useState("");
-  const [expenses, setExpenses] = useState("");
-  const [existingLoans, setExistingLoans] = useState("");
-  const [dependents, setDependents] = useState("");
+  const [income, setIncome] = useState("120000");
+  const [otherIncome, setOtherIncome] = useState("0");
+  const [expenses, setExpenses] = useState("3000");
+  const [existingLoans, setExistingLoans] = useState("500");
+  const [dependents, setDependents] = useState("0");
   const [result, setResult] = useState<any>(null);
 
   const calculateServiceability = () => {

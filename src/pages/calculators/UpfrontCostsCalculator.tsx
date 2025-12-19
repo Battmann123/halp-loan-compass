@@ -10,10 +10,10 @@ import { DollarSign, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const UpfrontCostsCalculator = () => {
-  const [propertyValue, setPropertyValue] = useState("");
-  const [depositAmount, setDepositAmount] = useState("");
+  const [propertyValue, setPropertyValue] = useState("650000");
+  const [depositAmount, setDepositAmount] = useState("130000");
   const [state, setState] = useState("NSW");
-  const [firstHomeBuyer, setFirstHomeBuyer] = useState("no");
+  const [firstHomeBuyer, setFirstHomeBuyer] = useState("yes");
   const [propertyType, setPropertyType] = useState("owner-occupier");
   const [result, setResult] = useState<any>(null);
 

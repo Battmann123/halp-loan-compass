@@ -11,11 +11,11 @@ import { PiggyBank, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const ExtraRepaymentsCalculator = () => {
-  const [loanAmount, setLoanAmount] = useState("");
-  const [interestRate, setInterestRate] = useState("");
+  const [loanAmount, setLoanAmount] = useState("500000");
+  const [interestRate, setInterestRate] = useState("6.5");
   const [loanTerm, setLoanTerm] = useState("30");
   const [paymentType, setPaymentType] = useState("principal-interest");
-  const [extraPayment, setExtraPayment] = useState("");
+  const [extraPayment, setExtraPayment] = useState("500");
   const [frequency, setFrequency] = useState("monthly");
   const [result, setResult] = useState<any>(null);
 
