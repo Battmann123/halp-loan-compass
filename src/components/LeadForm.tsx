@@ -39,6 +39,17 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
     message: "",
   });
 
+  const buildLeadSource = (baseSource: string) => {
+    try {
+      if (typeof window === "undefined") return baseSource;
+      const hostname = window.location.hostname;
+      if (!hostname) return baseSource;
+      return `${baseSource}@${hostname}`;
+    } catch {
+      return baseSource;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
@@ -65,7 +76,7 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('create-pipedrive-lead', {
+      const { data, error } = await supabase.functions.invoke("create-pipedrive-lead", {
         body: {
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -74,7 +85,7 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
           loanAmount: formData.loanAmount || undefined,
           purpose: formData.purpose || undefined,
           message: formData.message || undefined,
-          source,
+          source: buildLeadSource(source),
         },
       });
 
