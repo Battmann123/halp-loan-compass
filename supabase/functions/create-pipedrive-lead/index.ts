@@ -70,10 +70,10 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Created person in Pipedrive:", personId);
 
     // Create lead in Pipedrive (without note - deprecated)
+    const source = leadData.source || 'website';
     const leadTitle = leadData.purpose 
-      ? `${leadData.firstName} ${leadData.lastName} - ${leadData.purpose}`
-      : `${leadData.firstName} ${leadData.lastName} - Home Loan Enquiry`;
-
+      ? `${leadData.firstName} ${leadData.lastName} - ${leadData.purpose} [${source}]`
+      : `${leadData.firstName} ${leadData.lastName} - Home Loan Enquiry [${source}]`;
     const leadResponse = await fetch(
       `https://api.pipedrive.com/v1/leads?api_token=${apiToken}`,
       {
