@@ -38,23 +38,47 @@ const Home = () => {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary via-accent to-primary py-20 px-4">
         <div className="container mx-auto text-center text-white">
+          {/* Trust Badges */}
+          <div className="flex flex-wrap justify-center gap-6 mb-8">
+            <div className="flex items-center gap-2 text-sm opacity-90">
+              <Award className="h-5 w-5" />
+              <span>30 Years Experience</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm opacity-90">
+              <Shield className="h-5 w-5" />
+              <span>Licensed & Trusted</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm opacity-90">
+              <CheckCircle2 className="h-5 w-5" />
+              <span>Fast Approvals</span>
+            </div>
+          </div>
+
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            We HALP You Secure the Right Home Loan
+            Your Home Loan <span className="text-secondary">Specialists</span>
           </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-95">
-            Specialists in new properties, house & land packages, and off-the-plan developments across Australia
+            HALP Home Loans brings 30 years of expertise to help you secure your dream home. 
+            Specialists in first home buyers, house & land packages, overseas buyers, and government grants.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Link to="/apply">
               <Button size="lg" variant="secondary" className="text-lg px-8 py-6 h-auto shadow-xl hover:shadow-2xl">
-                Apply Now
+                Get Pre-Approved
               </Button>
             </Link>
-            <Link to="/calculators">
+            <Link to="/apply">
               <Button size="lg" variant="outline" className="text-lg px-8 py-6 h-auto bg-white/10 border-white text-white hover:bg-white hover:text-primary shadow-xl">
-                Use Calculators
+                Contact Tim Egan
               </Button>
             </Link>
+          </div>
+
+          {/* Company Branding */}
+          <div className="mt-8 pt-8 border-t border-white/20">
+            <p className="text-sm opacity-70 uppercase tracking-wider">House and Land Packages Pty Ltd</p>
+            <p className="text-xs opacity-60 mt-1">presents</p>
+            <p className="text-lg font-semibold mt-2 tracking-wide">HALP HOME LOANS & HALP FINANCE</p>
           </div>
         </div>
       </section>
@@ -109,14 +133,13 @@ const Home = () => {
       {/* Why Choose HALP */}
       <section className="py-16 px-4">
         <div className="container mx-auto max-w-4xl">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            Why Choose HALP for Your Home Loan?
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+            30 Years of Trusted <span className="text-primary">Home Loan Expertise</span>
           </h2>
           <p className="text-lg text-center text-muted-foreground mb-12">
-            At HALP, we don't just find you any home loan – we specialize in financing new properties, 
-            house and land packages, and off-the-plan developments across Australia. With over 400,000 
-            Australians newly eligible for the 5% deposit scheme and our unique school zone integration, 
-            we're your trusted partner in the home buying journey.
+            We're a family-oriented team who understand that buying a home is one of life's biggest decisions. 
+            Whether you're a first home buyer, growing family, or seasoned investor – we're here to HALP 
+            every step of the way with honest advice and genuine care for your financial future.
           </p>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -260,20 +283,28 @@ const Home = () => {
       {/* Final CTA */}
       <section className="py-16 px-4 bg-secondary/30">
         <div className="container mx-auto text-center max-w-3xl">
-          <Shield className="h-16 w-16 mx-auto mb-6 text-primary" />
+          <Users className="h-16 w-16 mx-auto mb-6 text-primary" />
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Get Started?
+            Let's HALP You Into Your Dream Home
           </h2>
           <p className="text-lg text-muted-foreground mb-8">
-            Connect with licensed mortgage brokers through HALP. We'll match you with 
-            the right finance solution for your house & land package or new property purchase.
+            Our friendly team is ready to guide you through every step of your home loan journey. 
+            No jargon, no pressure – just honest advice from people who genuinely care about helping 
+            Australian families achieve their property dreams.
           </p>
-          <Link to="/apply">
-            <Button size="lg" className="text-lg px-8 py-6 h-auto bg-gradient-to-r from-primary to-accent shadow-xl">
-              <DollarSign className="h-5 w-5 mr-2" />
-              Apply for Pre-Approval
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/apply">
+              <Button size="lg" className="text-lg px-8 py-6 h-auto bg-gradient-to-r from-primary to-accent shadow-xl">
+                <DollarSign className="h-5 w-5 mr-2" />
+                Get Pre-Approved Today
+              </Button>
+            </Link>
+            <a href="tel:+61XXXXXXXXX">
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6 h-auto">
+                Call Our Team
+              </Button>
+            </a>
+          </div>
         </div>
       </section>
 
