@@ -69,7 +69,7 @@ const handler = async (req: Request): Promise<Response> => {
     const personId = personResult.data.id;
     console.log("Created person in Pipedrive:", personId);
 
-    // Create lead in Pipedrive
+    // Create lead in Pipedrive (without note - deprecated)
     const leadTitle = leadData.purpose 
       ? `${leadData.firstName} ${leadData.lastName} - ${leadData.purpose}`
       : `${leadData.firstName} ${leadData.lastName} - Home Loan Enquiry`;
@@ -82,7 +82,6 @@ const handler = async (req: Request): Promise<Response> => {
         body: JSON.stringify({
           title: leadTitle,
           person_id: personId,
-          note: noteContent,
         }),
       }
     );
@@ -94,7 +93,29 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error(leadResult.error || "Failed to create lead");
     }
 
-    console.log("Created lead in Pipedrive:", leadResult.data.id);
+    const leadId = leadResult.data.id;
+    console.log("Created lead in Pipedrive:", leadId);
+
+    // Add note to the lead using Notes API
+    const noteResponse = await fetch(
+      `https://api.pipedrive.com/v1/notes?api_token=${apiToken}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: noteContent,
+          lead_id: leadId,
+        }),
+      }
+    );
+
+    const noteResult = await noteResponse.json();
+    if (!noteResult.success) {
+      console.warn("Failed to add note to lead:", noteResult);
+      // Don't throw - lead was created successfully
+    } else {
+      console.log("Added note to lead:", noteResult.data.id);
+    }
 
     return new Response(
       JSON.stringify({ 
