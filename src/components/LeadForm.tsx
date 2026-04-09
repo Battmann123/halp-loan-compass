@@ -347,6 +347,16 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
             </div>
           </div>
 
+          <div className="absolute opacity-0 -z-10 h-0 overflow-hidden" aria-hidden="true" tabIndex={-1}>
+            <Input
+              name="website"
+              value={formData.website}
+              onChange={(e) => handleChange("website", e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </div>
+
           <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
             {isSubmitting ? "Submitting..." : "Connect with a Broker"}
           </Button>
