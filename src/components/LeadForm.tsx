@@ -37,6 +37,7 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
     loanAmount: "",
     purpose: "",
     message: "",
+    website: "",
   });
 
   const buildLeadSource = (baseSource: string) => {
@@ -86,6 +87,7 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
           purpose: formData.purpose || undefined,
           message: formData.message || undefined,
           source: buildLeadSource(source),
+          website: formData.website,
         },
       });
 
@@ -106,6 +108,7 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
         loanAmount: "",
         purpose: "",
         message: "",
+        website: "",
       });
     } catch (error) {
       console.error("Error submitting lead:", error);
