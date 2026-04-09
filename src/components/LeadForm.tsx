@@ -37,6 +37,7 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
     loanAmount: "",
     purpose: "",
     message: "",
+    website: "",
   });
 
   const buildLeadSource = (baseSource: string) => {
@@ -86,6 +87,7 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
           purpose: formData.purpose || undefined,
           message: formData.message || undefined,
           source: buildLeadSource(source),
+          website: formData.website,
         },
       });
 
@@ -106,6 +108,7 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
         loanAmount: "",
         purpose: "",
         message: "",
+        website: "",
       });
     } catch (error) {
       console.error("Error submitting lead:", error);
@@ -188,6 +191,15 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
               {errors.email && (
                 <p className="text-sm text-destructive">{errors.email}</p>
               )}
+            </div>
+            <div className="absolute opacity-0 -z-10 h-0 overflow-hidden" aria-hidden="true" tabIndex={-1}>
+              <Input
+                name="website"
+                value={formData.website}
+                onChange={(e) => handleChange("website", e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+              />
             </div>
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? "Submitting..." : "Get Started"}
@@ -333,6 +345,16 @@ const LeadForm = ({ source = "website", variant = "full" }: LeadFormProps) => {
               <MessageSquare className="h-4 w-4 text-primary mt-0.5" />
               <span>Response within 24 hours</span>
             </div>
+          </div>
+
+          <div className="absolute opacity-0 -z-10 h-0 overflow-hidden" aria-hidden="true" tabIndex={-1}>
+            <Input
+              name="website"
+              value={formData.website}
+              onChange={(e) => handleChange("website", e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+            />
           </div>
 
           <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
