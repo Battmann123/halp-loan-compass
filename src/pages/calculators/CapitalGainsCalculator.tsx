@@ -8,6 +8,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Percent, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getMarginalRate } from "@/lib/calculations";
 
 const CapitalGainsCalculator = () => {
   const [purchasePrice, setPurchasePrice] = useState("500000");
@@ -40,13 +41,9 @@ const CapitalGainsCalculator = () => {
     const isMainResidence = propertyType === "owner-occupied";
     const taxableGain = isMainResidence ? 0 : discountedGain;
 
-    // Calculate tax based on marginal rate
-    let marginalRate = 0;
-    if (income <= 18200) marginalRate = 0;
-    else if (income <= 45000) marginalRate = 0.19;
-    else if (income <= 120000) marginalRate = 0.325;
-    else if (income <= 180000) marginalRate = 0.37;
-    else marginalRate = 0.45;
+    // Marginal rate based on income at sale (incl. discounted gain on top of salary)
+    // Uses 2024-25 Stage 3 brackets: 0 / 16% / 30% / 37% / 45%
+    const marginalRate = getMarginalRate(income + taxableGain);
 
     const cgtPayable = taxableGain * marginalRate;
     const netProfit = capitalGain - cgtPayable;
