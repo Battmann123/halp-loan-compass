@@ -64,15 +64,21 @@ export default function NegativeGearingCalculator() {
     // Australian tax — Stage 3 brackets effective 1 July 2024
     const taxWithoutProperty = calculateIncomeTax(preTaxSalary);
 
-    // Tax with property: only the interest portion of repayment is deductible (not principal).
-    // For investment loans we approximate using interest-only logic; users on P&I will see
-    // a slightly conservative tax benefit in year 1.
-    const annualInterestApprox = loanType === "interest-only"
-      ? annualRepayment
-      : monthlyRepayment * 12 - (loanAmount * monthlyInterestRate * 12 < annualRepayment
-          ? (annualRepayment - loanAmount * monthlyInterestRate * 12)
-          : 0);
-    const deductibleExpenses = (totalExpenses - annualRepayment) + annualInterestApprox;
+    // Tax with property: only the interest portion of repayments is deductible (not principal).
+    // Compute year-1 interest by simulating monthly amortisation on the reducing balance.
+    let annualInterest = 0;
+    if (loanType === "interest-only") {
+      annualInterest = annualRepayment;
+    } else {
+      let bal = loanAmount;
+      for (let m = 0; m < 12; m++) {
+        const i = bal * monthlyInterestRate;
+        annualInterest += i;
+        bal -= (monthlyRepayment - i);
+      }
+    }
+    const cashExpensesExclLoan = totalExpenses - depreciation - annualRepayment;
+    const deductibleExpenses = cashExpensesExclLoan + depreciation + annualInterest;
     const taxableIncomeWithProperty = preTaxSalary + annualRent - deductibleExpenses;
     const taxWithProperty = calculateIncomeTax(taxableIncomeWithProperty);
     
