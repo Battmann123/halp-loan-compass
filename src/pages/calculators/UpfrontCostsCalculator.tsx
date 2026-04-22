@@ -8,6 +8,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { DollarSign, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
+import { calculateStampDuty, calculateLmi, type AusState, type PropertyCategory } from "@/lib/calculations";
 
 const UpfrontCostsCalculator = () => {
   const [propertyValue, setPropertyValue] = useState("650000");
@@ -17,278 +18,46 @@ const UpfrontCostsCalculator = () => {
   const [propertyType, setPropertyType] = useState("owner-occupier");
   const [result, setResult] = useState<any>(null);
 
-  const calculateStampDuty = (value: number, state: string, isFirstHome: boolean, propType: string) => {
-    // Calculate stamp duty using tiered brackets (accurate as of 2024)
-    let stampDuty = 0;
-    
-    console.log("calculateStampDuty called with:", { value, state, isFirstHome });
-
-    switch(state) {
-      case "NSW":
-        // First Home Buyer exemptions (owner occupier only)
-        if (isFirstHome && propType === "owner-occupier" && value <= 800000) {
-          return 0;
-        }
-        // NSW has tiered rates
-        if (value <= 14000) {
-          stampDuty = value * 0.0125;
-        } else if (value <= 32000) {
-          stampDuty = 175 + (value - 14000) * 0.015;
-        } else if (value <= 85000) {
-          stampDuty = 445 + (value - 32000) * 0.0175;
-        } else if (value <= 319000) {
-          stampDuty = 1372.50 + (value - 85000) * 0.035;
-        } else if (value <= 1064000) {
-          stampDuty = 9562.50 + (value - 319000) * 0.045;
-        } else if (value <= 3177000) {
-          stampDuty = 43087.50 + (value - 1064000) * 0.055;
-        } else {
-          stampDuty = 159302.50 + (value - 3177000) * 0.07;
-        }
-        break;
-
-      case "VIC":
-        // First Home Buyer exemptions (owner occupier only, up to $750k)
-        if (isFirstHome && propType === "owner-occupier" && value <= 750000) {
-          console.log("VIC: First home buyer exemption applied");
-          return 0;
-        }
-        // Victoria tiered rates (as per SRO official rates)
-        if (value <= 25000) {
-          stampDuty = value * 0.014;
-        } else if (value <= 130000) {
-          stampDuty = 350 + (value - 25000) * 0.024;
-        } else if (value <= 960000) {
-          stampDuty = 2870 + (value - 130000) * 0.06;
-        } else if (value <= 2000000) {
-          stampDuty = value * 0.055;
-        } else {
-          stampDuty = 110000 + (value - 2000000) * 0.065;
-        }
-        console.log("VIC: Calculated stamp duty:", stampDuty);
-        break;
-
-      case "QLD":
-        // Queensland tiered rates
-        if (value <= 5000) {
-          stampDuty = 0;
-        } else if (value <= 75000) {
-          stampDuty = (value - 5000) * 0.015;
-        } else if (value <= 540000) {
-          stampDuty = 1050 + (value - 75000) * 0.035;
-        } else if (value <= 1000000) {
-          stampDuty = 17325 + (value - 540000) * 0.045;
-        } else {
-          stampDuty = 38025 + (value - 1000000) * 0.0575;
-        }
-        break;
-
-      case "SA":
-        // South Australia tiered rates
-        if (value <= 12000) {
-          stampDuty = value * 0.01;
-        } else if (value <= 30000) {
-          stampDuty = 120 + (value - 12000) * 0.02;
-        } else if (value <= 50000) {
-          stampDuty = 480 + (value - 30000) * 0.03;
-        } else if (value <= 100000) {
-          stampDuty = 1080 + (value - 50000) * 0.035;
-        } else if (value <= 200000) {
-          stampDuty = 2830 + (value - 100000) * 0.04;
-        } else if (value <= 250000) {
-          stampDuty = 6830 + (value - 200000) * 0.0425;
-        } else if (value <= 300000) {
-          stampDuty = 8955 + (value - 250000) * 0.045;
-        } else if (value <= 500000) {
-          stampDuty = 11205 + (value - 300000) * 0.0475;
-        } else {
-          stampDuty = 20705 + (value - 500000) * 0.055;
-        }
-        break;
-
-      case "WA":
-        // Western Australia tiered rates
-        if (value <= 120000) {
-          stampDuty = value * 0.019;
-        } else if (value <= 150000) {
-          stampDuty = 2280 + (value - 120000) * 0.028;
-        } else if (value <= 360000) {
-          stampDuty = 3120 + (value - 150000) * 0.038;
-        } else if (value <= 725000) {
-          stampDuty = 11100 + (value - 360000) * 0.049;
-        } else {
-          stampDuty = 28985 + (value - 725000) * 0.051;
-        }
-        break;
-
-      case "TAS":
-        // Tasmania tiered rates
-        if (value <= 3000) {
-          stampDuty = 50;
-        } else if (value <= 25000) {
-          stampDuty = 50 + (value - 3000) * 0.0175;
-        } else if (value <= 75000) {
-          stampDuty = 435 + (value - 25000) * 0.025;
-        } else if (value <= 200000) {
-          stampDuty = 1685 + (value - 75000) * 0.035;
-        } else if (value <= 375000) {
-          stampDuty = 6060 + (value - 200000) * 0.04;
-        } else if (value <= 725000) {
-          stampDuty = 13060 + (value - 375000) * 0.0425;
-        } else {
-          stampDuty = 27935 + (value - 725000) * 0.045;
-        }
-        break;
-
-      case "NT":
-        // Northern Territory - flat rates based on value
-        if (value <= 525000) {
-          stampDuty = value * 0.0672;
-        } else if (value <= 3000000) {
-          stampDuty = value * 0.0492;
-        } else {
-          stampDuty = 147600 + (value - 3000000) * 0.0575;
-        }
-        break;
-
-      case "ACT":
-        // ACT tiered rates
-        if (value <= 200000) {
-          stampDuty = (value / 200000) * (value / 200000) * 9340;
-        } else if (value <= 300000) {
-          stampDuty = 9340 + ((value - 200000) / 100000) * ((value - 200000) / 100000) * 6950;
-        } else if (value <= 500000) {
-          stampDuty = 16290 + ((value - 300000) / 200000) * ((value - 300000) / 200000) * 14890;
-        } else if (value <= 750000) {
-          stampDuty = 31180 + ((value - 500000) / 250000) * ((value - 500000) / 250000) * 20970;
-        } else if (value <= 1000000) {
-          stampDuty = 52150 + ((value - 750000) / 250000) * ((value - 750000) / 250000) * 27755;
-        } else if (value <= 1455000) {
-          stampDuty = 79905 + (value - 1000000) * 0.044;
-        } else {
-          stampDuty = 99925 + (value - 1455000) * 0.058;
-        }
-        break;
-
-      default:
-        stampDuty = value * 0.04;
-    }
-
-    console.log("calculateStampDuty returning:", stampDuty);
-    return Math.round(stampDuty);
-  };
-
   const calculateCosts = () => {
     const value = parseFloat(propertyValue || "0");
     const deposit = parseFloat(depositAmount || "0");
     const isFirstHome = firstHomeBuyer === "yes";
+    const occupancy = propertyType === "investor" ? "investor" : "owner-occupier";
 
-    const stampDuty = calculateStampDuty(value, state, isFirstHome, propertyType);
-    const legalFees = 2000; // Average conveyancing fees
+    // Use shared stamp duty helper (assumes "established" by default for upfront calc).
+    const sd = calculateStampDuty({
+      value,
+      state: state as AusState,
+      isFirstHomeBuyer: isFirstHome,
+      occupancy,
+      category: "established" as PropertyCategory,
+    });
+    const stampDuty = sd.duty;
+
+    const legalFees = 2000;
     const buildingInspection = 600;
     const pestInspection = 300;
     const loanApplicationFee = 600;
     const valuationFee = 400;
     const titleSearch = 150;
-    const transferFee = 200;
-    
-    // LMI calculation with detailed LVR-based rates (matching LMI Calculator)
-    const loanAmount = value - deposit;
-    const lvr = (loanAmount / value) * 100;
-    let lmi = 0;
-    
-    if (lvr > 80) {
-      // Determine loan amount tier
-      const isLowLoan = loanAmount <= 300000;
-      const isMidLoan = loanAmount > 300000 && loanAmount <= 600000;
-      const isHighLoan = loanAmount > 600000 && loanAmount <= 1000000;
-      const isVeryHighLoan = loanAmount > 1000000;
-      
-      // Adjust rates for first home buyers (typically 10% lower)
-      const fhbDiscount = isFirstHome ? 0.9 : 1.0;
-      
-      // Adjust rates for investors (typically 15% higher)
-      const investorMultiplier = propertyType === "investor" ? 1.15 : 1.0;
-      
-      let lmiRate = 0;
-      
-      // Calculate base rate based on LVR tiers (approximating QBE/Genworth rates)
-      if (lvr <= 81) {
-        lmiRate = isLowLoan ? 0.0053 : isMidLoan ? 0.0056 : isHighLoan ? 0.0077 : 0.0089;
-      } else if (lvr <= 82) {
-        lmiRate = isLowLoan ? 0.0053 : isMidLoan ? 0.0056 : isHighLoan ? 0.0077 : 0.0089;
-      } else if (lvr <= 83) {
-        lmiRate = isLowLoan ? 0.0065 : isMidLoan ? 0.0084 : isHighLoan ? 0.0108 : 0.0108;
-      } else if (lvr <= 84) {
-        lmiRate = isLowLoan ? 0.0065 : isMidLoan ? 0.0084 : isHighLoan ? 0.0108 : 0.011;
-      } else if (lvr <= 85) {
-        lmiRate = isLowLoan ? 0.0086 : isMidLoan ? 0.0106 : isHighLoan ? 0.0134 : 0.0134;
-      } else if (lvr <= 86) {
-        lmiRate = isLowLoan ? 0.0089 : isMidLoan ? 0.0107 : isHighLoan ? 0.0134 : 0.0139;
-      } else if (lvr <= 87) {
-        lmiRate = isLowLoan ? 0.0103 : isMidLoan ? 0.0127 : isHighLoan ? 0.0155 : 0.0155;
-      } else if (lvr <= 88) {
-        lmiRate = isLowLoan ? 0.0103 : isMidLoan ? 0.0127 : isHighLoan ? 0.016 : 0.0179;
-      } else if (lvr <= 89) {
-        lmiRate = isLowLoan ? 0.013 : isMidLoan ? 0.0171 : isHighLoan ? 0.0215 : 0.0227;
-      } else if (lvr <= 90) {
-        lmiRate = isLowLoan ? 0.0156 : isMidLoan ? 0.0187 : isHighLoan ? 0.0231 : 0.0265;
-      } else if (lvr <= 91) {
-        lmiRate = isLowLoan ? 0.0202 : isMidLoan ? 0.0265 : isHighLoan ? 0.0353 : 0.0353;
-      } else if (lvr <= 92) {
-        lmiRate = isLowLoan ? 0.0202 : isMidLoan ? 0.0265 : isHighLoan ? 0.0353 : 0.0353;
-      } else if (lvr <= 93) {
-        lmiRate = isLowLoan ? 0.0228 : isMidLoan ? 0.0298 : isHighLoan ? 0.0381 : 0.0407;
-      } else if (lvr <= 94) {
-        lmiRate = isLowLoan ? 0.0253 : isMidLoan ? 0.0298 : isHighLoan ? 0.0419 : 0.0438;
-      } else if (lvr <= 95) {
-        lmiRate = isLowLoan ? 0.0264 : isMidLoan ? 0.033 : isHighLoan ? 0.0443 : 0.0457;
-      } else {
-        // Above 95% LVR - use highest tier
-        lmiRate = isLowLoan ? 0.0264 : isMidLoan ? 0.033 : isHighLoan ? 0.0443 : 0.0457;
-      }
-      
-      // Apply adjustments
-      lmiRate = lmiRate * fhbDiscount * investorMultiplier;
-      lmi = loanAmount * lmiRate;
-    }
-    
-    // Add stamp duty on LMI (varies by state)
-    let lmiStampDuty = 0;
-    if (lmi > 0) {
-      switch(state) {
-        case "NSW":
-          lmiStampDuty = 0; // No stamp duty on LMI in NSW
-          break;
-        case "VIC":
-          lmiStampDuty = lmi * 0.10;
-          break;
-        case "QLD":
-          lmiStampDuty = lmi * 0.09;
-          break;
-        case "SA":
-          lmiStampDuty = lmi * 0.11;
-          break;
-        case "WA":
-          lmiStampDuty = lmi * 0.10;
-          break;
-        case "TAS":
-          lmiStampDuty = lmi * 0.10;
-          break;
-        case "NT":
-          lmiStampDuty = lmi * 0.10;
-          break;
-        case "ACT":
-          lmiStampDuty = 0; // Abolished
-          break;
-      }
-    }
-    
-    const totalLMI = lmi + lmiStampDuty;
+    const transferFee = sd.transferFee;
 
-    const totalUpfront = stampDuty + legalFees + buildingInspection + pestInspection + 
+    const loanAmount = value - deposit;
+    const lvr = value > 0 ? (loanAmount / value) * 100 : 0;
+    const lmiResult = calculateLmi({
+      loanAmount,
+      propertyValue: value,
+      isFirstHomeBuyer: isFirstHome,
+      occupancy,
+      state: state as AusState,
+    });
+    const lmi = lmiResult.premium;
+    const lmiStampDuty = lmiResult.stampDutyOnLmi;
+    const totalLMI = lmiResult.total;
+
+    const totalUpfront = stampDuty + legalFees + buildingInspection + pestInspection +
                         loanApplicationFee + valuationFee + titleSearch + transferFee;
-    
+
     const totalWithDeposit = totalUpfront + deposit;
     const totalWithLMI = totalUpfront + totalLMI;
 

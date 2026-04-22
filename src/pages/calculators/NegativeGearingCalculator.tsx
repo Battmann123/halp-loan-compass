@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { calculateIncomeTax } from "@/lib/calculations";
 
 export default function NegativeGearingCalculator() {
   // Loan Details
@@ -60,21 +61,26 @@ export default function NegativeGearingCalculator() {
     // Pre-tax cash flow
     const preTaxCashFlow = annualRent - cashExpenses;
     
-    // Australian tax calculation (2024-25 brackets)
-    const calculateTax = (income: number) => {
-      if (income <= 18200) return 0;
-      if (income <= 45000) return (income - 18200) * 0.19;
-      if (income <= 120000) return 5092 + (income - 45000) * 0.325;
-      if (income <= 180000) return 29467 + (income - 120000) * 0.37;
-      return 51667 + (income - 180000) * 0.45;
-    };
-    
-    // Tax without property
-    const taxWithoutProperty = calculateTax(preTaxSalary);
-    
-    // Tax with property (deduct all expenses including depreciation)
-    const taxableIncomeWithProperty = preTaxSalary + annualRent - totalExpenses;
-    const taxWithProperty = calculateTax(taxableIncomeWithProperty);
+    // Australian tax — Stage 3 brackets effective 1 July 2024
+    const taxWithoutProperty = calculateIncomeTax(preTaxSalary);
+
+    // Tax with property: only the interest portion of repayments is deductible (not principal).
+    // Compute year-1 interest by simulating monthly amortisation on the reducing balance.
+    let annualInterest = 0;
+    if (loanType === "interest-only") {
+      annualInterest = annualRepayment;
+    } else {
+      let bal = loanAmount;
+      for (let m = 0; m < 12; m++) {
+        const i = bal * monthlyInterestRate;
+        annualInterest += i;
+        bal -= (monthlyRepayment - i);
+      }
+    }
+    const cashExpensesExclLoan = totalExpenses - depreciation - annualRepayment;
+    const deductibleExpenses = cashExpensesExclLoan + depreciation + annualInterest;
+    const taxableIncomeWithProperty = preTaxSalary + annualRent - deductibleExpenses;
+    const taxWithProperty = calculateIncomeTax(taxableIncomeWithProperty);
     
     // Tax benefit
     const taxBenefit = taxWithoutProperty - taxWithProperty;

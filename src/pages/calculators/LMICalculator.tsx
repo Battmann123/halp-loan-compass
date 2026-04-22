@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import { FileText, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { calculateLmi, type AusState } from "@/lib/calculations";
 
 const LMICalculator = () => {
   const { toast } = useToast();
@@ -56,114 +57,22 @@ const LMICalculator = () => {
     const lvr = (loanAmount / property) * 100;
     const depositPercentage = (depositAmount / property) * 100;
 
-    // LMI is typically required for LVR > 80%
-    let lmiAmount = 0;
-    let lmiWaivedByScheme = false;
-    
-    // Check if eligible for First Home Guarantee or similar schemes
-    // First Home Guarantee allows 5% deposit without LMI for eligible buyers
-    if (isFirstHomeBuyer === "yes" && occupancyType === "owner-occupier") {
-      if (depositPercentage >= 5 && depositPercentage < 20) {
-        // Potentially eligible for First Home Guarantee
-        lmiWaivedByScheme = true;
-      }
-    }
-    
-    if (lvr > 80) {
-      // More accurate LMI calculation based on Australian lender rates
-      // Rates vary by LVR, loan amount, and borrower type
-      let lmiRate = 0;
-      
-      // Determine loan amount tier
-      const isLowLoan = loanAmount <= 300000;
-      const isMidLoan = loanAmount > 300000 && loanAmount <= 600000;
-      const isHighLoan = loanAmount > 600000 && loanAmount <= 1000000;
-      const isVeryHighLoan = loanAmount > 1000000;
-      
-      // Adjust rates for first home buyers (typically 10-15% lower)
-      const fhbDiscount = isFirstHomeBuyer === "yes" ? 0.9 : 1.0;
-      
-      // Adjust rates for investors (typically 10-20% higher)
-      const investorMultiplier = occupancyType === "investor" ? 1.15 : 1.0;
-      
-      // Calculate base rate based on LVR tiers (approximating QBE/Genworth rates)
-      if (lvr <= 81) {
-        lmiRate = isLowLoan ? 0.0053 : isMidLoan ? 0.0056 : isHighLoan ? 0.0077 : 0.0089;
-      } else if (lvr <= 82) {
-        lmiRate = isLowLoan ? 0.0053 : isMidLoan ? 0.0056 : isHighLoan ? 0.0077 : 0.0089;
-      } else if (lvr <= 83) {
-        lmiRate = isLowLoan ? 0.0065 : isMidLoan ? 0.0084 : isHighLoan ? 0.0108 : 0.0108;
-      } else if (lvr <= 84) {
-        lmiRate = isLowLoan ? 0.0065 : isMidLoan ? 0.0084 : isHighLoan ? 0.0108 : 0.011;
-      } else if (lvr <= 85) {
-        lmiRate = isLowLoan ? 0.0086 : isMidLoan ? 0.0106 : isHighLoan ? 0.0134 : 0.0134;
-      } else if (lvr <= 86) {
-        lmiRate = isLowLoan ? 0.0089 : isMidLoan ? 0.0107 : isHighLoan ? 0.0134 : 0.0139;
-      } else if (lvr <= 87) {
-        lmiRate = isLowLoan ? 0.0103 : isMidLoan ? 0.0127 : isHighLoan ? 0.0155 : 0.0155;
-      } else if (lvr <= 88) {
-        lmiRate = isLowLoan ? 0.0103 : isMidLoan ? 0.0127 : isHighLoan ? 0.016 : 0.0179;
-      } else if (lvr <= 89) {
-        lmiRate = isLowLoan ? 0.013 : isMidLoan ? 0.0171 : isHighLoan ? 0.0215 : 0.0227;
-      } else if (lvr <= 90) {
-        lmiRate = isLowLoan ? 0.0156 : isMidLoan ? 0.0187 : isHighLoan ? 0.0231 : 0.0265;
-      } else if (lvr <= 91) {
-        lmiRate = isLowLoan ? 0.0202 : isMidLoan ? 0.0265 : isHighLoan ? 0.0353 : 0.0353;
-      } else if (lvr <= 92) {
-        lmiRate = isLowLoan ? 0.0202 : isMidLoan ? 0.0265 : isHighLoan ? 0.0353 : 0.0353;
-      } else if (lvr <= 93) {
-        lmiRate = isLowLoan ? 0.0228 : isMidLoan ? 0.0298 : isHighLoan ? 0.0381 : 0.0407;
-      } else if (lvr <= 94) {
-        lmiRate = isLowLoan ? 0.0253 : isMidLoan ? 0.0298 : isHighLoan ? 0.0419 : 0.0438;
-      } else if (lvr <= 95) {
-        lmiRate = isLowLoan ? 0.0264 : isMidLoan ? 0.033 : isHighLoan ? 0.0443 : 0.0457;
-      } else {
-        // Above 95% LVR - use highest tier
-        lmiRate = isLowLoan ? 0.0264 : isMidLoan ? 0.033 : isHighLoan ? 0.0443 : 0.0457;
-      }
-      
-      // Apply adjustments
-      lmiRate = lmiRate * fhbDiscount * investorMultiplier;
-      lmiAmount = loanAmount * lmiRate;
-    }
+    // First Home Guarantee: 5%–<20% deposit, owner-occupier FHB → LMI waived
+    const lmiWaivedByScheme =
+      isFirstHomeBuyer === "yes" &&
+      occupancyType === "owner-occupier" &&
+      depositPercentage >= 5 &&
+      depositPercentage < 20;
 
-    // Add stamp duty on LMI (varies by state)
-    let lmiStampDuty = 0;
-    let lmiStampDutyRate = 0;
-    
-    if (lmiAmount > 0 && !lmiWaivedByScheme) {
-      switch(state) {
-        case "NSW":
-          lmiStampDutyRate = 0; // No stamp duty on LMI in NSW
-          break;
-        case "VIC":
-          lmiStampDutyRate = 0.10;
-          break;
-        case "QLD":
-          lmiStampDutyRate = 0.09;
-          break;
-        case "SA":
-          lmiStampDutyRate = 0.11;
-          break;
-        case "WA":
-          lmiStampDutyRate = 0.10;
-          break;
-        case "TAS":
-          lmiStampDutyRate = 0.10;
-          break;
-        case "NT":
-          lmiStampDutyRate = 0.10;
-          break;
-        case "ACT":
-          lmiStampDutyRate = 0; // Abolished
-          break;
-        default:
-          lmiStampDutyRate = 0;
-      }
-      lmiStampDuty = lmiAmount * lmiStampDutyRate;
-    }
+    const lmi = calculateLmi({
+      loanAmount,
+      propertyValue: property,
+      isFirstHomeBuyer: isFirstHomeBuyer === "yes",
+      occupancy: occupancyType as "owner-occupier" | "investor",
+      state: state as AusState,
+    });
 
-    const totalLMICost = lmiAmount + lmiStampDuty;
+    const totalLMICost = lmi.total;
     const totalLoanWithLMI = loanAmount + totalLMICost;
     const newLVR = (totalLoanWithLMI / property) * 100;
 
@@ -172,11 +81,11 @@ const LMICalculator = () => {
       deposit: depositAmount,
       loanAmount,
       lvr,
-      lmiRequired: lvr > 80 && !lmiWaivedByScheme,
-      lmiAmount: lmiWaivedByScheme ? 0 : lmiAmount,
-      lmiAmountWithoutScheme: lmiAmount,
-      lmiStampDuty: lmiWaivedByScheme ? 0 : lmiStampDuty,
-      lmiStampDutyRate,
+      lmiRequired: lmi.required && !lmiWaivedByScheme,
+      lmiAmount: lmiWaivedByScheme ? 0 : lmi.premium,
+      lmiAmountWithoutScheme: lmi.premium,
+      lmiStampDuty: lmiWaivedByScheme ? 0 : lmi.stampDutyOnLmi,
+      lmiStampDutyRate: 0,
       totalLMICost: lmiWaivedByScheme ? 0 : totalLMICost,
       totalLoanWithLMI: lmiWaivedByScheme ? loanAmount : totalLoanWithLMI,
       newLVR: lmiWaivedByScheme ? lvr : newLVR,

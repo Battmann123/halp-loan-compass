@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { calculateIncomeTax } from "@/lib/calculations";
 
 export default function InvestmentPropertyCalculator() {
   // Property and Loan Details
@@ -84,19 +85,11 @@ export default function InvestmentPropertyCalculator() {
       annualInterest = yearlyInterest;
     }
     
-    // Tax calculation (Australian tax brackets 2024-25)
-    const calculateTax = (income: number) => {
-      if (income <= 18200) return 0;
-      if (income <= 45000) return (income - 18200) * 0.19;
-      if (income <= 120000) return 5092 + (income - 45000) * 0.325;
-      if (income <= 180000) return 29467 + (income - 120000) * 0.37;
-      return 51667 + (income - 180000) * 0.45;
-    };
-    
-    const taxWithoutProperty = calculateTax(annualSalary);
+    // Tax calculation — Australian Stage 3 brackets effective 1 July 2024
+    const taxWithoutProperty = calculateIncomeTax(annualSalary);
     const deductibleExpenses = totalExpenses + annualInterest; // Only interest is deductible
     const taxableIncomeWithProperty = annualSalary + annualRent - deductibleExpenses;
-    const taxWithProperty = calculateTax(taxableIncomeWithProperty);
+    const taxWithProperty = calculateIncomeTax(taxableIncomeWithProperty);
     const taxBenefit = taxWithoutProperty - taxWithProperty;
     
     const cashFlowAfterTax = annualCashFlow + taxBenefit;
