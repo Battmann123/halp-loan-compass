@@ -9,6 +9,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Gift, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { calculateStampDuty, type AusState } from "@/lib/calculations";
 
 const GovernmentGrantsCalculator = () => {
   const [propertyValue, setPropertyValue] = useState(650000);
@@ -21,120 +22,47 @@ const GovernmentGrantsCalculator = () => {
     let fhog = 0;
     let depositScheme = false;
     let stampDutyExemption = 0;
-    let totalGrants = 0;
+    const stateUpper = state.toUpperCase() as AusState;
 
-    // NSW
-    if (state === "nsw") {
-      // FHOG: $10,000 for new homes up to $600k, OR up to $750k if building/owner-builder
-      if (firstHomeBuyer && newProperty && propertyValue <= 750000) {
-        fhog = 10000;
-      }
+    // Stamp duty saving = (full duty as non-FHB) − (duty as FHB).
+    // This uses the same shared logic as the Stamp Duty calculator for consistency.
+    const dutyWithoutFhb = calculateStampDuty({
+      value: propertyValue,
+      state: stateUpper,
+      isFirstHomeBuyer: false,
+      occupancy: "owner-occupier",
+      category: newProperty ? "new" : "established",
+    }).duty;
+    const dutyWithFhb = calculateStampDuty({
+      value: propertyValue,
+      state: stateUpper,
+      isFirstHomeBuyer: firstHomeBuyer,
+      occupancy: "owner-occupier",
+      category: newProperty ? "new" : "established",
+    }).duty;
+    if (firstHomeBuyer) stampDutyExemption = Math.max(0, dutyWithoutFhb - dutyWithFhb);
 
-      // Transfer duty exemption: up to $800k for new/existing homes
-      if (firstHomeBuyer && propertyValue <= 800000) {
-        stampDutyExemption = propertyValue * 0.04;
-      } else if (firstHomeBuyer && propertyValue <= 1000000) {
-        // Concession available between $800k-$1M
-        stampDutyExemption = propertyValue * 0.02;
-      }
+    // First Home Owner Grant (FHOG) — varies by state, mostly new builds only
+    if (state === "nsw" && firstHomeBuyer && newProperty && propertyValue <= 750000) fhog = 10000;
+    if (state === "vic" && firstHomeBuyer && newProperty && propertyValue <= 750000) fhog = 10000;
+    if (state === "qld" && firstHomeBuyer && newProperty && propertyValue <= 750000) fhog = 30000;
+    if (state === "sa" && firstHomeBuyer && newProperty) fhog = 15000;
+    if (state === "wa" && firstHomeBuyer && newProperty && propertyValue <= 1000000) fhog = 10000;
+    if (state === "tas" && firstHomeBuyer && newProperty && propertyValue <= 750000) fhog = 10000;
+    if (state === "nt" && firstHomeBuyer) fhog = newProperty ? 50000 : 10000;
+    // ACT: no FHOG — concession applied via stamp duty exemption above
 
-      // 5% Deposit Scheme eligibility
-      const depositPercentage = (deposit / propertyValue) * 100;
-      if (firstHomeBuyer && depositPercentage >= 5 && depositPercentage < 20 && propertyValue <= 1500000) {
-        depositScheme = true;
-      }
+    // 5% Deposit Scheme (Home Guarantee Scheme) eligibility — Oct 2025 caps
+    const depositPercentage = (deposit / propertyValue) * 100;
+    if (firstHomeBuyer && depositPercentage >= 5 && depositPercentage < 20) {
+      const cap: Record<string, number> = {
+        nsw: 1500000, vic: 950000, qld: 1000000, sa: 900000,
+        wa: 850000, tas: 700000, nt: 600000, act: 1000000,
+      };
+      if (propertyValue <= (cap[state] ?? 0)) depositScheme = true;
     }
 
-    // Victoria
-    if (state === "vic") {
-      // FHOG: $10,000 for new homes up to $750k
-      if (firstHomeBuyer && newProperty && propertyValue <= 750000) {
-        fhog = 10000;
-      }
-      
-      // Stamp duty exempt up to $600k, concession $600k-$750k
-      if (firstHomeBuyer && propertyValue <= 600000) {
-        stampDutyExemption = propertyValue * 0.055;
-      } else if (firstHomeBuyer && propertyValue <= 750000) {
-        stampDutyExemption = propertyValue * 0.03;
-      }
-    }
-
-    // Queensland
-    if (state === "qld") {
-      // FHOG: $30,000 for new homes up to $750k (Nov 2023 - June 2026)
-      if (firstHomeBuyer && newProperty && propertyValue <= 750000) {
-        fhog = 30000;
-      }
-      
-      // Transfer duty concession for new homes
-      if (firstHomeBuyer && newProperty && propertyValue <= 750000) {
-        stampDutyExemption = propertyValue * 0.035;
-      }
-    }
-
-    // South Australia
-    if (state === "sa") {
-      // FHOG: $15,000 for new homes - NO property value cap (removed June 2024)
-      if (firstHomeBuyer && newProperty) {
-        fhog = 15000;
-      }
-      
-      // Stamp duty relief available (simplified calculation)
-      if (firstHomeBuyer && newProperty) {
-        stampDutyExemption = propertyValue * 0.03;
-      }
-    }
-
-    // Western Australia
-    if (state === "wa") {
-      // FHOG: $10,000 for new homes up to $750k (south of 26th parallel) or $1M (north)
-      if (firstHomeBuyer && newProperty && propertyValue <= 1000000) {
-        fhog = 10000;
-      }
-      
-      // Stamp duty concessions up to $700k (Perth/Peel) or $750k (other)
-      if (firstHomeBuyer && propertyValue <= 700000) {
-        stampDutyExemption = propertyValue * 0.04;
-      }
-    }
-
-    // Tasmania
-    if (state === "tas") {
-      // FHOG: $10,000 for new/off-the-plan properties
-      if (firstHomeBuyer && newProperty && propertyValue <= 750000) {
-        fhog = 10000;
-      }
-      
-      // 100% stamp duty discount on established homes up to $750k
-      if (firstHomeBuyer && propertyValue <= 750000) {
-        stampDutyExemption = propertyValue * 0.04;
-      }
-    }
-
-    // Northern Territory
-    if (state === "nt") {
-      // HomeGrown Territory Grant: $50,000 for new homes
-      if (firstHomeBuyer && newProperty) {
-        fhog = 50000;
-      } else if (firstHomeBuyer && !newProperty) {
-        // $10,000 for established homes
-        fhog = 10000;
-      }
-    }
-
-    // Australian Capital Territory
-    if (state === "act") {
-      // No FHOG - replaced with Home Buyer Concession Scheme (stamp duty concession)
-      fhog = 0;
-      
-      // Full stamp duty concession available
-      if (firstHomeBuyer) {
-        stampDutyExemption = propertyValue * 0.04;
-      }
-    }
-
-    totalGrants = fhog + stampDutyExemption;
+    const totalGrants = fhog + stampDutyExemption;
 
     return {
       fhog,
