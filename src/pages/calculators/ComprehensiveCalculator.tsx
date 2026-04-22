@@ -11,6 +11,7 @@ import SEO from "@/components/SEO";
 import { Calculator, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { calculateStampDuty as sharedStampDuty, calculateLmi as sharedLmi, monthlyRepayment as sharedRepayment, type AusState } from "@/lib/calculations";
 
 interface CalculationResult {
   // Loan Repayment
@@ -78,177 +79,32 @@ const ComprehensiveCalculator = () => {
   
   const [result, setResult] = useState<CalculationResult | null>(null);
 
-  const calculateStampDuty = (value: number, state: string, isFirstHome: boolean): number => {
-    let duty = 0;
-    
-    if (state === "NSW") {
-      // First Home Buyer Exemption
-      if (isFirstHome && value <= 800000) return 0;
-      
-      // NSW rates (2024-2025)
-      if (value <= 17000) {
-        duty = Math.max((value / 100) * 1.25, 20);
-      } else if (value <= 37000) {
-        duty = 212 + ((value - 17000) / 100) * 1.5;
-      } else if (value <= 99000) {
-        duty = 512 + ((value - 37000) / 100) * 1.75;
-      } else if (value <= 372000) {
-        duty = 1597 + ((value - 99000) / 100) * 3.5;
-      } else if (value <= 1240000) {
-        duty = 11152 + ((value - 372000) / 100) * 4.5;
-      } else if (value <= 3721000) {
-        duty = 50212 + ((value - 1240000) / 100) * 5.5;
-      } else {
-        duty = 186667 + ((value - 3721000) / 100) * 7.0;
-      }
-    } else if (state === "VIC") {
-      // First Home Buyer Exemption
-      if (isFirstHome && value <= 600000) return 0;
-      
-      if (value <= 25000) {
-        duty = value * 0.014;
-      } else if (value <= 130000) {
-        duty = 350 + (value - 25000) * 0.024;
-      } else if (value <= 440000) {
-        duty = 2870 + (value - 130000) * 0.05;
-      } else if (value <= 550000) {
-        duty = 18370 + (value - 440000) * 0.06;
-      } else if (value <= 960000) {
-        duty = 24970 + (value - 550000) * 0.06;
-      } else {
-        duty = 49070 + (value - 960000) * 0.055;
-      }
-    } else if (state === "QLD") {
-      // First Home Buyer Concession
-      if (isFirstHome && value <= 500000) return 0;
-      
-      if (value <= 5000) {
-        duty = 0;
-      } else if (value <= 75000) {
-        duty = (value - 5000) * 0.015;
-      } else if (value <= 540000) {
-        duty = 1050 + (value - 75000) * 0.035;
-      } else if (value <= 1000000) {
-        duty = 17325 + (value - 540000) * 0.045;
-      } else {
-        duty = 38025 + (value - 1000000) * 0.0575;
-      }
-    } else if (state === "WA") {
-      // First Home Buyer Exemption
-      if (isFirstHome && value <= 430000) return 0;
-      
-      if (value <= 120000) {
-        duty = value * 0.019;
-      } else if (value <= 150000) {
-        duty = 2280 + (value - 120000) * 0.029;
-      } else if (value <= 360000) {
-        duty = 3150 + (value - 150000) * 0.039;
-      } else if (value <= 725000) {
-        duty = 11340 + (value - 360000) * 0.049;
-      } else {
-        duty = 29225 + (value - 725000) * 0.051;
-      }
-    } else if (state === "SA") {
-      // First Home Buyer Exemption
-      if (isFirstHome && value <= 650000) return 0;
-      
-      if (value <= 12000) {
-        duty = value * 0.01;
-      } else if (value <= 30000) {
-        duty = 120 + (value - 12000) * 0.02;
-      } else if (value <= 50000) {
-        duty = 480 + (value - 30000) * 0.03;
-      } else if (value <= 100000) {
-        duty = 1080 + (value - 50000) * 0.035;
-      } else if (value <= 200000) {
-        duty = 2830 + (value - 100000) * 0.04;
-      } else if (value <= 250000) {
-        duty = 6830 + (value - 200000) * 0.04;
-      } else if (value <= 300000) {
-        duty = 8830 + (value - 250000) * 0.045;
-      } else if (value <= 500000) {
-        duty = 11080 + (value - 300000) * 0.0475;
-      } else {
-        duty = 20580 + (value - 500000) * 0.055;
-      }
-    } else if (state === "TAS") {
-      // First Home Buyer Exemption
-      if (isFirstHome && value <= 600000) return 0;
-      
-      if (value <= 3000) {
-        duty = 50;
-      } else if (value <= 25000) {
-        duty = 50 + (value - 3000) * 0.0175;
-      } else if (value <= 75000) {
-        duty = 435 + (value - 25000) * 0.022;
-      } else if (value <= 200000) {
-        duty = 1535 + (value - 75000) * 0.035;
-      } else if (value <= 375000) {
-        duty = 5910 + (value - 200000) * 0.04;
-      } else if (value <= 725000) {
-        duty = 12910 + (value - 375000) * 0.0425;
-      } else {
-        duty = 27785 + (value - 725000) * 0.045;
-      }
-    } else if (state === "ACT") {
-      // ACT uses a different system - simplified for this calculator
-      if (value <= 260000) {
-        duty = (value / 100) * 0.67;
-      } else if (value <= 300000) {
-        duty = 1742 + ((value - 260000) / 100) * 2.2;
-      } else if (value <= 500000) {
-        duty = 2622 + ((value - 300000) / 100) * 3.4;
-      } else if (value <= 750000) {
-        duty = 9422 + ((value - 500000) / 100) * 4.32;
-      } else if (value <= 1000000) {
-        duty = 20222 + ((value - 750000) / 100) * 5.9;
-      } else if (value <= 1455000) {
-        duty = 34972 + ((value - 1000000) / 100) * 6.4;
-      } else {
-        duty = 64092 + ((value - 1455000) / 100) * 4.54;
-      }
-    } else if (state === "NT") {
-      // NT rates
-      duty = (value / 1000) * 4.95 + 15;
-      if (value <= 525000) {
-        duty *= 0.7; // Concession
-      }
-    }
-    
-    return Math.round(duty);
+  // Helpers now delegate to the shared lib so all calculators stay in lockstep.
+  const calculateStampDuty = (value: number, st: string, isFirstHome: boolean): number => {
+    const occupancy = propertyType === "investor" ? "investor" : "owner-occupier";
+    return sharedStampDuty({
+      value,
+      state: st as AusState,
+      isFirstHomeBuyer: isFirstHome,
+      occupancy,
+      category: propertyType === "new" ? "new" : "established",
+    }).duty;
   };
 
-  const calculateLMI = (loanAmount: number, propertyValue: number): { required: boolean; cost: number; lvr: number } => {
-    const lvr = (loanAmount / propertyValue) * 100;
-    
-    if (lvr <= 80) {
-      return { required: false, cost: 0, lvr };
-    }
-    
-    // LMI calculation based on LVR
-    let lmiRate = 0;
-    if (lvr <= 85) lmiRate = 0.017;
-    else if (lvr <= 90) lmiRate = 0.024;
-    else if (lvr <= 95) lmiRate = 0.036;
-    
-    const lmiCost = Math.round(loanAmount * lmiRate);
-    
-    return { required: true, cost: lmiCost, lvr };
+  const calculateLMI = (loanAmount: number, propValue: number) => {
+    const occupancy = propertyType === "investor" ? "investor" : "owner-occupier";
+    const r = sharedLmi({
+      loanAmount,
+      propertyValue: propValue,
+      isFirstHomeBuyer: isFirstHomeBuyer === "yes",
+      occupancy,
+      state: state as AusState,
+    });
+    return { required: r.required, cost: r.total, lvr: r.lvr };
   };
 
-  const calculateMonthlyRepayment = (principal: number, annualRate: number, years: number, type: string): number => {
-    const monthlyRate = annualRate / 100 / 12;
-    const numPayments = years * 12;
-    
-    if (type === "interest-only") {
-      return principal * monthlyRate;
-    }
-    
-    if (monthlyRate === 0) return principal / numPayments;
-    
-    return principal * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
-           (Math.pow(1 + monthlyRate, numPayments) - 1);
-  };
+  const calculateMonthlyRepayment = (principal: number, annualRate: number, years: number, type: string): number =>
+    sharedRepayment(principal, annualRate, years, type === "interest-only" ? "interest-only" : "principal-interest");
 
   const calculateComprehensive = () => {
     const propValue = parseFloat(propertyValue) || 0;
