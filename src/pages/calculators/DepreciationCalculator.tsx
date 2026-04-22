@@ -154,6 +154,22 @@ const DepreciationCalculator = () => {
                 </div>
 
                 <div>
+                  <Label htmlFor="purchasedNew">Did you purchase the property new?</Label>
+                  <Select value={purchasedNew} onValueChange={setPurchasedNew}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes">Yes — bought brand new</SelectItem>
+                      <SelectItem value="no">No — second-hand purchase</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Since 9 May 2017, Plant &amp; Equipment is only deductible on properties bought new.
+                  </p>
+                </div>
+
+                <div>
                   <Label htmlFor="fitoutValue">Fitout/Renovations Value ($)</Label>
                   <Input
                     id="fitoutValue"
