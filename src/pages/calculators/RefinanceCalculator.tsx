@@ -12,36 +12,41 @@ const RefinanceCalculator = () => {
   const [currentLoan, setCurrentLoan] = useState("500000");
   const [currentRate, setCurrentRate] = useState("7.5");
   const [currentRepayment, setCurrentRepayment] = useState("3500");
+  const [remainingYears, setRemainingYears] = useState("25");
   const [newRate, setNewRate] = useState("6.5");
   const [refinanceCosts, setRefinanceCosts] = useState("3000");
   const [result, setResult] = useState<any>(null);
 
   const calculateRefinance = () => {
     const loan = parseFloat(currentLoan || "0");
-    const oldRate = parseFloat(currentRate || "0") / 100 / 12;
     const newRateMonthly = parseFloat(newRate || "0") / 100 / 12;
     const oldRepayment = parseFloat(currentRepayment || "0");
     const costs = parseFloat(refinanceCosts || "0");
+    const yearsLeft = parseFloat(remainingYears || "0") || 30;
 
-    // Assume 30 year term
-    const numPayments = 30 * 12;
+    // Match the new loan term to the remaining years on the current loan
+    // for a like-for-like lifetime savings comparison.
+    const numPayments = yearsLeft * 12;
 
-    // Calculate new repayment
-    const newRepayment = loan * 
-      (newRateMonthly * Math.pow(1 + newRateMonthly, numPayments)) / 
-      (Math.pow(1 + newRateMonthly, numPayments) - 1);
+    // Calculate new repayment over the remaining term
+    const newRepayment = newRateMonthly === 0
+      ? loan / numPayments
+      : loan * (newRateMonthly * Math.pow(1 + newRateMonthly, numPayments)) /
+        (Math.pow(1 + newRateMonthly, numPayments) - 1);
 
     // Monthly savings
     const monthlySaving = oldRepayment - newRepayment;
     const annualSaving = monthlySaving * 12;
 
-    // Break-even period (months)
-    const breakEvenMonths = costs / monthlySaving;
+    // Break-even period (months) — guard against zero/negative savings
+    const breakEvenMonths = monthlySaving > 0 ? costs / monthlySaving : Infinity;
 
     // 5 year savings
     const fiveYearSavings = (monthlySaving * 60) - costs;
 
-    // Total interest saved over loan term (simplified)
+    // Lifetime savings: compare interest over the SAME remaining period.
+    // Old: total of remaining repayments minus principal balance.
+    // New: total of refinanced repayments minus principal balance.
     const oldTotalInterest = (oldRepayment * numPayments) - loan;
     const newTotalInterest = (newRepayment * numPayments) - loan;
     const lifetimeSavings = oldTotalInterest - newTotalInterest - costs;
