@@ -18,43 +18,41 @@ const ServiceabilityCalculator = () => {
 
   const calculateServiceability = () => {
     const totalIncome = parseFloat(income || "0") + parseFloat(otherIncome || "0");
-    const monthlyIncome = totalIncome / 12;
+    // Approximate net (after-tax) using flat 25% effective tax for serviceability.
+    const monthlyNetIncome = (totalIncome * 0.75) / 12;
     const monthlyExpenses = parseFloat(expenses || "0");
     const monthlyLoans = parseFloat(existingLoans || "0");
     const dependentCount = parseInt(dependents || "0");
-    
-    // Basic living expenses per dependent (HEM guidelines)
-    const dependentExpenses = dependentCount * 800;
-    
+
+    // HEM proxy: ~$600/mo per dependent
+    const dependentExpenses = dependentCount * 600;
+
     // Total monthly commitments
     const totalCommitments = monthlyExpenses + monthlyLoans + dependentExpenses;
-    
-    // Available income for loan servicing (surplus)
-    const surplus = monthlyIncome - totalCommitments;
-    
-    // Assessment rate (typically 3% buffer above actual rate)
-    const assessmentRate = 0.08; // 8% assessment rate
+
+    // Surplus available to service a new loan
+    const surplus = monthlyNetIncome - totalCommitments;
+
+    // APRA buffer: assess at actual rate + 3% (assume 6.5% + 3% = 9.5%)
+    const assessmentRate = 0.095;
     const monthlyAssessmentRate = assessmentRate / 12;
-    
-    // Loan term assumption (30 years)
     const loanTermYears = 30;
     const numberOfPayments = loanTermYears * 12;
-    
-    // Maximum monthly repayment capacity (use the lower of surplus or 30% of gross income)
-    const maxRepaymentFromIncome = monthlyIncome * 0.3;
-    const maxRepayment = Math.min(surplus, maxRepaymentFromIncome);
-    
-    // Calculate maximum loan amount using loan repayment formula
-    // P = M × [1 - (1 + r)^-n] / r
-    const maxLoanAmount = maxRepayment > 0 
+
+    // Use the FULL surplus as max repayment capacity (no arbitrary 30% gross cap;
+    // lenders use surplus-based serviceability per APRA guidance).
+    const maxRepayment = Math.max(0, surplus);
+
+    // Reverse-amortisation: max loan that can be serviced by `maxRepayment` at assessment rate.
+    const maxLoanAmount = maxRepayment > 0
       ? maxRepayment * (1 - Math.pow(1 + monthlyAssessmentRate, -numberOfPayments)) / monthlyAssessmentRate
       : 0;
-    
-    // Serviceability ratio
-    const serviceabilityRatio = (totalCommitments / monthlyIncome) * 100;
-    
+
+    // Serviceability ratio = commitments / net income (lenders prefer < 70%)
+    const serviceabilityRatio = monthlyNetIncome > 0 ? (totalCommitments / monthlyNetIncome) * 100 : 0;
+
     setResult({
-      monthlyIncome,
+      monthlyIncome: monthlyNetIncome,
       totalCommitments,
       surplus: Math.max(0, surplus),
       maxRepayment: Math.max(0, maxRepayment),

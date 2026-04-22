@@ -9,6 +9,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { TrendingUp, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { monthlyRepayment } from "@/lib/calculations";
 
 const BorrowingPowerCalculator = () => {
   const [numApplicants, setNumApplicants] = useState("one");
@@ -30,20 +31,35 @@ const BorrowingPowerCalculator = () => {
     const parsedExpenses = Number(expenses) || 0;
     const parsedDebts = Number(debts) || 0;
     const parsedDependents = Number(dependents) || 0;
-    
-    const totalIncome = parsedIncome + parsedOtherIncome;
-    const monthlyIncome = totalIncome / 12;
-    const totalExpenses = parsedExpenses + parsedDebts;
-    
-    // Simple calculation: Net income after expenses * multiplier
-    // Real lenders use more complex assessments
-    const netIncome = monthlyIncome - totalExpenses;
-    const borrowingCapacity = netIncome * 12 * 5.5; // Simplified multiplier
-    
-    // Adjust for dependents
-    const adjustedCapacity = borrowingCapacity - (parsedDependents * 50000);
 
-    return Math.max(0, adjustedCapacity);
+    // Approximate net (after-tax) income using flat 25% effective tax (mid-bracket).
+    const grossAnnual = parsedIncome + parsedOtherIncome;
+    const netAnnual = grossAnnual * 0.75;
+    const monthlyNetIncome = netAnnual / 12;
+
+    // HEM-style minimum living expenses adjustment for dependents.
+    const dependentExpense = parsedDependents * 600; // ~$600/mo per dependent (HEM proxy)
+
+    // Total monthly outgoings
+    const totalOutgoings = parsedExpenses + parsedDebts + dependentExpense;
+
+    // Surplus available to service the loan
+    const monthlySurplus = Math.max(0, monthlyNetIncome - totalOutgoings);
+
+    // APRA serviceability assessment rate: actual rate + 3% buffer.
+    // Assume current rate ~6.5% → assessment rate of 9.5%.
+    const assessmentRatePct = 9.5;
+    const termYears = 30;
+
+    if (monthlySurplus <= 0) return 0;
+
+    // Reverse the standard amortisation formula: solve for principal given monthly payment.
+    const r = assessmentRatePct / 100 / 12;
+    const n = termYears * 12;
+    const maxLoan = monthlySurplus * (1 - Math.pow(1 + r, -n)) / r;
+
+    // Sanity: cap at ~7× gross to avoid unrealistic outputs from outlier inputs.
+    return Math.min(maxLoan, grossAnnual * 7);
   };
 
   const borrowingPower = calculateBorrowingPower();
