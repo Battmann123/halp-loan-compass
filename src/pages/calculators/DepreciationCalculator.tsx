@@ -13,6 +13,7 @@ const DepreciationCalculator = () => {
   const [propertyValue, setPropertyValue] = useState("650000");
   const [buildingAge, setBuildingAge] = useState("5");
   const [propertyType, setPropertyType] = useState("house");
+  const [purchasedNew, setPurchasedNew] = useState("yes"); // post-May 2017 P&E rule
   const [fitoutValue, setFitoutValue] = useState("30000");
   const [result, setResult] = useState<any>(null);
 
@@ -20,30 +21,36 @@ const DepreciationCalculator = () => {
     const value = parseFloat(propertyValue || "0");
     const age = parseFloat(buildingAge || "0");
     const fitout = parseFloat(fitoutValue || "0");
+    const isNewlyPurchased = purchasedNew === "yes";
 
     // Building Value (40-60% of property value depending on type)
     const buildingPercent = propertyType === "apartment" ? 0.6 : 0.5;
     const buildingValue = value * buildingPercent;
     const landValue = value - buildingValue;
 
-    // Capital Works Deduction (Division 43) - 2.5% per year for 40 years
-    // Only available for properties built after Sept 1987
+    // Capital Works (Division 43) — 2.5% per year for 40 years.
+    // Eligible if construction started after 17 Sept 1987 (residential).
+    // Approximate: building age must be < 40 years for the deduction to remain.
     const eligibleForCapitalWorks = age < 40;
     const capitalWorksRate = 0.025;
     const capitalWorksDeduction = eligibleForCapitalWorks ? buildingValue * capitalWorksRate : 0;
 
-    // Plant & Equipment (Division 40) - varies by item age
-    // Estimate based on fitout value or 10% of building value
-    const plantEquipmentValue = fitout > 0 ? fitout : buildingValue * 0.1;
-    
-    // Average depreciation rate for plant & equipment (typically 5-20 years)
-    // New property: ~15% first year, declining
-    // Older property: much less or zero
+    // Plant & Equipment (Division 40)
+    // POST 9 MAY 2017 RULE: Investors can NO LONGER claim P&E on second-hand
+    // residential properties. Only available if you purchased the property new
+    // (or items were installed by you after purchase).
+    const eligibleForPlantEquipment = isNewlyPurchased;
+    const plantEquipmentValue = eligibleForPlantEquipment
+      ? (fitout > 0 ? fitout : buildingValue * 0.1)
+      : 0;
+
     let plantEquipmentRate = 0;
-    if (age <= 1) plantEquipmentRate = 0.15;
-    else if (age <= 5) plantEquipmentRate = 0.10;
-    else if (age <= 10) plantEquipmentRate = 0.05;
-    else plantEquipmentRate = 0;
+    if (eligibleForPlantEquipment) {
+      if (age <= 1) plantEquipmentRate = 0.15;
+      else if (age <= 5) plantEquipmentRate = 0.10;
+      else if (age <= 10) plantEquipmentRate = 0.05;
+      else plantEquipmentRate = 0;
+    }
 
     const plantEquipmentDeduction = plantEquipmentValue * plantEquipmentRate;
 
@@ -51,7 +58,7 @@ const DepreciationCalculator = () => {
     const totalFirstYear = capitalWorksDeduction + plantEquipmentDeduction;
 
     // 10 year projection
-    const tenYearTotal = (capitalWorksDeduction * 10) + 
+    const tenYearTotal = (capitalWorksDeduction * 10) +
                          (plantEquipmentDeduction * 5); // P&E declines faster
 
     // Tax benefit (assuming 37% marginal rate)
@@ -63,6 +70,7 @@ const DepreciationCalculator = () => {
       buildingValue,
       landValue,
       eligibleForCapitalWorks,
+      eligibleForPlantEquipment,
       capitalWorksDeduction,
       plantEquipmentValue,
       plantEquipmentDeduction,
