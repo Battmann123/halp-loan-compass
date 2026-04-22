@@ -81,10 +81,11 @@ const ExtraRepaymentsCalculator = () => {
       if (balance < 0) balance = 0;
     }
 
-    // Calculate without extra repayments
+    // Calculate without extra repayments (over the same elapsed period for fair comparison)
     let totalInterestRegular;
     if (paymentType === "interest-only") {
-      // Interest-only without extra payments: pay interest forever, principal never reduces
+      // Without extras: interest-only borrowers pay full interest for the term
+      // and still owe the entire principal at the end. Compare interest paid only.
       totalInterestRegular = regularRepayment * numPayments;
     } else {
       totalInterestRegular = (regularRepayment * numPayments) - principal;

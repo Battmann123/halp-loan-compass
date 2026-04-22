@@ -129,6 +129,16 @@ const RefinanceCalculator = () => {
                         placeholder="3000"
                       />
                     </div>
+                    <div>
+                      <Label htmlFor="remainingYears">Years Remaining on Loan</Label>
+                      <Input
+                        id="remainingYears"
+                        type="number"
+                        value={remainingYears}
+                        onChange={(e) => setRemainingYears(e.target.value)}
+                        placeholder="25"
+                      />
+                    </div>
                   </div>
                 </div>
 
