@@ -325,7 +325,7 @@ const RatesFreshness = () => {
         </section>
 
         {/* Latest release */}
-        <section className="py-12">
+        <section className="py-12" ref={latestRef}>
           <div className="container mx-auto px-4 max-w-5xl">
             <Card className="border-primary/30 shadow-md">
               <CardHeader>
