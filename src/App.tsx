@@ -51,6 +51,7 @@ import Guides from "./pages/Guides";
 import Sponsors from "./pages/Sponsors";
 import StateComparison from "./pages/StateComparison";
 import InputChecklist from "./pages/InputChecklist";
+import RatesFreshness from "./pages/RatesFreshness";
 
 const queryClient = new QueryClient();
 
