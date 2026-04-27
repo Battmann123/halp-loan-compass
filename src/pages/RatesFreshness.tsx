@@ -86,6 +86,30 @@ const dataSources = [
 const categoryLabel = (c: Category) =>
   CATEGORIES.find((x) => x.value === c)?.label ?? c;
 
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const Highlight = ({ text, query }: { text: string; query: string }) => {
+  const q = query.trim();
+  if (!q) return <>{text}</>;
+  const parts = text.split(new RegExp(`(${escapeRegExp(q)})`, "gi"));
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === q.toLowerCase() ? (
+          <mark
+            key={i}
+            className="bg-primary/20 text-foreground rounded px-0.5 font-semibold"
+          >
+            {part}
+          </mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+};
+
 const RatesFreshness = () => {
   const [active, setActive] = useState<Category[]>([]);
   const [query, setQuery] = useState("");
