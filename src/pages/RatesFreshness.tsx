@@ -82,7 +82,28 @@ const dataSources = [
   { topic: "Depreciation – Plant & Equipment rules", source: "ATO – Rental properties (Div 40/43)", url: "https://www.ato.gov.au/individuals-and-families/investments-and-assets/residential-rental-properties" },
 ];
 
+const categoryLabel = (c: Category) =>
+  CATEGORIES.find((x) => x.value === c)?.label ?? c;
+
 const RatesFreshness = () => {
+  const [active, setActive] = useState<Category[]>([]);
+
+  const matches = (cats: Category[]) =>
+    active.length === 0 || cats.some((c) => active.includes(c));
+
+  const filteredLatest = useMemo(
+    () => releases[0].changed.filter((c) => matches(c.categories)),
+    [active]
+  );
+
+  const filteredHistory = useMemo(
+    () =>
+      releases
+        .map((r) => ({ ...r, changed: r.changed.filter((c) => matches(c.categories)) }))
+        .filter((r) => r.changed.length > 0),
+    [active]
+  );
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
