@@ -288,7 +288,9 @@ const RatesFreshness = () => {
                             >
                               <div className="flex items-center justify-between gap-2 flex-wrap">
                                 <div className="flex items-center gap-2">
-                                  <span className="font-medium text-sm">{r.name}</span>
+                                  <span className="font-medium text-sm">
+                                    <Highlight text={r.name} query={q} />
+                                  </span>
                                   {r.inLatest ? (
                                     <Badge className="text-[10px]">Latest</Badge>
                                   ) : (
@@ -300,7 +302,7 @@ const RatesFreshness = () => {
                                 <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary" />
                               </div>
                               <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
-                                {r.note}
+                                <Highlight text={r.note} query={q} />
                               </p>
                             </button>
                           </li>
