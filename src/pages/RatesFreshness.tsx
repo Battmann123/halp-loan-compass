@@ -88,6 +88,9 @@ const categoryLabel = (c: Category) =>
 
 const RatesFreshness = () => {
   const [active, setActive] = useState<Category[]>([]);
+  const [query, setQuery] = useState("");
+  const latestRef = useRef<HTMLDivElement>(null);
+  const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
 
   const matches = (cats: Category[]) =>
     active.length === 0 || cats.some((c) => active.includes(c));
@@ -104,6 +107,47 @@ const RatesFreshness = () => {
         .filter((r) => r.changed.length > 0),
     [active]
   );
+
+  const q = query.trim().toLowerCase();
+  const searchResults = useMemo(() => {
+    if (!q) return [];
+    const seen = new Set<string>();
+    const results: { name: string; path: string; version: string; date: string; note: string; inLatest: boolean }[] = [];
+    releases.forEach((r, idx) => {
+      r.changed.forEach((c) => {
+        if (seen.has(c.name)) return;
+        if (c.name.toLowerCase().includes(q) || c.note.toLowerCase().includes(q)) {
+          seen.add(c.name);
+          results.push({
+            name: c.name,
+            path: c.path,
+            version: r.version,
+            date: r.date,
+            note: c.note,
+            inLatest: idx === 0,
+          });
+        }
+      });
+    });
+    return results.slice(0, 8);
+  }, [q]);
+
+  const jumpToLatest = (name: string) => {
+    setActive([]);
+    setQuery("");
+    requestAnimationFrame(() => {
+      const row = rowRefs.current[name];
+      if (row) {
+        row.scrollIntoView({ behavior: "smooth", block: "center" });
+        row.classList.add("ring-2", "ring-primary", "ring-offset-2", "rounded");
+        setTimeout(() => {
+          row.classList.remove("ring-2", "ring-primary", "ring-offset-2", "rounded");
+        }, 2000);
+      } else {
+        latestRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
