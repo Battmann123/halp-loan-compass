@@ -141,6 +141,40 @@ const RatesFreshness = () => {
           </div>
         </section>
 
+        {/* Filter bar */}
+        <section className="py-8 border-b bg-background">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-primary" />
+                <h2 className="font-semibold">Filter by category</h2>
+                <span className="text-sm text-muted-foreground">
+                  {active.length === 0 ? "Showing all" : `Showing ${active.length} selected`}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 flex-wrap">
+                <ToggleGroup
+                  type="multiple"
+                  value={active}
+                  onValueChange={(v) => setActive(v as Category[])}
+                  className="flex-wrap justify-start"
+                >
+                  {CATEGORIES.map((c) => (
+                    <ToggleGroupItem key={c.value} value={c.value} aria-label={c.label} className="text-sm">
+                      {c.label}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+                {active.length > 0 && (
+                  <Button variant="ghost" size="sm" onClick={() => setActive([])}>
+                    Clear
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Latest release */}
         <section className="py-12">
           <div className="container mx-auto px-4 max-w-5xl">
@@ -164,20 +198,38 @@ const RatesFreshness = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Calculator</TableHead>
+                        <TableHead>Categories</TableHead>
                         <TableHead>What changed</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {releases[0].changed.map((c) => (
-                        <TableRow key={c.name}>
-                          <TableCell className="font-medium">
-                            <Link to={c.path} className="text-primary hover:underline">
-                              {c.name}
-                            </Link>
+                      {filteredLatest.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={3} className="text-center text-muted-foreground py-6">
+                            No changes in the latest release match the selected filters.
                           </TableCell>
-                          <TableCell className="text-muted-foreground">{c.note}</TableCell>
                         </TableRow>
-                      ))}
+                      ) : (
+                        filteredLatest.map((c) => (
+                          <TableRow key={c.name}>
+                            <TableCell className="font-medium">
+                              <Link to={c.path} className="text-primary hover:underline">
+                                {c.name}
+                              </Link>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-wrap gap-1">
+                                {c.categories.map((cat) => (
+                                  <Badge key={cat} variant="secondary" className="text-xs">
+                                    {categoryLabel(cat)}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-muted-foreground">{c.note}</TableCell>
+                          </TableRow>
+                        ))
+                      )}
                     </TableBody>
                   </Table>
                 </div>
