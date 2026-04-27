@@ -373,27 +373,27 @@ const GovernmentGrantsCalculator = () => {
                   <p className="font-semibold text-primary mb-2">Other Regions</p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm ml-4">
                     <div>
-                      <p className="text-muted-foreground">Brisbane</p>
-                      <p className="font-semibold">$700,000</p>
+                      <p className="text-muted-foreground">Brisbane / Gold Coast / Sunshine Coast</p>
+                      <p className="font-semibold">$1,000,000</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Adelaide</p>
-                      <p className="font-semibold">$600,000</p>
+                      <p className="font-semibold">$900,000</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Perth</p>
-                      <p className="font-semibold">$600,000</p>
+                      <p className="font-semibold">$850,000</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Hobart</p>
-                      <p className="font-semibold">$600,000</p>
+                      <p className="font-semibold">$700,000</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Canberra</p>
-                      <p className="font-semibold">$800,000</p>
+                      <p className="text-muted-foreground">Canberra (ACT)</p>
+                      <p className="font-semibold">$1,000,000</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Darwin</p>
+                      <p className="text-muted-foreground">Darwin / NT</p>
                       <p className="font-semibold">$600,000</p>
                     </div>
                   </div>
