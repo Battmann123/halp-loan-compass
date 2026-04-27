@@ -3,24 +3,51 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { CalendarCheck, ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { CalendarCheck, ExternalLink, RefreshCw, ShieldCheck, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useMemo, useState } from "react";
 
 const LAST_UPDATED = "27 April 2026";
 const NEXT_REVIEW = "1 July 2026";
 
-const releases = [
+type Category = "stamp-duty" | "lmi" | "grants" | "tax" | "repayments";
+
+const CATEGORIES: { value: Category; label: string }[] = [
+  { value: "stamp-duty", label: "Stamp Duty" },
+  { value: "lmi", label: "LMI" },
+  { value: "grants", label: "Grants" },
+  { value: "tax", label: "Tax" },
+  { value: "repayments", label: "Repayments" },
+];
+
+type Change = {
+  name: string;
+  path: string;
+  note: string;
+  categories: Category[];
+};
+
+type Release = {
+  version: string;
+  date: string;
+  summary: string;
+  changed: Change[];
+};
+
+const releases: Release[] = [
   {
     version: "v2.4",
     date: "27 April 2026",
     summary: "QLD stamp duty waiver (1 May 2025) and Home Guarantee Scheme October 2025 expansion applied site-wide.",
     changed: [
-      { name: "Stamp Duty Calculator", path: "/calculators/stamp-duty", note: "QLD: full waiver on new homes & vacant land for FHBs (no value cap)." },
-      { name: "Government Grants", path: "/calculators/government-grants", note: "Updated HGS caps (QLD $1M, SA $900k, WA $850k, ACT $1M) and FHOG values for NT/ACT." },
-      { name: "Upfront Costs", path: "/calculators/upfront-costs", note: "Flows through new QLD duty rules via shared lib." },
-      { name: "State Comparison", path: "/compare-states", note: "Reflects updated state-by-state duty + grant rules." },
+      { name: "Stamp Duty Calculator", path: "/calculators/stamp-duty", note: "QLD: full waiver on new homes & vacant land for FHBs (no value cap).", categories: ["stamp-duty"] },
+      { name: "Government Grants", path: "/calculators/government-grants", note: "Updated HGS caps (QLD $1M, SA $900k, WA $850k, ACT $1M) and FHOG values for NT/ACT.", categories: ["grants"] },
+      { name: "Upfront Costs", path: "/calculators/upfront-costs", note: "Flows through new QLD duty rules via shared lib.", categories: ["stamp-duty", "lmi"] },
+      { name: "State Comparison", path: "/compare-states", note: "Reflects updated state-by-state duty + grant rules.", categories: ["stamp-duty", "grants", "lmi"] },
     ],
   },
   {
@@ -28,12 +55,12 @@ const releases = [
     date: "20 April 2026",
     summary: "Centralised all formulas into src/lib/calculations.ts — single source of truth for stamp duty, LMI, tax, and repayments.",
     changed: [
-      { name: "Borrowing Power", path: "/calculators/borrowing-power", note: "APRA-style 9.5% assessment (3% buffer) + HEM-aligned expenses." },
-      { name: "Serviceability", path: "/calculators/serviceability", note: "Net surplus model replacing legacy multiplier." },
-      { name: "Capital Gains / Negative Gearing / Investment", path: "/calculators/capital-gains", note: "ATO 2024-25 Stage 3 resident brackets (16/30/37/45%)." },
-      { name: "Depreciation", path: "/calculators/depreciation", note: "New ‘Purchased new?’ toggle enforces post-2017 P&E rule." },
-      { name: "Refinance", path: "/calculators/refinance", note: "Added remaining loan term for accurate lifetime savings." },
-      { name: "LMI", path: "/calculators/lmi", note: "LVR-tier rates + state stamp duty on premium." },
+      { name: "Borrowing Power", path: "/calculators/borrowing-power", note: "APRA-style 9.5% assessment (3% buffer) + HEM-aligned expenses.", categories: ["repayments"] },
+      { name: "Serviceability", path: "/calculators/serviceability", note: "Net surplus model replacing legacy multiplier.", categories: ["repayments", "tax"] },
+      { name: "Capital Gains / Negative Gearing / Investment", path: "/calculators/capital-gains", note: "ATO 2024-25 Stage 3 resident brackets (16/30/37/45%).", categories: ["tax"] },
+      { name: "Depreciation", path: "/calculators/depreciation", note: "New ‘Purchased new?’ toggle enforces post-2017 P&E rule.", categories: ["tax"] },
+      { name: "Refinance", path: "/calculators/refinance", note: "Added remaining loan term for accurate lifetime savings.", categories: ["repayments"] },
+      { name: "LMI", path: "/calculators/lmi", note: "LVR-tier rates + state stamp duty on premium.", categories: ["lmi", "stamp-duty"] },
     ],
   },
 ];
@@ -55,7 +82,28 @@ const dataSources = [
   { topic: "Depreciation – Plant & Equipment rules", source: "ATO – Rental properties (Div 40/43)", url: "https://www.ato.gov.au/individuals-and-families/investments-and-assets/residential-rental-properties" },
 ];
 
+const categoryLabel = (c: Category) =>
+  CATEGORIES.find((x) => x.value === c)?.label ?? c;
+
 const RatesFreshness = () => {
+  const [active, setActive] = useState<Category[]>([]);
+
+  const matches = (cats: Category[]) =>
+    active.length === 0 || cats.some((c) => active.includes(c));
+
+  const filteredLatest = useMemo(
+    () => releases[0].changed.filter((c) => matches(c.categories)),
+    [active]
+  );
+
+  const filteredHistory = useMemo(
+    () =>
+      releases
+        .map((r) => ({ ...r, changed: r.changed.filter((c) => matches(c.categories)) }))
+        .filter((r) => r.changed.length > 0),
+    [active]
+  );
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
@@ -93,6 +141,40 @@ const RatesFreshness = () => {
           </div>
         </section>
 
+        {/* Filter bar */}
+        <section className="py-8 border-b bg-background">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-primary" />
+                <h2 className="font-semibold">Filter by category</h2>
+                <span className="text-sm text-muted-foreground">
+                  {active.length === 0 ? "Showing all" : `Showing ${active.length} selected`}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 flex-wrap">
+                <ToggleGroup
+                  type="multiple"
+                  value={active}
+                  onValueChange={(v) => setActive(v as Category[])}
+                  className="flex-wrap justify-start"
+                >
+                  {CATEGORIES.map((c) => (
+                    <ToggleGroupItem key={c.value} value={c.value} aria-label={c.label} className="text-sm">
+                      {c.label}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+                {active.length > 0 && (
+                  <Button variant="ghost" size="sm" onClick={() => setActive([])}>
+                    Clear
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Latest release */}
         <section className="py-12">
           <div className="container mx-auto px-4 max-w-5xl">
@@ -116,20 +198,38 @@ const RatesFreshness = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Calculator</TableHead>
+                        <TableHead>Categories</TableHead>
                         <TableHead>What changed</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {releases[0].changed.map((c) => (
-                        <TableRow key={c.name}>
-                          <TableCell className="font-medium">
-                            <Link to={c.path} className="text-primary hover:underline">
-                              {c.name}
-                            </Link>
+                      {filteredLatest.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={3} className="text-center text-muted-foreground py-6">
+                            No changes in the latest release match the selected filters.
                           </TableCell>
-                          <TableCell className="text-muted-foreground">{c.note}</TableCell>
                         </TableRow>
-                      ))}
+                      ) : (
+                        filteredLatest.map((c) => (
+                          <TableRow key={c.name}>
+                            <TableCell className="font-medium">
+                              <Link to={c.path} className="text-primary hover:underline">
+                                {c.name}
+                              </Link>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-wrap gap-1">
+                                {c.categories.map((cat) => (
+                                  <Badge key={cat} variant="secondary" className="text-xs">
+                                    {categoryLabel(cat)}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-muted-foreground">{c.note}</TableCell>
+                          </TableRow>
+                        ))
+                      )}
                     </TableBody>
                   </Table>
                 </div>
@@ -183,35 +283,56 @@ const RatesFreshness = () => {
         <section className="py-12">
           <div className="container mx-auto px-4 max-w-5xl">
             <h2 className="text-2xl font-bold mb-6">Release history</h2>
-            <Accordion type="single" collapsible className="w-full">
-              {releases.map((r) => (
-                <AccordionItem key={r.version} value={r.version}>
-                  <AccordionTrigger>
-                    <div className="flex items-center gap-3 text-left">
-                      <Badge variant="outline">{r.version}</Badge>
-                      <span className="font-medium">{r.date}</span>
-                      <span className="text-muted-foreground hidden md:inline">— {r.summary}</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <p className="text-muted-foreground mb-4 md:hidden">{r.summary}</p>
-                    <ul className="space-y-2">
-                      {r.changed.map((c) => (
-                        <li key={c.name} className="flex items-start gap-2">
-                          <span className="text-primary mt-1">•</span>
-                          <div>
-                            <Link to={c.path} className="font-medium text-primary hover:underline">
-                              {c.name}
-                            </Link>
-                            <p className="text-sm text-muted-foreground">{c.note}</p>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            {filteredHistory.length === 0 ? (
+              <Card>
+                <CardContent className="py-8 text-center text-muted-foreground">
+                  No past releases match the selected filters.{" "}
+                  <button onClick={() => setActive([])} className="text-primary hover:underline">
+                    Clear filters
+                  </button>
+                </CardContent>
+              </Card>
+            ) : (
+              <Accordion type="single" collapsible className="w-full" defaultValue={filteredHistory[0]?.version}>
+                {filteredHistory.map((r) => (
+                  <AccordionItem key={r.version} value={r.version}>
+                    <AccordionTrigger>
+                      <div className="flex items-center gap-3 text-left flex-wrap">
+                        <Badge variant="outline">{r.version}</Badge>
+                        <span className="font-medium">{r.date}</span>
+                        <Badge variant="secondary" className="text-xs">
+                          {r.changed.length} match{r.changed.length === 1 ? "" : "es"}
+                        </Badge>
+                        <span className="text-muted-foreground hidden md:inline">— {r.summary}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <p className="text-muted-foreground mb-4 md:hidden">{r.summary}</p>
+                      <ul className="space-y-3">
+                        {r.changed.map((c) => (
+                          <li key={c.name} className="flex items-start gap-2">
+                            <span className="text-primary mt-1">•</span>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <Link to={c.path} className="font-medium text-primary hover:underline">
+                                  {c.name}
+                                </Link>
+                                {c.categories.map((cat) => (
+                                  <Badge key={cat} variant="secondary" className="text-xs">
+                                    {categoryLabel(cat)}
+                                  </Badge>
+                                ))}
+                              </div>
+                              <p className="text-sm text-muted-foreground mt-1">{c.note}</p>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            )}
           </div>
         </section>
 
