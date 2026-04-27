@@ -360,7 +360,7 @@ const RatesFreshness = () => {
                         </TableRow>
                       ) : (
                         filteredLatest.map((c) => (
-                          <TableRow key={c.name}>
+                          <TableRow key={c.name} ref={(el) => (rowRefs.current[c.name] = el)}>
                             <TableCell className="font-medium">
                               <Link to={c.path} className="text-primary hover:underline">
                                 {c.name}
