@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { CalendarCheck, ExternalLink, RefreshCw, ShieldCheck, Filter } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { CalendarCheck, ExternalLink, RefreshCw, ShieldCheck, Filter, Search, X, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 const LAST_UPDATED = "27 April 2026";
 const NEXT_REVIEW = "1 July 2026";
@@ -87,6 +88,9 @@ const categoryLabel = (c: Category) =>
 
 const RatesFreshness = () => {
   const [active, setActive] = useState<Category[]>([]);
+  const [query, setQuery] = useState("");
+  const latestRef = useRef<HTMLDivElement>(null);
+  const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
 
   const matches = (cats: Category[]) =>
     active.length === 0 || cats.some((c) => active.includes(c));
@@ -103,6 +107,47 @@ const RatesFreshness = () => {
         .filter((r) => r.changed.length > 0),
     [active]
   );
+
+  const q = query.trim().toLowerCase();
+  const searchResults = useMemo(() => {
+    if (!q) return [];
+    const seen = new Set<string>();
+    const results: { name: string; path: string; version: string; date: string; note: string; inLatest: boolean }[] = [];
+    releases.forEach((r, idx) => {
+      r.changed.forEach((c) => {
+        if (seen.has(c.name)) return;
+        if (c.name.toLowerCase().includes(q) || c.note.toLowerCase().includes(q)) {
+          seen.add(c.name);
+          results.push({
+            name: c.name,
+            path: c.path,
+            version: r.version,
+            date: r.date,
+            note: c.note,
+            inLatest: idx === 0,
+          });
+        }
+      });
+    });
+    return results.slice(0, 8);
+  }, [q]);
+
+  const jumpToLatest = (name: string) => {
+    setActive([]);
+    setQuery("");
+    requestAnimationFrame(() => {
+      const row = rowRefs.current[name];
+      if (row) {
+        row.scrollIntoView({ behavior: "smooth", block: "center" });
+        row.classList.add("ring-2", "ring-primary", "ring-offset-2", "rounded");
+        setTimeout(() => {
+          row.classList.remove("ring-2", "ring-primary", "ring-offset-2", "rounded");
+        }, 2000);
+      } else {
+        latestRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -174,6 +219,77 @@ const RatesFreshness = () => {
           </Card>
         </section>
 
+        {/* Search bar */}
+        <section className="py-8 border-b bg-background">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="flex items-center gap-2 mb-3">
+              <Search className="h-4 w-4 text-primary" />
+              <h2 className="font-semibold">Find a calculator</h2>
+              <span className="text-sm text-muted-foreground">
+                Search by name or change keyword
+              </span>
+            </div>
+            <div className="relative max-w-xl">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="e.g. stamp duty, LMI, depreciation…"
+                className="pl-9 pr-9"
+                aria-label="Search calculators"
+              />
+              {query && (
+                <button
+                  onClick={() => setQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground"
+                  aria-label="Clear search"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+              {q && (
+                <Card className="absolute z-20 mt-2 w-full shadow-lg border">
+                  <CardContent className="p-2">
+                    {searchResults.length === 0 ? (
+                      <p className="text-sm text-muted-foreground py-3 px-2">
+                        No matching calculators or change notes.
+                      </p>
+                    ) : (
+                      <ul className="space-y-1">
+                        {searchResults.map((r) => (
+                          <li key={r.name}>
+                            <button
+                              onClick={() => jumpToLatest(r.name)}
+                              className="w-full text-left p-2 rounded hover:bg-muted transition-colors group"
+                            >
+                              <div className="flex items-center justify-between gap-2 flex-wrap">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium text-sm">{r.name}</span>
+                                  {r.inLatest ? (
+                                    <Badge className="text-[10px]">Latest</Badge>
+                                  ) : (
+                                    <Badge variant="outline" className="text-[10px]">
+                                      {r.version}
+                                    </Badge>
+                                  )}
+                                </div>
+                                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary" />
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                                {r.note}
+                              </p>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
+        </section>
+
         {/* Filter bar */}
         <section className="py-8 border-b bg-background">
           <div className="container mx-auto px-4 max-w-5xl">
@@ -209,7 +325,7 @@ const RatesFreshness = () => {
         </section>
 
         {/* Latest release */}
-        <section className="py-12">
+        <section className="py-12" ref={latestRef}>
           <div className="container mx-auto px-4 max-w-5xl">
             <Card className="border-primary/30 shadow-md">
               <CardHeader>
@@ -244,7 +360,7 @@ const RatesFreshness = () => {
                         </TableRow>
                       ) : (
                         filteredLatest.map((c) => (
-                          <TableRow key={c.name}>
+                          <TableRow key={c.name} ref={(el) => (rowRefs.current[c.name] = el)}>
                             <TableCell className="font-medium">
                               <Link to={c.path} className="text-primary hover:underline">
                                 {c.name}
