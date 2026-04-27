@@ -113,6 +113,7 @@ const Highlight = ({ text, query }: { text: string; query: string }) => {
 const RatesFreshness = () => {
   const [active, setActive] = useState<Category[]>([]);
   const [query, setQuery] = useState("");
+  const [searchChips, setSearchChips] = useState<Category[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const latestRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
@@ -133,34 +134,48 @@ const RatesFreshness = () => {
     [active]
   );
 
+  const toggleChip = (cat: Category) => {
+    setSearchChips((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+    setDropdownOpen(true);
+  };
+
   const q = query.trim().toLowerCase();
+  const hasSearch = q.length > 0 || searchChips.length > 0;
   const searchResults = useMemo(() => {
-    if (!q) return [];
+    if (!hasSearch) return [];
     const seen = new Set<string>();
     const results: { name: string; path: string; version: string; date: string; note: string; inLatest: boolean }[] = [];
     releases.forEach((r, idx) => {
       r.changed.forEach((c) => {
         if (seen.has(c.name)) return;
-        if (c.name.toLowerCase().includes(q) || c.note.toLowerCase().includes(q)) {
-          seen.add(c.name);
-          results.push({
-            name: c.name,
-            path: c.path,
-            version: r.version,
-            date: r.date,
-            note: c.note,
-            inLatest: idx === 0,
-          });
-        }
+        // AND logic: must match ALL chips AND keyword (if present)
+        const chipOk =
+          searchChips.length === 0 ||
+          searchChips.every((chip) => c.categories.includes(chip));
+        if (!chipOk) return;
+        const kwOk =
+          !q ||
+          c.name.toLowerCase().includes(q) ||
+          c.note.toLowerCase().includes(q);
+        if (!kwOk) return;
+        seen.add(c.name);
+        results.push({
+          name: c.name,
+          path: c.path,
+          version: r.version,
+          date: r.date,
+          note: c.note,
+          inLatest: idx === 0,
+        });
       });
     });
     return results.slice(0, 8);
-  }, [q]);
+  }, [q, searchChips, hasSearch]);
 
   const jumpToLatest = (name: string) => {
     setActive([]);
-    // Keep `query` so the highlighted keyword remains visible in the row,
-    // but close the dropdown by clearing the trimmed lookup via a flag.
     setDropdownOpen(false);
     requestAnimationFrame(() => {
       const row = rowRefs.current[name];
