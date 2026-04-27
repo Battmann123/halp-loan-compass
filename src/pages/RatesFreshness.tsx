@@ -158,7 +158,9 @@ const RatesFreshness = () => {
 
   const jumpToLatest = (name: string) => {
     setActive([]);
-    setQuery("");
+    // Keep `query` so the highlighted keyword remains visible in the row,
+    // but close the dropdown by clearing the trimmed lookup via a flag.
+    setDropdownOpen(false);
     requestAnimationFrame(() => {
       const row = rowRefs.current[name];
       if (row) {
