@@ -260,21 +260,28 @@ const RatesFreshness = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setDropdownOpen(true);
+                }}
+                onFocus={() => setDropdownOpen(true)}
                 placeholder="e.g. stamp duty, LMI, depreciation…"
                 className="pl-9 pr-9"
                 aria-label="Search calculators"
               />
               {query && (
                 <button
-                  onClick={() => setQuery("")}
+                  onClick={() => {
+                    setQuery("");
+                    setDropdownOpen(false);
+                  }}
                   className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground"
                   aria-label="Clear search"
                 >
                   <X className="h-4 w-4" />
                 </button>
               )}
-              {q && (
+              {q && dropdownOpen && (
                 <Card className="absolute z-20 mt-2 w-full shadow-lg border">
                   <CardContent className="p-2">
                     {searchResults.length === 0 ? (
