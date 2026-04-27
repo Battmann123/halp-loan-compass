@@ -91,39 +91,39 @@ const GovernmentGrantsCalculator = () => {
       },
       qld: {
         fhog: 30000,
-        limit: 750000,
-        stampLimit: 750000,
-        depositScheme: 700000,
+        limit: 750000,                 // FHOG cap (total value, new builds)
+        stampLimit: 0,                 // From 1 May 2025: no cap on new homes / vacant land
+        depositScheme: 1000000,        // HGS cap from 1 Oct 2025 (Brisbane / GC / SC)
       },
       sa: {
         fhog: 15000,
-        limit: 0, // No cap as of June 2024
+        limit: 0,                      // No cap as of Feb 2025
         stampLimit: 0,
-        depositScheme: 600000,
+        depositScheme: 900000,         // HGS cap from 1 Oct 2025 (Adelaide)
       },
       wa: {
         fhog: 10000,
-        limit: 1000000, // $1M north, $750k south
-        stampLimit: 700000,
-        depositScheme: 600000,
+        limit: 1000000,                // $1M north, $750k south
+        stampLimit: 700000,            // FHB sliding scale top (established)
+        depositScheme: 850000,         // HGS cap from 1 Oct 2025 (Perth)
       },
       tas: {
         fhog: 10000,
         limit: 750000,
         stampLimit: 750000,
-        depositScheme: 600000,
+        depositScheme: 700000,         // HGS cap from 1 Oct 2025 (Hobart)
       },
       nt: {
-        fhog: 50000, // $50k for new, $10k for established
+        fhog: 50000,                   // $50k for new, $10k for established
         limit: 0,
-        stampLimit: 0,
+        stampLimit: 650000,            // FHB reduction up to $650k
         depositScheme: 600000,
       },
       act: {
-        fhog: 0, // No FHOG - Home Buyer Concession Scheme instead
+        fhog: 0,                       // No FHOG — Home Buyer Concession Scheme instead
         limit: 0,
-        stampLimit: 0,
-        depositScheme: 800000,
+        stampLimit: 1020000,           // Full HBCS exemption ≤ $1.02M (PPR)
+        depositScheme: 1000000,        // HGS cap from 1 Oct 2025
       },
     };
     return details[state as keyof typeof details];
@@ -373,27 +373,27 @@ const GovernmentGrantsCalculator = () => {
                   <p className="font-semibold text-primary mb-2">Other Regions</p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm ml-4">
                     <div>
-                      <p className="text-muted-foreground">Brisbane</p>
-                      <p className="font-semibold">$700,000</p>
+                      <p className="text-muted-foreground">Brisbane / Gold Coast / Sunshine Coast</p>
+                      <p className="font-semibold">$1,000,000</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Adelaide</p>
-                      <p className="font-semibold">$600,000</p>
+                      <p className="font-semibold">$900,000</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Perth</p>
-                      <p className="font-semibold">$600,000</p>
+                      <p className="font-semibold">$850,000</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Hobart</p>
-                      <p className="font-semibold">$600,000</p>
+                      <p className="font-semibold">$700,000</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Canberra</p>
-                      <p className="font-semibold">$800,000</p>
+                      <p className="text-muted-foreground">Canberra (ACT)</p>
+                      <p className="font-semibold">$1,000,000</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Darwin</p>
+                      <p className="text-muted-foreground">Darwin / NT</p>
                       <p className="font-semibold">$600,000</p>
                     </div>
                   </div>

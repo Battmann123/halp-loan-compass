@@ -262,9 +262,9 @@ const StampDutyCalculator = () => {
               <div>
                 <h3 className="font-semibold mb-2">New South Wales</h3>
                 <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>• Full exemption: New homes up to $800,000</li>
-                  <li>• Partial exemption: $800,001 - $1,000,000</li>
-                  <li>• Existing homes: Up to $650,000</li>
+                  <li>• Full exemption: New or established up to $800,000</li>
+                  <li>• Partial concession: $800,001 – $1,000,000</li>
+                  <li>• Vacant land: full exemption to $350,000, sliding to $450,000</li>
                 </ul>
               </div>
 
@@ -272,7 +272,7 @@ const StampDutyCalculator = () => {
                 <h3 className="font-semibold mb-2">Victoria</h3>
                 <ul className="text-sm space-y-1 text-muted-foreground">
                   <li>• Full exemption: Up to $600,000</li>
-                  <li>• Partial exemption: $600,001 - $750,000</li>
+                  <li>• Partial concession: $600,001 – $750,000</li>
                   <li>• Principal place of residence only</li>
                 </ul>
               </div>
@@ -280,18 +280,36 @@ const StampDutyCalculator = () => {
               <div>
                 <h3 className="font-semibold mb-2">Queensland</h3>
                 <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>• Full exemption: Up to $500,000</li>
-                  <li>• Partial concession: $500,001 - $550,000</li>
-                  <li>• New or established homes</li>
+                  <li>• <strong>From 1 May 2025:</strong> $0 duty on new homes &amp; vacant land — no value cap</li>
+                  <li>• Established homes: sliding concession up to $800,000</li>
+                  <li>• Must move in within 12 months and live there for 6 months</li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-semibold mb-2">South Australia</h3>
                 <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>• Full exemption: Up to $650,000</li>
-                  <li>• Partial concession available</li>
+                  <li>• Full exemption on new builds — no value cap (Feb 2025)</li>
+                  <li>• Established homes: standard rates apply</li>
                   <li>• Must occupy within 12 months</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Western Australia</h3>
+                <ul className="text-sm space-y-1 text-muted-foreground">
+                  <li>• Full exemption: Up to $500,000 (sliding to $700,000)</li>
+                  <li>• Vacant land: full to $350,000, sliding to $450,000</li>
+                  <li>• Effective 21 March 2025</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">ACT, TAS &amp; NT</h3>
+                <ul className="text-sm space-y-1 text-muted-foreground">
+                  <li>• <strong>ACT:</strong> Full HBCS exemption ≤ $1,020,000 (PPR)</li>
+                  <li>• <strong>TAS:</strong> Full exemption on established homes ≤ $750,000</li>
+                  <li>• <strong>NT:</strong> Up to $18,601 reduction for properties ≤ $650,000</li>
                 </ul>
               </div>
             </div>
