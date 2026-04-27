@@ -61,7 +61,7 @@ const RatesFreshness = () => {
       <SEO
         title="Formula & Rates Freshness | HALP Home Loans"
         description="See when our calculator formulas, tax rates, stamp duty and grant data were last updated, with source links and recent change history."
-        canonicalUrl="/rates-freshness"
+        canonical="/rates-freshness"
       />
       <Navigation />
 
