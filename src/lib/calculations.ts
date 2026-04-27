@@ -1,6 +1,17 @@
 /**
  * Shared calculation helpers used across all calculators.
- * Source of truth for: stamp duty, LMI, Australian tax (2024-25 Stage 3), and loan repayments.
+ * Source of truth for: stamp duty, LMI, Australian tax (Stage 3 — 2024-25 & 2025-26
+ * brackets are identical), and loan repayments.
+ *
+ * Last reviewed: April 2026. Reflects:
+ *   • 2025-26 ATO resident tax rates (unchanged from 2024-25 Stage 3)
+ *   • Home Guarantee Scheme caps effective 1 October 2025 (no income/place caps)
+ *   • QLD: full FHB stamp duty waiver on new homes & vacant land from 1 May 2025
+ *   • QLD FHOG: $30,000 extended to 30 June 2026 (≤ $750k total value, new builds)
+ *   • VIC FHB: full exemption ≤ $600k, sliding $600k–$750k
+ *   • WA FHB thresholds effective 21 March 2025
+ *   • ACT FHB Home Buyer Concession: full exemption ≤ $1,020,000 (PPR)
+ *   • SA FHB: no value cap on new builds (Feb 2025)
  *
  * IMPORTANT: All calculator pages must import from here so results stay consistent.
  */
@@ -156,23 +167,30 @@ export const calculateStampDuty = (input: StampDutyInput): StampDutyResult => {
         else if (value <= 1000000) duty = 17325 + (value - 540000) * 0.045;
         else duty = 38025 + (value - 1000000) * 0.0575;
       }
-      // QLD FHB concession (sliding to $800k from 9 June 2024)
+      // QLD FHB concession
+      // From 1 May 2025: full waiver on NEW homes & vacant land (no value cap)
+      // Existing homes still use the sliding scale to $800k (effective 9 June 2024)
       if (isFhb && isPpr) {
-        let fhbConc = 0;
-        if (value <= 709999.99) fhbConc = 17350;
-        else if (value <= 719999.99) fhbConc = 15615;
-        else if (value <= 729999.99) fhbConc = 13880;
-        else if (value <= 739999.99) fhbConc = 12145;
-        else if (value <= 749999.99) fhbConc = 10410;
-        else if (value <= 759999.99) fhbConc = 8675;
-        else if (value <= 769999.99) fhbConc = 6940;
-        else if (value <= 779999.99) fhbConc = 5205;
-        else if (value <= 789999.99) fhbConc = 3470;
-        else if (value <= 799999.99) fhbConc = 1735;
-        if (fhbConc > 0) {
-          const before = duty;
-          duty = Math.max(0, duty - fhbConc);
-          concession = before - duty;
+        if (category === "new" || category === "vacant") {
+          concession = duty;
+          duty = 0;
+        } else {
+          let fhbConc = 0;
+          if (value <= 709999.99) fhbConc = 17350;
+          else if (value <= 719999.99) fhbConc = 15615;
+          else if (value <= 729999.99) fhbConc = 13880;
+          else if (value <= 739999.99) fhbConc = 12145;
+          else if (value <= 749999.99) fhbConc = 10410;
+          else if (value <= 759999.99) fhbConc = 8675;
+          else if (value <= 769999.99) fhbConc = 6940;
+          else if (value <= 779999.99) fhbConc = 5205;
+          else if (value <= 789999.99) fhbConc = 3470;
+          else if (value <= 799999.99) fhbConc = 1735;
+          if (fhbConc > 0) {
+            const before = duty;
+            duty = Math.max(0, duty - fhbConc);
+            concession = before - duty;
+          }
         }
       }
       if (foreignPurchaser) foreignSurcharge = value * 0.07;
