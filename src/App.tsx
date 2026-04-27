@@ -49,6 +49,8 @@ import LenderComparisonGuide from "./pages/guides/LenderComparisonGuide";
 import FAQ from "./pages/FAQ";
 import Guides from "./pages/Guides";
 import Sponsors from "./pages/Sponsors";
+import StateComparison from "./pages/StateComparison";
+import InputChecklist from "./pages/InputChecklist";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +102,8 @@ const App = () => (
           <Route path="/faq" element={<FAQ />} />
           <Route path="/guides" element={<Guides />} />
           <Route path="/sponsors" element={<Sponsors />} />
+          <Route path="/compare-states" element={<StateComparison />} />
+          <Route path="/input-checklist" element={<InputChecklist />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
           <Route path="/apply" element={<Apply />} />
           <Route path="/privacy" element={<Privacy />} />
