@@ -105,6 +105,7 @@ const App = () => (
           <Route path="/sponsors" element={<Sponsors />} />
           <Route path="/compare-states" element={<StateComparison />} />
           <Route path="/input-checklist" element={<InputChecklist />} />
+          <Route path="/rates-freshness" element={<RatesFreshness />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
           <Route path="/apply" element={<Apply />} />
           <Route path="/privacy" element={<Privacy />} />
