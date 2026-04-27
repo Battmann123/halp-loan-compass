@@ -219,6 +219,77 @@ const RatesFreshness = () => {
           </Card>
         </section>
 
+        {/* Search bar */}
+        <section className="py-8 border-b bg-background">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="flex items-center gap-2 mb-3">
+              <Search className="h-4 w-4 text-primary" />
+              <h2 className="font-semibold">Find a calculator</h2>
+              <span className="text-sm text-muted-foreground">
+                Search by name or change keyword
+              </span>
+            </div>
+            <div className="relative max-w-xl">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="e.g. stamp duty, LMI, depreciation…"
+                className="pl-9 pr-9"
+                aria-label="Search calculators"
+              />
+              {query && (
+                <button
+                  onClick={() => setQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground"
+                  aria-label="Clear search"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+              {q && (
+                <Card className="absolute z-20 mt-2 w-full shadow-lg border">
+                  <CardContent className="p-2">
+                    {searchResults.length === 0 ? (
+                      <p className="text-sm text-muted-foreground py-3 px-2">
+                        No matching calculators or change notes.
+                      </p>
+                    ) : (
+                      <ul className="space-y-1">
+                        {searchResults.map((r) => (
+                          <li key={r.name}>
+                            <button
+                              onClick={() => jumpToLatest(r.name)}
+                              className="w-full text-left p-2 rounded hover:bg-muted transition-colors group"
+                            >
+                              <div className="flex items-center justify-between gap-2 flex-wrap">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium text-sm">{r.name}</span>
+                                  {r.inLatest ? (
+                                    <Badge className="text-[10px]">Latest</Badge>
+                                  ) : (
+                                    <Badge variant="outline" className="text-[10px]">
+                                      {r.version}
+                                    </Badge>
+                                  )}
+                                </div>
+                                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary" />
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                                {r.note}
+                              </p>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
+        </section>
+
         {/* Filter bar */}
         <section className="py-8 border-b bg-background">
           <div className="container mx-auto px-4 max-w-5xl">
