@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Input } from "@/components/ui/input";
-import { CalendarCheck, ExternalLink, RefreshCw, ShieldCheck, Filter, Search, X, ArrowRight } from "lucide-react";
+import { CalendarCheck, ExternalLink, RefreshCw, ShieldCheck, Filter, Search, X, ArrowRight, Plus, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMemo, useRef, useState } from "react";
 
@@ -113,6 +113,7 @@ const Highlight = ({ text, query }: { text: string; query: string }) => {
 const RatesFreshness = () => {
   const [active, setActive] = useState<Category[]>([]);
   const [query, setQuery] = useState("");
+  const [searchChips, setSearchChips] = useState<Category[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const latestRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
@@ -133,34 +134,48 @@ const RatesFreshness = () => {
     [active]
   );
 
+  const toggleChip = (cat: Category) => {
+    setSearchChips((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+    setDropdownOpen(true);
+  };
+
   const q = query.trim().toLowerCase();
+  const hasSearch = q.length > 0 || searchChips.length > 0;
   const searchResults = useMemo(() => {
-    if (!q) return [];
+    if (!hasSearch) return [];
     const seen = new Set<string>();
     const results: { name: string; path: string; version: string; date: string; note: string; inLatest: boolean }[] = [];
     releases.forEach((r, idx) => {
       r.changed.forEach((c) => {
         if (seen.has(c.name)) return;
-        if (c.name.toLowerCase().includes(q) || c.note.toLowerCase().includes(q)) {
-          seen.add(c.name);
-          results.push({
-            name: c.name,
-            path: c.path,
-            version: r.version,
-            date: r.date,
-            note: c.note,
-            inLatest: idx === 0,
-          });
-        }
+        // AND logic: must match ALL chips AND keyword (if present)
+        const chipOk =
+          searchChips.length === 0 ||
+          searchChips.every((chip) => c.categories.includes(chip));
+        if (!chipOk) return;
+        const kwOk =
+          !q ||
+          c.name.toLowerCase().includes(q) ||
+          c.note.toLowerCase().includes(q);
+        if (!kwOk) return;
+        seen.add(c.name);
+        results.push({
+          name: c.name,
+          path: c.path,
+          version: r.version,
+          date: r.date,
+          note: c.note,
+          inLatest: idx === 0,
+        });
       });
     });
     return results.slice(0, 8);
-  }, [q]);
+  }, [q, searchChips, hasSearch]);
 
   const jumpToLatest = (name: string) => {
     setActive([]);
-    // Keep `query` so the highlighted keyword remains visible in the row,
-    // but close the dropdown by clearing the trimmed lookup via a flag.
     setDropdownOpen(false);
     requestAnimationFrame(() => {
       const row = rowRefs.current[name];
@@ -249,13 +264,14 @@ const RatesFreshness = () => {
         {/* Search bar */}
         <section className="py-8 border-b bg-background">
           <div className="container mx-auto px-4 max-w-5xl">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
               <Search className="h-4 w-4 text-primary" />
               <h2 className="font-semibold">Find a calculator</h2>
               <span className="text-sm text-muted-foreground">
-                Search by name or change keyword
+                Combine category chips with a keyword to narrow results
               </span>
             </div>
+
             <div className="relative max-w-xl">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
@@ -265,14 +281,15 @@ const RatesFreshness = () => {
                   setDropdownOpen(true);
                 }}
                 onFocus={() => setDropdownOpen(true)}
-                placeholder="e.g. stamp duty, LMI, depreciation…"
+                placeholder="e.g. depreciation, waiver, HEM…"
                 className="pl-9 pr-9"
                 aria-label="Search calculators"
               />
-              {query && (
+              {(query || searchChips.length > 0) && (
                 <button
                   onClick={() => {
                     setQuery("");
+                    setSearchChips([]);
                     setDropdownOpen(false);
                   }}
                   className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground"
@@ -281,7 +298,62 @@ const RatesFreshness = () => {
                   <X className="h-4 w-4" />
                 </button>
               )}
-              {q && dropdownOpen && (
+
+              {/* Chip toggles */}
+              <div className="flex flex-wrap items-center gap-2 mt-3">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Categories
+                </span>
+                {CATEGORIES.map((c) => {
+                  const isOn = searchChips.includes(c.value);
+                  return (
+                    <button
+                      key={c.value}
+                      onClick={() => toggleChip(c.value)}
+                      aria-pressed={isOn}
+                      className={
+                        "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors " +
+                        (isOn
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-background text-foreground border-input hover:bg-muted")
+                      }
+                    >
+                      {isOn ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
+                      {c.label}
+                    </button>
+                  );
+                })}
+                {searchChips.length > 0 && (
+                  <button
+                    onClick={() => setSearchChips([])}
+                    className="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
+                  >
+                    Clear chips
+                  </button>
+                )}
+              </div>
+
+              {/* Active filter summary */}
+              {hasSearch && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  {searchResults.length} match{searchResults.length === 1 ? "" : "es"}
+                  {searchChips.length > 0 && (
+                    <>
+                      {" "}in{" "}
+                      <span className="font-medium text-foreground">
+                        {searchChips.map(categoryLabel).join(" + ")}
+                      </span>
+                    </>
+                  )}
+                  {q && (
+                    <>
+                      {" "}for "<span className="font-medium text-foreground">{query.trim()}</span>"
+                    </>
+                  )}
+                </p>
+              )}
+
+              {hasSearch && dropdownOpen && (
                 <Card className="absolute z-20 mt-2 w-full shadow-lg border">
                   <CardContent className="p-2">
                     {searchResults.length === 0 ? (
