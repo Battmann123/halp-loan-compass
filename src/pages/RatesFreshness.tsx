@@ -113,6 +113,7 @@ const Highlight = ({ text, query }: { text: string; query: string }) => {
 const RatesFreshness = () => {
   const [active, setActive] = useState<Category[]>([]);
   const [query, setQuery] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const latestRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
 
