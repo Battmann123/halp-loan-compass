@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { CalendarCheck, ExternalLink, RefreshCw, ShieldCheck, Filter } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { CalendarCheck, ExternalLink, RefreshCw, ShieldCheck, Filter, Search, X, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 const LAST_UPDATED = "27 April 2026";
 const NEXT_REVIEW = "1 July 2026";
