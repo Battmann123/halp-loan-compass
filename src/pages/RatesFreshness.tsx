@@ -283,35 +283,56 @@ const RatesFreshness = () => {
         <section className="py-12">
           <div className="container mx-auto px-4 max-w-5xl">
             <h2 className="text-2xl font-bold mb-6">Release history</h2>
-            <Accordion type="single" collapsible className="w-full">
-              {releases.map((r) => (
-                <AccordionItem key={r.version} value={r.version}>
-                  <AccordionTrigger>
-                    <div className="flex items-center gap-3 text-left">
-                      <Badge variant="outline">{r.version}</Badge>
-                      <span className="font-medium">{r.date}</span>
-                      <span className="text-muted-foreground hidden md:inline">— {r.summary}</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <p className="text-muted-foreground mb-4 md:hidden">{r.summary}</p>
-                    <ul className="space-y-2">
-                      {r.changed.map((c) => (
-                        <li key={c.name} className="flex items-start gap-2">
-                          <span className="text-primary mt-1">•</span>
-                          <div>
-                            <Link to={c.path} className="font-medium text-primary hover:underline">
-                              {c.name}
-                            </Link>
-                            <p className="text-sm text-muted-foreground">{c.note}</p>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            {filteredHistory.length === 0 ? (
+              <Card>
+                <CardContent className="py-8 text-center text-muted-foreground">
+                  No past releases match the selected filters.{" "}
+                  <button onClick={() => setActive([])} className="text-primary hover:underline">
+                    Clear filters
+                  </button>
+                </CardContent>
+              </Card>
+            ) : (
+              <Accordion type="single" collapsible className="w-full" defaultValue={filteredHistory[0]?.version}>
+                {filteredHistory.map((r) => (
+                  <AccordionItem key={r.version} value={r.version}>
+                    <AccordionTrigger>
+                      <div className="flex items-center gap-3 text-left flex-wrap">
+                        <Badge variant="outline">{r.version}</Badge>
+                        <span className="font-medium">{r.date}</span>
+                        <Badge variant="secondary" className="text-xs">
+                          {r.changed.length} match{r.changed.length === 1 ? "" : "es"}
+                        </Badge>
+                        <span className="text-muted-foreground hidden md:inline">— {r.summary}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <p className="text-muted-foreground mb-4 md:hidden">{r.summary}</p>
+                      <ul className="space-y-3">
+                        {r.changed.map((c) => (
+                          <li key={c.name} className="flex items-start gap-2">
+                            <span className="text-primary mt-1">•</span>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <Link to={c.path} className="font-medium text-primary hover:underline">
+                                  {c.name}
+                                </Link>
+                                {c.categories.map((cat) => (
+                                  <Badge key={cat} variant="secondary" className="text-xs">
+                                    {categoryLabel(cat)}
+                                  </Badge>
+                                ))}
+                              </div>
+                              <p className="text-sm text-muted-foreground mt-1">{c.note}</p>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            )}
           </div>
         </section>
 
