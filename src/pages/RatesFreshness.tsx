@@ -86,9 +86,34 @@ const dataSources = [
 const categoryLabel = (c: Category) =>
   CATEGORIES.find((x) => x.value === c)?.label ?? c;
 
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const Highlight = ({ text, query }: { text: string; query: string }) => {
+  const q = query.trim();
+  if (!q) return <>{text}</>;
+  const parts = text.split(new RegExp(`(${escapeRegExp(q)})`, "gi"));
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === q.toLowerCase() ? (
+          <mark
+            key={i}
+            className="bg-primary/20 text-foreground rounded px-0.5 font-semibold"
+          >
+            {part}
+          </mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+};
+
 const RatesFreshness = () => {
   const [active, setActive] = useState<Category[]>([]);
   const [query, setQuery] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const latestRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
 
@@ -134,7 +159,9 @@ const RatesFreshness = () => {
 
   const jumpToLatest = (name: string) => {
     setActive([]);
-    setQuery("");
+    // Keep `query` so the highlighted keyword remains visible in the row,
+    // but close the dropdown by clearing the trimmed lookup via a flag.
+    setDropdownOpen(false);
     requestAnimationFrame(() => {
       const row = rowRefs.current[name];
       if (row) {
@@ -233,21 +260,28 @@ const RatesFreshness = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setDropdownOpen(true);
+                }}
+                onFocus={() => setDropdownOpen(true)}
                 placeholder="e.g. stamp duty, LMI, depreciation…"
                 className="pl-9 pr-9"
                 aria-label="Search calculators"
               />
               {query && (
                 <button
-                  onClick={() => setQuery("")}
+                  onClick={() => {
+                    setQuery("");
+                    setDropdownOpen(false);
+                  }}
                   className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground"
                   aria-label="Clear search"
                 >
                   <X className="h-4 w-4" />
                 </button>
               )}
-              {q && (
+              {q && dropdownOpen && (
                 <Card className="absolute z-20 mt-2 w-full shadow-lg border">
                   <CardContent className="p-2">
                     {searchResults.length === 0 ? (
@@ -264,7 +298,9 @@ const RatesFreshness = () => {
                             >
                               <div className="flex items-center justify-between gap-2 flex-wrap">
                                 <div className="flex items-center gap-2">
-                                  <span className="font-medium text-sm">{r.name}</span>
+                                  <span className="font-medium text-sm">
+                                    <Highlight text={r.name} query={q} />
+                                  </span>
                                   {r.inLatest ? (
                                     <Badge className="text-[10px]">Latest</Badge>
                                   ) : (
@@ -276,7 +312,7 @@ const RatesFreshness = () => {
                                 <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary" />
                               </div>
                               <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
-                                {r.note}
+                                <Highlight text={r.note} query={q} />
                               </p>
                             </button>
                           </li>
@@ -363,7 +399,7 @@ const RatesFreshness = () => {
                           <TableRow key={c.name} ref={(el) => (rowRefs.current[c.name] = el)}>
                             <TableCell className="font-medium">
                               <Link to={c.path} className="text-primary hover:underline">
-                                {c.name}
+                                <Highlight text={c.name} query={q} />
                               </Link>
                             </TableCell>
                             <TableCell>
@@ -375,7 +411,9 @@ const RatesFreshness = () => {
                                 ))}
                               </div>
                             </TableCell>
-                            <TableCell className="text-muted-foreground">{c.note}</TableCell>
+                            <TableCell className="text-muted-foreground">
+                              <Highlight text={c.note} query={q} />
+                            </TableCell>
                           </TableRow>
                         ))
                       )}
