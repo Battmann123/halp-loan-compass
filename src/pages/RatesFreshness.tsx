@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Input } from "@/components/ui/input";
-import { CalendarCheck, ExternalLink, RefreshCw, ShieldCheck, Filter, Search, X, ArrowRight } from "lucide-react";
+import { CalendarCheck, ExternalLink, RefreshCw, ShieldCheck, Filter, Search, X, ArrowRight, Plus, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMemo, useRef, useState } from "react";
 
