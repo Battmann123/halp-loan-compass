@@ -36,6 +36,7 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Legal</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link to="/rates-freshness" className="hover:text-primary transition-colors">Rates & Formula Freshness</Link></li>
               <li><Link to="/disclaimer" className="hover:text-primary transition-colors">Disclaimer</Link></li>
               <li><Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link></li>
