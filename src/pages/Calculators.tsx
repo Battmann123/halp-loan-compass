@@ -242,6 +242,46 @@ const Calculators = () => {
             </Card>
           </Link>
 
+          {/* Helper tools */}
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
+            <Link to="/compare-states" className="block">
+              <Card className="h-full border-2 hover:border-primary transition-all hover:shadow-xl cursor-pointer group bg-gradient-to-br from-primary/5 to-transparent">
+                <CardContent className="p-6 flex items-start gap-4">
+                  <div className="bg-primary/10 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                    <Scale className="h-8 w-8 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-semibold mb-1 group-hover:text-primary transition-colors">
+                      Compare States & Territories
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      Toggle states to instantly see differences in stamp duty, LMI and grants
+                      for the same property.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link to="/input-checklist" className="block">
+              <Card className="h-full border-2 hover:border-primary transition-all hover:shadow-xl cursor-pointer group bg-gradient-to-br from-accent/5 to-transparent">
+                <CardContent className="p-6 flex items-start gap-4">
+                  <div className="bg-accent/10 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                    <FileText className="h-8 w-8 text-accent" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-semibold mb-1 group-hover:text-primary transition-colors">
+                      Input Checklist
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      See exactly what each calculator needs (including new toggles) and get
+                      warnings when required inputs are missing.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+
           {/* Calculator Categories */}
           {calculatorCategories.map((category, categoryIndex) => (
             <div key={categoryIndex} className="mb-12">
