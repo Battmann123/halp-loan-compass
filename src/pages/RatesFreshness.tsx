@@ -3,24 +3,51 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { CalendarCheck, ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { CalendarCheck, ExternalLink, RefreshCw, ShieldCheck, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useMemo, useState } from "react";
 
 const LAST_UPDATED = "27 April 2026";
 const NEXT_REVIEW = "1 July 2026";
 
-const releases = [
+type Category = "stamp-duty" | "lmi" | "grants" | "tax" | "repayments";
+
+const CATEGORIES: { value: Category; label: string }[] = [
+  { value: "stamp-duty", label: "Stamp Duty" },
+  { value: "lmi", label: "LMI" },
+  { value: "grants", label: "Grants" },
+  { value: "tax", label: "Tax" },
+  { value: "repayments", label: "Repayments" },
+];
+
+type Change = {
+  name: string;
+  path: string;
+  note: string;
+  categories: Category[];
+};
+
+type Release = {
+  version: string;
+  date: string;
+  summary: string;
+  changed: Change[];
+};
+
+const releases: Release[] = [
   {
     version: "v2.4",
     date: "27 April 2026",
     summary: "QLD stamp duty waiver (1 May 2025) and Home Guarantee Scheme October 2025 expansion applied site-wide.",
     changed: [
-      { name: "Stamp Duty Calculator", path: "/calculators/stamp-duty", note: "QLD: full waiver on new homes & vacant land for FHBs (no value cap)." },
-      { name: "Government Grants", path: "/calculators/government-grants", note: "Updated HGS caps (QLD $1M, SA $900k, WA $850k, ACT $1M) and FHOG values for NT/ACT." },
-      { name: "Upfront Costs", path: "/calculators/upfront-costs", note: "Flows through new QLD duty rules via shared lib." },
-      { name: "State Comparison", path: "/compare-states", note: "Reflects updated state-by-state duty + grant rules." },
+      { name: "Stamp Duty Calculator", path: "/calculators/stamp-duty", note: "QLD: full waiver on new homes & vacant land for FHBs (no value cap).", categories: ["stamp-duty"] },
+      { name: "Government Grants", path: "/calculators/government-grants", note: "Updated HGS caps (QLD $1M, SA $900k, WA $850k, ACT $1M) and FHOG values for NT/ACT.", categories: ["grants"] },
+      { name: "Upfront Costs", path: "/calculators/upfront-costs", note: "Flows through new QLD duty rules via shared lib.", categories: ["stamp-duty", "lmi"] },
+      { name: "State Comparison", path: "/compare-states", note: "Reflects updated state-by-state duty + grant rules.", categories: ["stamp-duty", "grants", "lmi"] },
     ],
   },
   {
@@ -28,12 +55,12 @@ const releases = [
     date: "20 April 2026",
     summary: "Centralised all formulas into src/lib/calculations.ts — single source of truth for stamp duty, LMI, tax, and repayments.",
     changed: [
-      { name: "Borrowing Power", path: "/calculators/borrowing-power", note: "APRA-style 9.5% assessment (3% buffer) + HEM-aligned expenses." },
-      { name: "Serviceability", path: "/calculators/serviceability", note: "Net surplus model replacing legacy multiplier." },
-      { name: "Capital Gains / Negative Gearing / Investment", path: "/calculators/capital-gains", note: "ATO 2024-25 Stage 3 resident brackets (16/30/37/45%)." },
-      { name: "Depreciation", path: "/calculators/depreciation", note: "New ‘Purchased new?’ toggle enforces post-2017 P&E rule." },
-      { name: "Refinance", path: "/calculators/refinance", note: "Added remaining loan term for accurate lifetime savings." },
-      { name: "LMI", path: "/calculators/lmi", note: "LVR-tier rates + state stamp duty on premium." },
+      { name: "Borrowing Power", path: "/calculators/borrowing-power", note: "APRA-style 9.5% assessment (3% buffer) + HEM-aligned expenses.", categories: ["repayments"] },
+      { name: "Serviceability", path: "/calculators/serviceability", note: "Net surplus model replacing legacy multiplier.", categories: ["repayments", "tax"] },
+      { name: "Capital Gains / Negative Gearing / Investment", path: "/calculators/capital-gains", note: "ATO 2024-25 Stage 3 resident brackets (16/30/37/45%).", categories: ["tax"] },
+      { name: "Depreciation", path: "/calculators/depreciation", note: "New ‘Purchased new?’ toggle enforces post-2017 P&E rule.", categories: ["tax"] },
+      { name: "Refinance", path: "/calculators/refinance", note: "Added remaining loan term for accurate lifetime savings.", categories: ["repayments"] },
+      { name: "LMI", path: "/calculators/lmi", note: "LVR-tier rates + state stamp duty on premium.", categories: ["lmi", "stamp-duty"] },
     ],
   },
 ];
