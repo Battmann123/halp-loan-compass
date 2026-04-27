@@ -141,6 +141,39 @@ const RatesFreshness = () => {
           </div>
         </section>
 
+        {/* Mobile compact summary — visible only on small screens */}
+        <section className="md:hidden py-4 px-4 bg-background border-b">
+          <Card className="border-primary/30">
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <CalendarCheck className="h-4 w-4 text-primary shrink-0" />
+                <div className="text-sm">
+                  <span className="font-semibold">Updated</span>{" "}
+                  <span className="text-muted-foreground">{LAST_UPDATED}</span>
+                </div>
+                <Badge variant="outline" className="ml-auto text-[10px]">
+                  {releases[0].version}
+                </Badge>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                  Changed in latest release
+                </p>
+                <ul className="space-y-1.5">
+                  {releases[0].changed.map((c) => (
+                    <li key={c.name} className="flex items-start gap-2 text-sm">
+                      <span className="text-primary mt-0.5">•</span>
+                      <Link to={c.path} className="text-primary hover:underline leading-snug">
+                        {c.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
         {/* Filter bar */}
         <section className="py-8 border-b bg-background">
           <div className="container mx-auto px-4 max-w-5xl">
