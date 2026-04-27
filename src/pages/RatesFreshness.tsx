@@ -389,7 +389,7 @@ const RatesFreshness = () => {
                           <TableRow key={c.name} ref={(el) => (rowRefs.current[c.name] = el)}>
                             <TableCell className="font-medium">
                               <Link to={c.path} className="text-primary hover:underline">
-                                {c.name}
+                                <Highlight text={c.name} query={q} />
                               </Link>
                             </TableCell>
                             <TableCell>
@@ -401,7 +401,9 @@ const RatesFreshness = () => {
                                 ))}
                               </div>
                             </TableCell>
-                            <TableCell className="text-muted-foreground">{c.note}</TableCell>
+                            <TableCell className="text-muted-foreground">
+                              <Highlight text={c.note} query={q} />
+                            </TableCell>
                           </TableRow>
                         ))
                       )}
