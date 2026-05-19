@@ -98,10 +98,51 @@ const GovernmentGrantsCalculator = () => {
     </div>
   );
 
+  // ── Per-stream source citations (state-aware where relevant) ──────────────
+  const FHOG_SOURCES: Record<AusState, { label: string; url: string }> = {
+    NSW: { label: "Revenue NSW — First Home Owner (New Homes) Grant", url: "https://www.revenue.nsw.gov.au/grants-schemes/first-home-owner" },
+    VIC: { label: "SRO Victoria — First Home Owner Grant", url: "https://www.sro.vic.gov.au/first-home-owner" },
+    QLD: { label: "QRO — First Home Owner Grant", url: "https://qro.qld.gov.au/property-concessions-grants/first-home-grant/" },
+    SA:  { label: "RevenueSA — First Home Owner Grant", url: "https://www.revenuesa.sa.gov.au/grants-and-concessions/first-home-owners" },
+    WA:  { label: "RevenueWA — First Home Owner Grant", url: "https://www.wa.gov.au/organisation/department-of-finance/first-home-owner-grant" },
+    TAS: { label: "SRO Tasmania — First Home Owner Grant", url: "https://www.sro.tas.gov.au/first-home-owner" },
+    NT:  { label: "Territory Revenue Office — HomeGrown Territory Grant", url: "https://nt.gov.au/property/home-owner-assistance" },
+    ACT: { label: "ACT Revenue Office — Home Buyer Concession Scheme", url: "https://www.revenue.act.gov.au/home-buyer-assistance" },
+  };
+  const STAMP_DUTY_SOURCES: Record<AusState, { label: string; url: string }> = {
+    NSW: { label: "Revenue NSW — Transfer Duty & FHB Assistance Scheme", url: "https://www.revenue.nsw.gov.au/taxes-duties-levies-royalties/transfer-duty" },
+    VIC: { label: "SRO Victoria — Land Transfer Duty (FHB exemption ≤ $750k)", url: "https://www.sro.vic.gov.au/land-transfer-duty" },
+    QLD: { label: "QRO — Transfer Duty & First Home Concession", url: "https://qro.qld.gov.au/duties/transfer-duty/concessions/homes/" },
+    SA:  { label: "RevenueSA — Stamp Duty (FHB relief from Jun 2024)", url: "https://www.revenuesa.sa.gov.au/stampduty" },
+    WA:  { label: "RevenueWA — Transfer Duty & First Home Owner Rate", url: "https://www.wa.gov.au/organisation/department-of-finance/transfer-duty" },
+    TAS: { label: "SRO Tasmania — Duty Concessions", url: "https://www.sro.tas.gov.au/property-transfer-duties" },
+    NT:  { label: "Territory Revenue Office — Stamp Duty", url: "https://nt.gov.au/employ/money-and-taxes/stamp-duty" },
+    ACT: { label: "ACT Revenue Office — Home Buyer Concession Scheme (≤ $1.02M)", url: "https://www.revenue.act.gov.au/duties/conveyance-duty" },
+  };
+  const DEPOSIT_SCHEME_SOURCE = { label: "Housing Australia — Australian Government 5% Deposit Scheme (eff. 1 Oct 2025)", url: "https://www.housingaustralia.gov.au/" };
+  const HELP_TO_BUY_SOURCE   = { label: "Treasury — Help to Buy (Shared Equity, applications opened 5 Dec 2025)", url: "https://treasury.gov.au/policy-topics/housing/home-ownership-support" };
+  const FHSS_SOURCE          = { label: "ATO — First Home Super Saver Scheme", url: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/super/withdrawing-and-using-your-super/early-access-to-super/first-home-super-saver-scheme" };
+
+  const SourceList = ({ items }: { items: { label: string; url: string }[] }) => (
+    <div className="mt-3 pt-2 border-t border-border/40">
+      <p className="text-[10px] uppercase tracking-wide text-muted-foreground/70 mb-1 font-semibold">Sources</p>
+      <ul className="space-y-0.5">
+        {items.map((s, i) => (
+          <li key={i} className="text-[11px] leading-snug">
+            <a href={s.url} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+              {s.label} ↗
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
+
+
 
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         <Link to="/calculators" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
@@ -298,6 +339,7 @@ const GovernmentGrantsCalculator = () => {
                 <p className="text-xs text-muted-foreground mt-2 italic">
                   {r.fhogAmount > 0 ? "✓ " : ""}{r.fhogReason}
                 </p>
+                <SourceList items={[FHOG_SOURCES[state], { label: "FirstHome.gov.au — national FHB hub", url: "https://firsthomebuyers.gov.au/" }]} />
               </div>
 
               {/* Stamp duty concession */}
@@ -326,6 +368,7 @@ const GovernmentGrantsCalculator = () => {
                       : `Property value above the ${STATE_LABELS[state]} FHB concession threshold — no saving available.`
                     : "Tick \"First Home Buyer\" to see the concession you'd qualify for."}
                 </p>
+                <SourceList items={[STAMP_DUTY_SOURCES[state]]} />
               </div>
 
               {/* 5% Deposit Scheme */}
@@ -359,6 +402,7 @@ const GovernmentGrantsCalculator = () => {
                 <p className="text-xs text-muted-foreground mt-2 italic">
                   {r.depositSchemeEligible ? "✓ " : ""}{r.depositSchemeReason}
                 </p>
+                <SourceList items={[DEPOSIT_SCHEME_SOURCE]} />
               </div>
 
               {/* Help to Buy */}
@@ -394,6 +438,7 @@ const GovernmentGrantsCalculator = () => {
                   <p className="text-xs text-muted-foreground mt-2 italic">
                     {r.helpToBuyEligible ? "✓ " : ""}{r.helpToBuyReason}
                   </p>
+                  <SourceList items={[HELP_TO_BUY_SOURCE]} />
                 </div>
               )}
 
@@ -425,6 +470,7 @@ const GovernmentGrantsCalculator = () => {
                          value={`$${r.fhssNetForDeposit.toLocaleString()}`}
                          ok={r.fhssNetForDeposit > 0} />
                   </div>
+                  <SourceList items={[FHSS_SOURCE]} />
                 </div>
               )}
 
