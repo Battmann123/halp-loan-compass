@@ -464,6 +464,23 @@ const GovernmentGrantsCalculator = () => {
                 <p className={`text-sm font-semibold mb-2 ${r.depositSchemeEligible ? "text-primary" : "text-muted-foreground"}`}>
                   {r.depositSchemeEligible ? "Eligible — no LMI payable" : "Not eligible"}
                 </p>
+                <EligibilityChecklist items={[
+                  { label: "First home buyer", passed: firstHomeBuyer,
+                    detail: firstHomeBuyer ? "confirmed" : "scheme requires FHB",
+                    source: DEPOSIT_SCHEME_SOURCE },
+                  { label: `Within ${STATE_LABELS[state]} ${region} property cap`,
+                    passed: pv <= depositCap,
+                    detail: `cap $${depositCap.toLocaleString()} · your $${pv.toLocaleString()}`,
+                    source: DEPOSIT_SCHEME_SOURCE },
+                  { label: `Deposit ≥ ${minDepositPct}% (${isSingleParent ? "single parent stream" : "FHB stream"})`,
+                    passed: depositPctNum >= minDepositPct,
+                    detail: `your deposit ${depositPct}%`,
+                    source: DEPOSIT_SCHEME_SOURCE },
+                  { label: "No income cap (post 1 Oct 2025)",
+                    passed: true,
+                    detail: "income caps removed in the rebrand",
+                    source: DEPOSIT_SCHEME_SOURCE },
+                ]} />
                 <div className="space-y-0.5">
                   <Row label={`Property cap (${STATE_LABELS[state]} ${region})`}
                        value={`$${depositCap.toLocaleString()}`}
