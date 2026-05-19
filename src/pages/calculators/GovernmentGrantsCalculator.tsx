@@ -143,6 +143,10 @@ const GovernmentGrantsCalculator = () => {
     label: string;
     passed: boolean;
     detail?: string;
+    /** One-line reason shown inline when the criterion fails. */
+    reason?: string;
+    /** Longer explanation revealed when the user expands "Why?". */
+    why?: string;
     source?: { label: string; url: string };
   };
   const EligibilityChecklist = ({ items }: { items: ChecklistItem[] }) => (
@@ -163,6 +167,20 @@ const GovernmentGrantsCalculator = () => {
                 </span>
                 {it.detail && <span className="text-muted-foreground">— {it.detail}</span>}
               </div>
+              {!it.passed && it.reason && (
+                <p className="text-[11px] text-destructive/90 mt-0.5">{it.reason}</p>
+              )}
+              {!it.passed && it.why && (
+                <details className="mt-1 group">
+                  <summary className="cursor-pointer text-[11px] text-primary hover:underline list-none inline-flex items-center gap-1 select-none">
+                    <span className="group-open:hidden">Why? ▸</span>
+                    <span className="hidden group-open:inline">Hide ▾</span>
+                  </summary>
+                  <div className="mt-1 p-2 rounded bg-background/60 border border-border/50 text-[11px] text-muted-foreground leading-relaxed">
+                    {it.why}
+                  </div>
+                </details>
+              )}
               {it.source && (
                 <a href={it.source.url} target="_blank" rel="noreferrer"
                    className="text-[11px] text-primary hover:underline inline-block mt-0.5">
@@ -366,24 +384,40 @@ const GovernmentGrantsCalculator = () => {
                 <EligibilityChecklist items={[
                   { label: "First home buyer", passed: firstHomeBuyer,
                     detail: firstHomeBuyer ? "confirmed" : "must be a first home buyer",
+                    reason: firstHomeBuyer ? undefined : "You (or your partner) have previously owned residential property in Australia.",
+                    why: "FHOG is a one-off cash grant for people entering the property market. If you or your partner have ever held an interest in residential property in Australia, you're not eligible — even if that property was sold or owned overseas-relocated buyers may still qualify; check the state revenue office.",
                     source: { label: "FirstHome.gov.au", url: "https://firsthomebuyers.gov.au/" } },
                   { label: fhogRule.newOnly ? "Property is a new build" : "New or established accepted",
                     passed: fhogRule.newOnly ? newProperty : true,
                     detail: fhogRule.newOnly
                       ? (newProperty ? "new build confirmed" : `${STATE_LABELS[state]} FHOG is new-only`)
                       : "no restriction",
+                    reason: fhogRule.newOnly && !newProperty ? `${STATE_LABELS[state]} only pays FHOG on new builds or substantially renovated homes.` : undefined,
+                    why: fhogRule.newOnly && !newProperty
+                      ? `Most states limit FHOG to newly built dwellings to stimulate new housing supply. "New" generally means never lived in, or substantially renovated. Buying an established home means no FHOG — but you may still qualify for the stamp duty concession (see below).`
+                      : undefined,
                     source: FHOG_SOURCES[state] },
                   { label: "Within property value cap",
                     passed: fhogRule.valueCap === 0 || pv <= fhogRule.valueCap,
                     detail: fhogRule.valueCap > 0
                       ? `cap $${fhogRule.valueCap.toLocaleString()} · your $${pv.toLocaleString()}`
                       : "no cap in this state",
+                    reason: fhogRule.valueCap > 0 && pv > fhogRule.valueCap
+                      ? `Your property is $${(pv - fhogRule.valueCap).toLocaleString()} above the ${STATE_LABELS[state]} FHOG cap.`
+                      : undefined,
+                    why: fhogRule.valueCap > 0 && pv > fhogRule.valueCap
+                      ? `Each state caps FHOG to keep it targeted at typical first-home price points. Once you exceed the cap by even $1 the grant is lost entirely (it doesn't taper). Negotiating the price below the cap, or buying in a cheaper suburb, may restore eligibility.`
+                      : undefined,
                     source: FHOG_SOURCES[state] },
                   { label: "State offers a cash FHOG",
                     passed: fhogCashAmount > 0,
                     detail: fhogCashAmount > 0
                       ? `$${fhogCashAmount.toLocaleString()} in ${STATE_LABELS[state]}`
                       : "no cash grant (concessions via stamp duty instead)",
+                    reason: fhogCashAmount === 0 ? `${STATE_LABELS[state]} does not pay a cash FHOG in your scenario.` : undefined,
+                    why: fhogCashAmount === 0
+                      ? `Not every state runs a cash FHOG — the ACT, for example, replaced it with a stamp-duty-based Home Buyer Concession Scheme. You may still receive equivalent support through stamp duty relief rather than a cheque.`
+                      : undefined,
                     source: FHOG_SOURCES[state] },
                 ]} />
                 <div className="space-y-0.5">
@@ -417,6 +451,8 @@ const GovernmentGrantsCalculator = () => {
                 <EligibilityChecklist items={[
                   { label: "First home buyer", passed: firstHomeBuyer,
                     detail: firstHomeBuyer ? "confirmed" : "concession applies to FHBs only",
+                    reason: firstHomeBuyer ? undefined : "Tick the FHB box — stamp duty concessions are reserved for first home buyers.",
+                    why: "Every state limits the headline stamp duty concession to genuine first home buyers (you and your partner can't have previously owned residential property in Australia). Non-FHBs pay full transfer duty.",
                     source: STAMP_DUTY_SOURCES[state] },
                   { label: `Property qualifies under ${STATE_LABELS[state]} FHB concession`,
                     passed: firstHomeBuyer && r.stampDutyConcession > 0,
@@ -425,6 +461,12 @@ const GovernmentGrantsCalculator = () => {
                           ? `saving $${r.stampDutyConcession.toLocaleString()}`
                           : `value above ${STATE_LABELS[state]} concession threshold`)
                       : "tick FHB to evaluate",
+                    reason: firstHomeBuyer && r.stampDutyConcession === 0
+                      ? `Property value $${pv.toLocaleString()} is above the ${STATE_LABELS[state]} FHB concession threshold — full duty applies.`
+                      : undefined,
+                    why: firstHomeBuyer && r.stampDutyConcession === 0
+                      ? `Each state has a full-exemption threshold and a partial-concession (taper) band above it. Once the price exceeds the taper ceiling the concession disappears and you pay duty at the standard rate. Buying under the threshold — or in a state with a higher cap — restores the saving.`
+                      : undefined,
                     source: STAMP_DUTY_SOURCES[state] },
                   { label: `Property type (${newProperty ? "new" : "established"})`,
                     passed: true,
@@ -467,14 +509,28 @@ const GovernmentGrantsCalculator = () => {
                 <EligibilityChecklist items={[
                   { label: "First home buyer", passed: firstHomeBuyer,
                     detail: firstHomeBuyer ? "confirmed" : "scheme requires FHB",
+                    reason: firstHomeBuyer ? undefined : "The 5% Deposit Scheme is restricted to first home buyers.",
+                    why: "From 1 Oct 2025 the Australian Government 5% Deposit Scheme is still FHB-only — the government guarantees the LMI shortfall on the assumption you're entering the market for the first time. Investors and previous owners aren't eligible.",
                     source: DEPOSIT_SCHEME_SOURCE },
                   { label: `Within ${STATE_LABELS[state]} ${region} property cap`,
                     passed: pv <= depositCap,
                     detail: `cap $${depositCap.toLocaleString()} · your $${pv.toLocaleString()}`,
+                    reason: pv > depositCap
+                      ? `Your property is $${(pv - depositCap).toLocaleString()} above the ${region} cap for ${STATE_LABELS[state]}.`
+                      : undefined,
+                    why: pv > depositCap
+                      ? `Price caps are regional — capital city, regional centre, and rest-of-state each have their own ceiling. Check the region selector matches where you're buying. Going $1 over the cap removes eligibility entirely; you'd need to negotiate the price down or look at a cheaper region.`
+                      : undefined,
                     source: DEPOSIT_SCHEME_SOURCE },
                   { label: `Deposit ≥ ${minDepositPct}% (${isSingleParent ? "single parent stream" : "FHB stream"})`,
                     passed: depositPctNum >= minDepositPct,
                     detail: `your deposit ${depositPct}%`,
+                    reason: depositPctNum < minDepositPct
+                      ? `You're ${(minDepositPct - depositPctNum).toFixed(1)}% short — need at least $${Math.ceil(pv * minDepositPct / 100).toLocaleString()}.`
+                      : undefined,
+                    why: depositPctNum < minDepositPct
+                      ? `The government only guarantees the shortfall between your deposit and 20%. You still have to genuinely save the minimum (5%, or 2% for single parents). Sources of "genuine savings" matter — lenders want to see consistent deposits over time, not just gifted funds.`
+                      : undefined,
                     source: DEPOSIT_SCHEME_SOURCE },
                   { label: "No income cap (post 1 Oct 2025)",
                     passed: true,
@@ -519,14 +575,28 @@ const GovernmentGrantsCalculator = () => {
                     { label: `${STATE_LABELS[state]} participates in Help to Buy`,
                       passed: HTB_STATES.includes(state),
                       detail: HTB_STATES.includes(state) ? "in scheme" : "TAS opted out",
+                      reason: HTB_STATES.includes(state) ? undefined : `${STATE_LABELS[state]} is not currently in the Help to Buy program.`,
+                      why: HTB_STATES.includes(state)
+                        ? undefined
+                        : "Help to Buy is a joint Commonwealth–State scheme. Each state has to opt in through its own legislation. Tasmania declined; WA joined later than the others. If your state isn't in, the shared-equity option simply isn't available to you yet.",
                       source: HELP_TO_BUY_SOURCE },
                     { label: `Household income within ${isCouple ? "couple" : "single"} cap`,
                       passed: incomeNum <= htbIncomeCap,
                       detail: `cap $${htbIncomeCap.toLocaleString()} · yours $${incomeNum.toLocaleString()}`,
+                      reason: incomeNum > htbIncomeCap
+                        ? `You're $${(incomeNum - htbIncomeCap).toLocaleString()} over the ${isCouple ? "couple" : "single"} income cap.`
+                        : undefined,
+                      why: incomeNum > htbIncomeCap
+                        ? "Help to Buy is means-tested at $100k single / $160k couple combined gross income. The cap is a hard cliff (no taper). Couples are assessed on combined income — if one partner earns most of the income, the cap is still $160k, not $100k each."
+                        : undefined,
                       source: HELP_TO_BUY_SOURCE },
                     { label: "Deposit ≥ 2% of property value",
                       passed: depositPctNum >= 2,
                       detail: `your deposit ${depositPct}%`,
+                      reason: depositPctNum < 2 ? `You need at least $${Math.ceil(pv * 0.02).toLocaleString()} (2%) saved.` : undefined,
+                      why: depositPctNum < 2
+                        ? "Even with the government taking up to 40% equity, you still need to contribute genuine savings of at least 2%. This is to demonstrate financial discipline and skin in the game."
+                        : undefined,
                       source: HELP_TO_BUY_SOURCE },
                     { label: `Property type sets gov equity (${newProperty ? "new = up to 40%" : "existing = up to 30%"})`,
                       passed: true,
@@ -575,14 +645,30 @@ const GovernmentGrantsCalculator = () => {
                     { label: "Annual contribution within $15,000 cap",
                       passed: (Number(fhssAnnualContribution) || 0) <= 15000,
                       detail: `your $${(Number(fhssAnnualContribution) || 0).toLocaleString()} · counted $${fhssAnnualCapped.toLocaleString()}`,
+                      reason: (Number(fhssAnnualContribution) || 0) > 15000
+                        ? `Anything above $15,000/yr won't count toward FHSS — only $15,000 of your contribution is releasable.`
+                        : undefined,
+                      why: (Number(fhssAnnualContribution) || 0) > 15000
+                        ? "FHSS only releases up to $15,000 of voluntary contributions per financial year. Extra contributions stay locked in super until retirement. They're not lost — they still get the concessional tax treatment — but they can't be withdrawn for a deposit."
+                        : undefined,
                       source: FHSS_SOURCE },
                     { label: "Per-person total within $50,000 cap",
                       passed: fhssGrossContrib <= 50000,
                       detail: `total contributed $${fhssGrossContrib.toLocaleString()}`,
+                      reason: fhssGrossContrib > 50000
+                        ? `Only $50,000 per person can be released — the remaining $${(fhssGrossContrib - 50000).toLocaleString()} stays locked in super.`
+                        : undefined,
+                      why: fhssGrossContrib > 50000
+                        ? "The lifetime FHSS release cap is $50,000 per person. Couples can each contribute and release, giving $100k combined. Contributions above the per-person cap aren't lost but can't be withdrawn for the deposit."
+                        : undefined,
                       source: FHSS_SOURCE },
                     { label: "Must be first home buyer (intend to occupy ≥ 6 months in first year)",
                       passed: firstHomeBuyer,
                       detail: firstHomeBuyer ? "confirmed" : "tick FHB above",
+                      reason: firstHomeBuyer ? undefined : "FHSS is restricted to genuine first home buyers planning to live in the property.",
+                      why: firstHomeBuyer
+                        ? undefined
+                        : "FHSS requires you to be a first home buyer and to move into the property within 12 months of settlement and live there for at least 6 of the first 12 months. Investors and people who've owned property in Australia before don't qualify (some hardship exceptions exist).",
                       source: FHSS_SOURCE },
                     { label: "Voluntary contributions only (not employer SG)",
                       passed: true,
