@@ -470,6 +470,7 @@ const GovernmentGrantsCalculator = () => {
                          value={`$${r.fhssNetForDeposit.toLocaleString()}`}
                          ok={r.fhssNetForDeposit > 0} />
                   </div>
+                  <SourceList items={[FHSS_SOURCE]} />
                 </div>
               )}
 
