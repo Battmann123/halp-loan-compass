@@ -429,8 +429,11 @@ const GovernmentGrantsCalculator = () => {
                 <p className={`text-2xl font-bold mb-2 ${r.fhogAmount > 0 ? "text-green-600" : "text-muted-foreground"}`}>
                   ${r.fhogAmount.toLocaleString()}
                 </p>
-                <EligibilityChecklist items={[
-                  { label: "First home buyer", passed: firstHomeBuyer,
+                <EligibilityChecklist
+                  showOnlyFails={showOnlyFails}
+                  expandAllWhy={expandAllWhy}
+                  items={[
+                    { label: "First home buyer", passed: firstHomeBuyer,
                     detail: firstHomeBuyer ? "confirmed" : "must be a first home buyer",
                     reason: firstHomeBuyer ? undefined : "You (or your partner) have previously owned residential property in Australia.",
                     why: "FHOG is a one-off cash grant for people entering the property market. If you or your partner have ever held an interest in residential property in Australia, you're not eligible — even if that property was sold or owned overseas-relocated buyers may still qualify; check the state revenue office.",
