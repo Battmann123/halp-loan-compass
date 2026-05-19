@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,6 +39,10 @@ const GovernmentGrantsCalculator = () => {
   const [evaluateFhss, setEvaluateFhss] = useState(false);
   const [fhssAnnualContribution, setFhssAnnualContribution] = useState<string | number>(15000);
   const [fhssYearsContributing, setFhssYearsContributing] = useState<string | number>(3);
+
+  // Global checklist controls
+  const [showOnlyFails, setShowOnlyFails] = useState(false);
+  const [expandAllWhy, setExpandAllWhy] = useState(false);
 
   const pv = Number(propertyValue) || 0;
   const dep = Number(deposit) || 0;
@@ -149,50 +153,72 @@ const GovernmentGrantsCalculator = () => {
     why?: string;
     source?: { label: string; url: string };
   };
-  const EligibilityChecklist = ({ items }: { items: ChecklistItem[] }) => (
-    <div className="mt-3 mb-2 rounded-md border border-border/60 bg-muted/30 p-3">
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground/80 mb-2 font-semibold">
-        Eligibility checklist
-      </p>
-      <ul className="space-y-1.5">
-        {items.map((it, i) => (
-          <li key={i} className="flex items-start gap-2 text-xs">
-            {it.passed
-              ? <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
-              : <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />}
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-baseline gap-x-2">
-                <span className={`font-medium ${it.passed ? "text-foreground" : "text-destructive"}`}>
-                  {it.label}
-                </span>
-                {it.detail && <span className="text-muted-foreground">— {it.detail}</span>}
+  const EligibilityChecklist = ({
+    items,
+    showOnlyFails = false,
+    expandAllWhy = false,
+  }: {
+    items: ChecklistItem[];
+    showOnlyFails?: boolean;
+    expandAllWhy?: boolean;
+  }) => {
+    const containerRef = useRef<HTMLUListElement>(null);
+
+    useEffect(() => {
+      if (!containerRef.current) return;
+      const details = containerRef.current.querySelectorAll<HTMLDetailsElement>("details");
+      details.forEach((d) => {
+        d.open = expandAllWhy;
+      });
+    }, [expandAllWhy]);
+
+    const visibleItems = showOnlyFails ? items.filter((it) => !it.passed) : items;
+
+    return (
+      <div className="mt-3 mb-2 rounded-md border border-border/60 bg-muted/30 p-3">
+        <p className="text-[10px] uppercase tracking-wide text-muted-foreground/80 mb-2 font-semibold">
+          Eligibility checklist
+        </p>
+        <ul ref={containerRef} className="space-y-1.5">
+          {visibleItems.map((it, i) => (
+            <li key={i} className="flex items-start gap-2 text-xs">
+              {it.passed
+                ? <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
+                : <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />}
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-baseline gap-x-2">
+                  <span className={`font-medium ${it.passed ? "text-foreground" : "text-destructive"}`}>
+                    {it.label}
+                  </span>
+                  {it.detail && <span className="text-muted-foreground">— {it.detail}</span>}
+                </div>
+                {!it.passed && it.reason && (
+                  <p className="text-[11px] text-destructive/90 mt-0.5">{it.reason}</p>
+                )}
+                {!it.passed && it.why && (
+                  <details className="mt-1 group">
+                    <summary className="cursor-pointer text-[11px] text-primary hover:underline list-none inline-flex items-center gap-1 select-none">
+                      <span className="group-open:hidden">Why? ▸</span>
+                      <span className="hidden group-open:inline">Hide ▾</span>
+                    </summary>
+                    <div className="mt-1 p-2 rounded bg-background/60 border border-border/50 text-[11px] text-muted-foreground leading-relaxed">
+                      {it.why}
+                    </div>
+                  </details>
+                )}
+                {it.source && (
+                  <a href={it.source.url} target="_blank" rel="noreferrer"
+                     className="text-[11px] text-primary hover:underline inline-block mt-0.5">
+                    Source: {it.source.label} ↗
+                  </a>
+                )}
               </div>
-              {!it.passed && it.reason && (
-                <p className="text-[11px] text-destructive/90 mt-0.5">{it.reason}</p>
-              )}
-              {!it.passed && it.why && (
-                <details className="mt-1 group">
-                  <summary className="cursor-pointer text-[11px] text-primary hover:underline list-none inline-flex items-center gap-1 select-none">
-                    <span className="group-open:hidden">Why? ▸</span>
-                    <span className="hidden group-open:inline">Hide ▾</span>
-                  </summary>
-                  <div className="mt-1 p-2 rounded bg-background/60 border border-border/50 text-[11px] text-muted-foreground leading-relaxed">
-                    {it.why}
-                  </div>
-                </details>
-              )}
-              {it.source && (
-                <a href={it.source.url} target="_blank" rel="noreferrer"
-                   className="text-[11px] text-primary hover:underline inline-block mt-0.5">
-                  Source: {it.source.label} ↗
-                </a>
-              )}
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -362,6 +388,28 @@ const GovernmentGrantsCalculator = () => {
               <CardTitle>Your Potential Benefits</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Checklist controls */}
+              <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border border-border/60 bg-background/60">
+                <button
+                  type="button"
+                  onClick={() => setExpandAllWhy((v) => !v)}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border border-border bg-muted hover:bg-muted/80 transition-colors"
+                >
+                  {expandAllWhy ? "Collapse all Why?" : "Expand all Why?"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowOnlyFails((v) => !v)}
+                  className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border transition-colors ${
+                    showOnlyFails
+                      ? "border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20"
+                      : "border-border bg-muted hover:bg-muted/80"
+                  }`}
+                >
+                  {showOnlyFails ? "Showing: fails only" : "Show only fails"}
+                </button>
+              </div>
+
               <div className="bg-gradient-to-r from-primary to-accent p-6 rounded-lg text-white">
                 <p className="text-sm opacity-90 mb-2">Total Cash Benefit</p>
                 <p className="text-4xl font-bold">${r.totalCashBenefit.toLocaleString()}</p>
@@ -381,8 +429,11 @@ const GovernmentGrantsCalculator = () => {
                 <p className={`text-2xl font-bold mb-2 ${r.fhogAmount > 0 ? "text-green-600" : "text-muted-foreground"}`}>
                   ${r.fhogAmount.toLocaleString()}
                 </p>
-                <EligibilityChecklist items={[
-                  { label: "First home buyer", passed: firstHomeBuyer,
+                <EligibilityChecklist
+                  showOnlyFails={showOnlyFails}
+                  expandAllWhy={expandAllWhy}
+                  items={[
+                    { label: "First home buyer", passed: firstHomeBuyer,
                     detail: firstHomeBuyer ? "confirmed" : "must be a first home buyer",
                     reason: firstHomeBuyer ? undefined : "You (or your partner) have previously owned residential property in Australia.",
                     why: "FHOG is a one-off cash grant for people entering the property market. If you or your partner have ever held an interest in residential property in Australia, you're not eligible — even if that property was sold or owned overseas-relocated buyers may still qualify; check the state revenue office.",
@@ -448,8 +499,11 @@ const GovernmentGrantsCalculator = () => {
                 <p className={`text-2xl font-bold mb-2 ${r.stampDutyConcession > 0 ? "text-blue-600" : "text-muted-foreground"}`}>
                   ${r.stampDutyConcession.toLocaleString()}
                 </p>
-                <EligibilityChecklist items={[
-                  { label: "First home buyer", passed: firstHomeBuyer,
+                <EligibilityChecklist
+                  showOnlyFails={showOnlyFails}
+                  expandAllWhy={expandAllWhy}
+                  items={[
+                    { label: "First home buyer", passed: firstHomeBuyer,
                     detail: firstHomeBuyer ? "confirmed" : "concession applies to FHBs only",
                     reason: firstHomeBuyer ? undefined : "Tick the FHB box — stamp duty concessions are reserved for first home buyers.",
                     why: "Every state limits the headline stamp duty concession to genuine first home buyers (you and your partner can't have previously owned residential property in Australia). Non-FHBs pay full transfer duty.",
@@ -506,8 +560,11 @@ const GovernmentGrantsCalculator = () => {
                 <p className={`text-sm font-semibold mb-2 ${r.depositSchemeEligible ? "text-primary" : "text-muted-foreground"}`}>
                   {r.depositSchemeEligible ? "Eligible — no LMI payable" : "Not eligible"}
                 </p>
-                <EligibilityChecklist items={[
-                  { label: "First home buyer", passed: firstHomeBuyer,
+                <EligibilityChecklist
+                  showOnlyFails={showOnlyFails}
+                  expandAllWhy={expandAllWhy}
+                  items={[
+                    { label: "First home buyer", passed: firstHomeBuyer,
                     detail: firstHomeBuyer ? "confirmed" : "scheme requires FHB",
                     reason: firstHomeBuyer ? undefined : "The 5% Deposit Scheme is restricted to first home buyers.",
                     why: "From 1 Oct 2025 the Australian Government 5% Deposit Scheme is still FHB-only — the government guarantees the LMI shortfall on the assumption you're entering the market for the first time. Investors and previous owners aren't eligible.",
@@ -571,8 +628,11 @@ const GovernmentGrantsCalculator = () => {
                       <span className="text-sm font-normal text-muted-foreground">gov equity</span>
                     </p>
                   )}
-                  <EligibilityChecklist items={[
-                    { label: `${STATE_LABELS[state]} participates in Help to Buy`,
+                  <EligibilityChecklist
+                    showOnlyFails={showOnlyFails}
+                    expandAllWhy={expandAllWhy}
+                    items={[
+                      { label: `${STATE_LABELS[state]} participates in Help to Buy`,
                       passed: HTB_STATES.includes(state),
                       detail: HTB_STATES.includes(state) ? "in scheme" : "TAS opted out",
                       reason: HTB_STATES.includes(state) ? undefined : `${STATE_LABELS[state]} is not currently in the Help to Buy program.`,
@@ -641,8 +701,11 @@ const GovernmentGrantsCalculator = () => {
                   <p className="text-2xl font-bold text-green-600 mb-2">
                     ${r.fhssNetForDeposit.toLocaleString()}
                   </p>
-                  <EligibilityChecklist items={[
-                    { label: "Annual contribution within $15,000 cap",
+                  <EligibilityChecklist
+                    showOnlyFails={showOnlyFails}
+                    expandAllWhy={expandAllWhy}
+                    items={[
+                      { label: "Annual contribution within $15,000 cap",
                       passed: (Number(fhssAnnualContribution) || 0) <= 15000,
                       detail: `your $${(Number(fhssAnnualContribution) || 0).toLocaleString()} · counted $${fhssAnnualCapped.toLocaleString()}`,
                       reason: (Number(fhssAnnualContribution) || 0) > 15000
