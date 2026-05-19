@@ -408,6 +408,18 @@ const GovernmentGrantsCalculator = () => {
                 >
                   {showOnlyFails ? "Showing: fails only" : "Show only fails"}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowOnlyFails(false);
+                    setExpandAllWhy(false);
+                  }}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border border-border bg-muted hover:bg-muted/80 transition-colors ml-auto"
+                  title="Reset checklist view"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  Reset view
+                </button>
               </div>
 
               <div className="bg-gradient-to-r from-primary to-accent p-6 rounded-lg text-white">
