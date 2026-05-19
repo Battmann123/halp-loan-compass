@@ -138,6 +138,44 @@ const GovernmentGrantsCalculator = () => {
     </div>
   );
 
+  // ── Eligibility checklist: criterion + pass/fail + linked source ─────────
+  type ChecklistItem = {
+    label: string;
+    passed: boolean;
+    detail?: string;
+    source?: { label: string; url: string };
+  };
+  const EligibilityChecklist = ({ items }: { items: ChecklistItem[] }) => (
+    <div className="mt-3 mb-2 rounded-md border border-border/60 bg-muted/30 p-3">
+      <p className="text-[10px] uppercase tracking-wide text-muted-foreground/80 mb-2 font-semibold">
+        Eligibility checklist
+      </p>
+      <ul className="space-y-1.5">
+        {items.map((it, i) => (
+          <li key={i} className="flex items-start gap-2 text-xs">
+            {it.passed
+              ? <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
+              : <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />}
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-baseline gap-x-2">
+                <span className={`font-medium ${it.passed ? "text-foreground" : "text-destructive"}`}>
+                  {it.label}
+                </span>
+                {it.detail && <span className="text-muted-foreground">— {it.detail}</span>}
+              </div>
+              {it.source && (
+                <a href={it.source.url} target="_blank" rel="noreferrer"
+                   className="text-[11px] text-primary hover:underline inline-block mt-0.5">
+                  Source: {it.source.label} ↗
+                </a>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
