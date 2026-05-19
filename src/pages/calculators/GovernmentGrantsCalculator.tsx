@@ -41,8 +41,20 @@ const GovernmentGrantsCalculator = () => {
   const [fhssYearsContributing, setFhssYearsContributing] = useState<string | number>(3);
 
   // Global checklist controls
-  const [showOnlyFails, setShowOnlyFails] = useState(false);
-  const [expandAllWhy, setExpandAllWhy] = useState(false);
+  const [showOnlyFails, setShowOnlyFails] = useState(() => {
+    try { return localStorage.getItem("ggc_showOnlyFails") === "true"; } catch { return false; }
+  });
+  const [expandAllWhy, setExpandAllWhy] = useState(() => {
+    try { return localStorage.getItem("ggc_expandAllWhy") === "true"; } catch { return false; }
+  });
+
+  useEffect(() => {
+    try { localStorage.setItem("ggc_showOnlyFails", String(showOnlyFails)); } catch {}
+  }, [showOnlyFails]);
+
+  useEffect(() => {
+    try { localStorage.setItem("ggc_expandAllWhy", String(expandAllWhy)); } catch {}
+  }, [expandAllWhy]);
 
   const pv = Number(propertyValue) || 0;
   const dep = Number(deposit) || 0;
