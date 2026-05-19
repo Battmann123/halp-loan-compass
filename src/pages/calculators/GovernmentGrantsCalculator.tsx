@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Gift, ArrowLeft, CheckCircle2, XCircle, Info } from "lucide-react";
+import { Gift, ArrowLeft, CheckCircle2, XCircle, Info, RotateCcw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { calculateGovernmentGrants, FHOG_BY_STATE, PRICE_CAPS } from "@/lib/engine/grants";
 import { calculateStampDuty } from "@/lib/engine/property";
@@ -407,6 +407,18 @@ const GovernmentGrantsCalculator = () => {
                   }`}
                 >
                   {showOnlyFails ? "Showing: fails only" : "Show only fails"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowOnlyFails(false);
+                    setExpandAllWhy(false);
+                  }}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border border-border bg-muted hover:bg-muted/80 transition-colors ml-auto"
+                  title="Reset checklist view"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  Reset view
                 </button>
               </div>
 
