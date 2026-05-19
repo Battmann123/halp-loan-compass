@@ -66,7 +66,7 @@ export function calculateGovernmentGrants(input: GovernmentGrantsInput): CalcRes
   // 5% Deposit Scheme — FHB stream by default, Single Parent if flagged
   const stream: DepositSchemeStream = input.isSingleParent ? "single-parent-or-guardian" : "first-home-buyer";
   const depositCheck = checkDepositSchemeEligibility({
-    stream, state: input.state, propertyValue: input.propertyValue, deposit: input.deposit, isFirstHomeBuyer: input.isFirstHomeBuyer
+    stream, state: input.state, region: input.region, propertyValue: input.propertyValue, deposit: input.deposit, isFirstHomeBuyer: input.isFirstHomeBuyer
   });
   if (input.isSingleParent) {
     assumptions.push("Single Parent / Legal Guardian stream evaluated (2% deposit minimum) — audit fix B12");
