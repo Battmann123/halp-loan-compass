@@ -9,7 +9,8 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Gift, ArrowLeft, CheckCircle2, XCircle, Info } from "lucide-react";
 import { Link } from "react-router-dom";
-import { calculateGovernmentGrants, PRICE_CAPS } from "@/lib/engine/grants";
+import { calculateGovernmentGrants, FHOG_BY_STATE, PRICE_CAPS } from "@/lib/engine/grants";
+import { calculateStampDuty } from "@/lib/engine/property";
 import type { AusState } from "@/lib/engine";
 
 type Region = "capital" | "regional" | "rest";
