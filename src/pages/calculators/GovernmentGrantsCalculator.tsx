@@ -339,6 +339,7 @@ const GovernmentGrantsCalculator = () => {
                 <p className="text-xs text-muted-foreground mt-2 italic">
                   {r.fhogAmount > 0 ? "✓ " : ""}{r.fhogReason}
                 </p>
+                <SourceList items={[FHOG_SOURCES[state], { label: "FirstHome.gov.au — national FHB hub", url: "https://firsthomebuyers.gov.au/" }]} />
               </div>
 
               {/* Stamp duty concession */}
