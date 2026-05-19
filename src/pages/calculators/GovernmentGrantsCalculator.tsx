@@ -509,14 +509,28 @@ const GovernmentGrantsCalculator = () => {
                 <EligibilityChecklist items={[
                   { label: "First home buyer", passed: firstHomeBuyer,
                     detail: firstHomeBuyer ? "confirmed" : "scheme requires FHB",
+                    reason: firstHomeBuyer ? undefined : "The 5% Deposit Scheme is restricted to first home buyers.",
+                    why: "From 1 Oct 2025 the Australian Government 5% Deposit Scheme is still FHB-only — the government guarantees the LMI shortfall on the assumption you're entering the market for the first time. Investors and previous owners aren't eligible.",
                     source: DEPOSIT_SCHEME_SOURCE },
                   { label: `Within ${STATE_LABELS[state]} ${region} property cap`,
                     passed: pv <= depositCap,
                     detail: `cap $${depositCap.toLocaleString()} · your $${pv.toLocaleString()}`,
+                    reason: pv > depositCap
+                      ? `Your property is $${(pv - depositCap).toLocaleString()} above the ${region} cap for ${STATE_LABELS[state]}.`
+                      : undefined,
+                    why: pv > depositCap
+                      ? `Price caps are regional — capital city, regional centre, and rest-of-state each have their own ceiling. Check the region selector matches where you're buying. Going $1 over the cap removes eligibility entirely; you'd need to negotiate the price down or look at a cheaper region.`
+                      : undefined,
                     source: DEPOSIT_SCHEME_SOURCE },
                   { label: `Deposit ≥ ${minDepositPct}% (${isSingleParent ? "single parent stream" : "FHB stream"})`,
                     passed: depositPctNum >= minDepositPct,
                     detail: `your deposit ${depositPct}%`,
+                    reason: depositPctNum < minDepositPct
+                      ? `You're ${(minDepositPct - depositPctNum).toFixed(1)}% short — need at least $${Math.ceil(pv * minDepositPct / 100).toLocaleString()}.`
+                      : undefined,
+                    why: depositPctNum < minDepositPct
+                      ? `The government only guarantees the shortfall between your deposit and 20%. You still have to genuinely save the minimum (5%, or 2% for single parents). Sources of "genuine savings" matter — lenders want to see consistent deposits over time, not just gifted funds.`
+                      : undefined,
                     source: DEPOSIT_SCHEME_SOURCE },
                   { label: "No income cap (post 1 Oct 2025)",
                     passed: true,
