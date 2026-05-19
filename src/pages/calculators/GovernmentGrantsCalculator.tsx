@@ -363,6 +363,29 @@ const GovernmentGrantsCalculator = () => {
                 <p className={`text-2xl font-bold mb-2 ${r.fhogAmount > 0 ? "text-green-600" : "text-muted-foreground"}`}>
                   ${r.fhogAmount.toLocaleString()}
                 </p>
+                <EligibilityChecklist items={[
+                  { label: "First home buyer", passed: firstHomeBuyer,
+                    detail: firstHomeBuyer ? "confirmed" : "must be a first home buyer",
+                    source: { label: "FirstHome.gov.au", url: "https://firsthomebuyers.gov.au/" } },
+                  { label: fhogRule.newOnly ? "Property is a new build" : "New or established accepted",
+                    passed: fhogRule.newOnly ? newProperty : true,
+                    detail: fhogRule.newOnly
+                      ? (newProperty ? "new build confirmed" : `${STATE_LABELS[state]} FHOG is new-only`)
+                      : "no restriction",
+                    source: FHOG_SOURCES[state] },
+                  { label: "Within property value cap",
+                    passed: fhogRule.valueCap === 0 || pv <= fhogRule.valueCap,
+                    detail: fhogRule.valueCap > 0
+                      ? `cap $${fhogRule.valueCap.toLocaleString()} · your $${pv.toLocaleString()}`
+                      : "no cap in this state",
+                    source: FHOG_SOURCES[state] },
+                  { label: "State offers a cash FHOG",
+                    passed: fhogCashAmount > 0,
+                    detail: fhogCashAmount > 0
+                      ? `$${fhogCashAmount.toLocaleString()} in ${STATE_LABELS[state]}`
+                      : "no cash grant (concessions via stamp duty instead)",
+                    source: FHOG_SOURCES[state] },
+                ]} />
                 <div className="space-y-0.5">
                   <Row label={`${STATE_LABELS[state]} FHOG amount`}
                        value={fhogCashAmount > 0 ? `$${fhogCashAmount.toLocaleString()}` : "No cash grant"} />
