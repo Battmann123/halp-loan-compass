@@ -384,24 +384,40 @@ const GovernmentGrantsCalculator = () => {
                 <EligibilityChecklist items={[
                   { label: "First home buyer", passed: firstHomeBuyer,
                     detail: firstHomeBuyer ? "confirmed" : "must be a first home buyer",
+                    reason: firstHomeBuyer ? undefined : "You (or your partner) have previously owned residential property in Australia.",
+                    why: "FHOG is a one-off cash grant for people entering the property market. If you or your partner have ever held an interest in residential property in Australia, you're not eligible — even if that property was sold or owned overseas-relocated buyers may still qualify; check the state revenue office.",
                     source: { label: "FirstHome.gov.au", url: "https://firsthomebuyers.gov.au/" } },
                   { label: fhogRule.newOnly ? "Property is a new build" : "New or established accepted",
                     passed: fhogRule.newOnly ? newProperty : true,
                     detail: fhogRule.newOnly
                       ? (newProperty ? "new build confirmed" : `${STATE_LABELS[state]} FHOG is new-only`)
                       : "no restriction",
+                    reason: fhogRule.newOnly && !newProperty ? `${STATE_LABELS[state]} only pays FHOG on new builds or substantially renovated homes.` : undefined,
+                    why: fhogRule.newOnly && !newProperty
+                      ? `Most states limit FHOG to newly built dwellings to stimulate new housing supply. "New" generally means never lived in, or substantially renovated. Buying an established home means no FHOG — but you may still qualify for the stamp duty concession (see below).`
+                      : undefined,
                     source: FHOG_SOURCES[state] },
                   { label: "Within property value cap",
                     passed: fhogRule.valueCap === 0 || pv <= fhogRule.valueCap,
                     detail: fhogRule.valueCap > 0
                       ? `cap $${fhogRule.valueCap.toLocaleString()} · your $${pv.toLocaleString()}`
                       : "no cap in this state",
+                    reason: fhogRule.valueCap > 0 && pv > fhogRule.valueCap
+                      ? `Your property is $${(pv - fhogRule.valueCap).toLocaleString()} above the ${STATE_LABELS[state]} FHOG cap.`
+                      : undefined,
+                    why: fhogRule.valueCap > 0 && pv > fhogRule.valueCap
+                      ? `Each state caps FHOG to keep it targeted at typical first-home price points. Once you exceed the cap by even $1 the grant is lost entirely (it doesn't taper). Negotiating the price below the cap, or buying in a cheaper suburb, may restore eligibility.`
+                      : undefined,
                     source: FHOG_SOURCES[state] },
                   { label: "State offers a cash FHOG",
                     passed: fhogCashAmount > 0,
                     detail: fhogCashAmount > 0
                       ? `$${fhogCashAmount.toLocaleString()} in ${STATE_LABELS[state]}`
                       : "no cash grant (concessions via stamp duty instead)",
+                    reason: fhogCashAmount === 0 ? `${STATE_LABELS[state]} does not pay a cash FHOG in your scenario.` : undefined,
+                    why: fhogCashAmount === 0
+                      ? `Not every state runs a cash FHOG — the ACT, for example, replaced it with a stamp-duty-based Home Buyer Concession Scheme. You may still receive equivalent support through stamp duty relief rather than a cheque.`
+                      : undefined,
                     source: FHOG_SOURCES[state] },
                 ]} />
                 <div className="space-y-0.5">
