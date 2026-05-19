@@ -575,14 +575,28 @@ const GovernmentGrantsCalculator = () => {
                     { label: `${STATE_LABELS[state]} participates in Help to Buy`,
                       passed: HTB_STATES.includes(state),
                       detail: HTB_STATES.includes(state) ? "in scheme" : "TAS opted out",
+                      reason: HTB_STATES.includes(state) ? undefined : `${STATE_LABELS[state]} is not currently in the Help to Buy program.`,
+                      why: HTB_STATES.includes(state)
+                        ? undefined
+                        : "Help to Buy is a joint Commonwealth–State scheme. Each state has to opt in through its own legislation. Tasmania declined; WA joined later than the others. If your state isn't in, the shared-equity option simply isn't available to you yet.",
                       source: HELP_TO_BUY_SOURCE },
                     { label: `Household income within ${isCouple ? "couple" : "single"} cap`,
                       passed: incomeNum <= htbIncomeCap,
                       detail: `cap $${htbIncomeCap.toLocaleString()} · yours $${incomeNum.toLocaleString()}`,
+                      reason: incomeNum > htbIncomeCap
+                        ? `You're $${(incomeNum - htbIncomeCap).toLocaleString()} over the ${isCouple ? "couple" : "single"} income cap.`
+                        : undefined,
+                      why: incomeNum > htbIncomeCap
+                        ? "Help to Buy is means-tested at $100k single / $160k couple combined gross income. The cap is a hard cliff (no taper). Couples are assessed on combined income — if one partner earns most of the income, the cap is still $160k, not $100k each."
+                        : undefined,
                       source: HELP_TO_BUY_SOURCE },
                     { label: "Deposit ≥ 2% of property value",
                       passed: depositPctNum >= 2,
                       detail: `your deposit ${depositPct}%`,
+                      reason: depositPctNum < 2 ? `You need at least $${Math.ceil(pv * 0.02).toLocaleString()} (2%) saved.` : undefined,
+                      why: depositPctNum < 2
+                        ? "Even with the government taking up to 40% equity, you still need to contribute genuine savings of at least 2%. This is to demonstrate financial discipline and skin in the game."
+                        : undefined,
                       source: HELP_TO_BUY_SOURCE },
                     { label: `Property type sets gov equity (${newProperty ? "new = up to 40%" : "existing = up to 30%"})`,
                       passed: true,
