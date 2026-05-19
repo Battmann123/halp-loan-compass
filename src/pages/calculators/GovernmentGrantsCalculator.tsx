@@ -401,25 +401,28 @@ const GovernmentGrantsCalculator = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Checklist controls */}
-              <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border border-border/60 bg-background/60">
-                <button
-                  type="button"
-                  onClick={() => setExpandAllWhy((v) => !v)}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border border-border bg-muted hover:bg-muted/80 transition-colors"
-                >
-                  {expandAllWhy ? "Collapse all Why?" : "Expand all Why?"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowOnlyFails((v) => !v)}
-                  className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border transition-colors ${
-                    showOnlyFails
-                      ? "border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20"
-                      : "border-border bg-muted hover:bg-muted/80"
-                  }`}
-                >
-                  {showOnlyFails ? "Showing: fails only" : "Show only fails"}
-                </button>
+              <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 p-3 rounded-lg border border-border/60 bg-background/60">
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setExpandAllWhy((v) => !v)}
+                    className="inline-flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border border-border bg-muted hover:bg-muted/80 transition-colors"
+                  >
+                    {expandAllWhy ? "Collapse all" : "Expand all"}
+                    <span className="hidden sm:inline"> Why?</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowOnlyFails((v) => !v)}
+                    className={`inline-flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border transition-colors ${
+                      showOnlyFails
+                        ? "border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20"
+                        : "border-border bg-muted hover:bg-muted/80"
+                    }`}
+                  >
+                    {showOnlyFails ? "Showing fails" : "Show only fails"}
+                  </button>
+                </div>
                 <button
                   type="button"
                   onClick={() => {
@@ -430,7 +433,7 @@ const GovernmentGrantsCalculator = () => {
                       localStorage.removeItem("ggc_expandAllWhy");
                     } catch {}
                   }}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border border-border bg-muted hover:bg-muted/80 transition-colors ml-auto"
+                  className="inline-flex items-center justify-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border border-border bg-muted hover:bg-muted/80 transition-colors sm:ml-auto"
                   title="Reset checklist view"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
