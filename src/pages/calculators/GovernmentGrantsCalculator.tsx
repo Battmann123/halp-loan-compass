@@ -138,6 +138,44 @@ const GovernmentGrantsCalculator = () => {
     </div>
   );
 
+  // ── Eligibility checklist: criterion + pass/fail + linked source ─────────
+  type ChecklistItem = {
+    label: string;
+    passed: boolean;
+    detail?: string;
+    source?: { label: string; url: string };
+  };
+  const EligibilityChecklist = ({ items }: { items: ChecklistItem[] }) => (
+    <div className="mt-3 mb-2 rounded-md border border-border/60 bg-muted/30 p-3">
+      <p className="text-[10px] uppercase tracking-wide text-muted-foreground/80 mb-2 font-semibold">
+        Eligibility checklist
+      </p>
+      <ul className="space-y-1.5">
+        {items.map((it, i) => (
+          <li key={i} className="flex items-start gap-2 text-xs">
+            {it.passed
+              ? <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
+              : <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />}
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-baseline gap-x-2">
+                <span className={`font-medium ${it.passed ? "text-foreground" : "text-destructive"}`}>
+                  {it.label}
+                </span>
+                {it.detail && <span className="text-muted-foreground">— {it.detail}</span>}
+              </div>
+              {it.source && (
+                <a href={it.source.url} target="_blank" rel="noreferrer"
+                   className="text-[11px] text-primary hover:underline inline-block mt-0.5">
+                  Source: {it.source.label} ↗
+                </a>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -325,6 +363,29 @@ const GovernmentGrantsCalculator = () => {
                 <p className={`text-2xl font-bold mb-2 ${r.fhogAmount > 0 ? "text-green-600" : "text-muted-foreground"}`}>
                   ${r.fhogAmount.toLocaleString()}
                 </p>
+                <EligibilityChecklist items={[
+                  { label: "First home buyer", passed: firstHomeBuyer,
+                    detail: firstHomeBuyer ? "confirmed" : "must be a first home buyer",
+                    source: { label: "FirstHome.gov.au", url: "https://firsthomebuyers.gov.au/" } },
+                  { label: fhogRule.newOnly ? "Property is a new build" : "New or established accepted",
+                    passed: fhogRule.newOnly ? newProperty : true,
+                    detail: fhogRule.newOnly
+                      ? (newProperty ? "new build confirmed" : `${STATE_LABELS[state]} FHOG is new-only`)
+                      : "no restriction",
+                    source: FHOG_SOURCES[state] },
+                  { label: "Within property value cap",
+                    passed: fhogRule.valueCap === 0 || pv <= fhogRule.valueCap,
+                    detail: fhogRule.valueCap > 0
+                      ? `cap $${fhogRule.valueCap.toLocaleString()} · your $${pv.toLocaleString()}`
+                      : "no cap in this state",
+                    source: FHOG_SOURCES[state] },
+                  { label: "State offers a cash FHOG",
+                    passed: fhogCashAmount > 0,
+                    detail: fhogCashAmount > 0
+                      ? `$${fhogCashAmount.toLocaleString()} in ${STATE_LABELS[state]}`
+                      : "no cash grant (concessions via stamp duty instead)",
+                    source: FHOG_SOURCES[state] },
+                ]} />
                 <div className="space-y-0.5">
                   <Row label={`${STATE_LABELS[state]} FHOG amount`}
                        value={fhogCashAmount > 0 ? `$${fhogCashAmount.toLocaleString()}` : "No cash grant"} />
@@ -353,6 +414,23 @@ const GovernmentGrantsCalculator = () => {
                 <p className={`text-2xl font-bold mb-2 ${r.stampDutyConcession > 0 ? "text-blue-600" : "text-muted-foreground"}`}>
                   ${r.stampDutyConcession.toLocaleString()}
                 </p>
+                <EligibilityChecklist items={[
+                  { label: "First home buyer", passed: firstHomeBuyer,
+                    detail: firstHomeBuyer ? "confirmed" : "concession applies to FHBs only",
+                    source: STAMP_DUTY_SOURCES[state] },
+                  { label: `Property qualifies under ${STATE_LABELS[state]} FHB concession`,
+                    passed: firstHomeBuyer && r.stampDutyConcession > 0,
+                    detail: firstHomeBuyer
+                      ? (r.stampDutyConcession > 0
+                          ? `saving $${r.stampDutyConcession.toLocaleString()}`
+                          : `value above ${STATE_LABELS[state]} concession threshold`)
+                      : "tick FHB to evaluate",
+                    source: STAMP_DUTY_SOURCES[state] },
+                  { label: `Property type (${newProperty ? "new" : "established"})`,
+                    passed: true,
+                    detail: "both treated under each state's concession rules",
+                    source: STAMP_DUTY_SOURCES[state] },
+                ]} />
                 <div className="space-y-0.5">
                   <Row label="Duty if NOT a first home buyer" value={`$${Math.round(dutyNoFhb).toLocaleString()}`} />
                   <Row label={`Duty as ${firstHomeBuyer ? "FHB" : "non-FHB"} (your case)`}
@@ -386,6 +464,23 @@ const GovernmentGrantsCalculator = () => {
                 <p className={`text-sm font-semibold mb-2 ${r.depositSchemeEligible ? "text-primary" : "text-muted-foreground"}`}>
                   {r.depositSchemeEligible ? "Eligible — no LMI payable" : "Not eligible"}
                 </p>
+                <EligibilityChecklist items={[
+                  { label: "First home buyer", passed: firstHomeBuyer,
+                    detail: firstHomeBuyer ? "confirmed" : "scheme requires FHB",
+                    source: DEPOSIT_SCHEME_SOURCE },
+                  { label: `Within ${STATE_LABELS[state]} ${region} property cap`,
+                    passed: pv <= depositCap,
+                    detail: `cap $${depositCap.toLocaleString()} · your $${pv.toLocaleString()}`,
+                    source: DEPOSIT_SCHEME_SOURCE },
+                  { label: `Deposit ≥ ${minDepositPct}% (${isSingleParent ? "single parent stream" : "FHB stream"})`,
+                    passed: depositPctNum >= minDepositPct,
+                    detail: `your deposit ${depositPct}%`,
+                    source: DEPOSIT_SCHEME_SOURCE },
+                  { label: "No income cap (post 1 Oct 2025)",
+                    passed: true,
+                    detail: "income caps removed in the rebrand",
+                    source: DEPOSIT_SCHEME_SOURCE },
+                ]} />
                 <div className="space-y-0.5">
                   <Row label={`Property cap (${STATE_LABELS[state]} ${region})`}
                        value={`$${depositCap.toLocaleString()}`}
@@ -420,6 +515,28 @@ const GovernmentGrantsCalculator = () => {
                       <span className="text-sm font-normal text-muted-foreground">gov equity</span>
                     </p>
                   )}
+                  <EligibilityChecklist items={[
+                    { label: `${STATE_LABELS[state]} participates in Help to Buy`,
+                      passed: HTB_STATES.includes(state),
+                      detail: HTB_STATES.includes(state) ? "in scheme" : "TAS opted out",
+                      source: HELP_TO_BUY_SOURCE },
+                    { label: `Household income within ${isCouple ? "couple" : "single"} cap`,
+                      passed: incomeNum <= htbIncomeCap,
+                      detail: `cap $${htbIncomeCap.toLocaleString()} · yours $${incomeNum.toLocaleString()}`,
+                      source: HELP_TO_BUY_SOURCE },
+                    { label: "Deposit ≥ 2% of property value",
+                      passed: depositPctNum >= 2,
+                      detail: `your deposit ${depositPct}%`,
+                      source: HELP_TO_BUY_SOURCE },
+                    { label: `Property type sets gov equity (${newProperty ? "new = up to 40%" : "existing = up to 30%"})`,
+                      passed: true,
+                      detail: `${htbEquityPct}% gov equity in your case`,
+                      source: HELP_TO_BUY_SOURCE },
+                    { label: "10,000 places nationally per year",
+                      passed: true,
+                      detail: "subject to allocation when applying",
+                      source: HELP_TO_BUY_SOURCE },
+                  ]} />
                   <div className="space-y-0.5">
                     <Row label={`State participates (${state})`}
                          value={HTB_STATES.includes(state) ? "Yes" : "No (TAS opted out)"}
@@ -454,6 +571,28 @@ const GovernmentGrantsCalculator = () => {
                   <p className="text-2xl font-bold text-green-600 mb-2">
                     ${r.fhssNetForDeposit.toLocaleString()}
                   </p>
+                  <EligibilityChecklist items={[
+                    { label: "Annual contribution within $15,000 cap",
+                      passed: (Number(fhssAnnualContribution) || 0) <= 15000,
+                      detail: `your $${(Number(fhssAnnualContribution) || 0).toLocaleString()} · counted $${fhssAnnualCapped.toLocaleString()}`,
+                      source: FHSS_SOURCE },
+                    { label: "Per-person total within $50,000 cap",
+                      passed: fhssGrossContrib <= 50000,
+                      detail: `total contributed $${fhssGrossContrib.toLocaleString()}`,
+                      source: FHSS_SOURCE },
+                    { label: "Must be first home buyer (intend to occupy ≥ 6 months in first year)",
+                      passed: firstHomeBuyer,
+                      detail: firstHomeBuyer ? "confirmed" : "tick FHB above",
+                      source: FHSS_SOURCE },
+                    { label: "Voluntary contributions only (not employer SG)",
+                      passed: true,
+                      detail: "salary sacrifice or personal contributions",
+                      source: FHSS_SOURCE },
+                    { label: "Withdrawal taxed at marginal rate less 30% offset",
+                      passed: true,
+                      detail: "applied automatically on release",
+                      source: FHSS_SOURCE },
+                  ]} />
                   <div className="space-y-0.5">
                     <Row label="Annual contribution cap" value="$15,000"
                          ok={(Number(fhssAnnualContribution) || 0) <= 15000} />
