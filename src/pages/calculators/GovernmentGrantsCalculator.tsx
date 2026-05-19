@@ -425,6 +425,10 @@ const GovernmentGrantsCalculator = () => {
                   onClick={() => {
                     setShowOnlyFails(false);
                     setExpandAllWhy(false);
+                    try {
+                      localStorage.removeItem("ggc_showOnlyFails");
+                      localStorage.removeItem("ggc_expandAllWhy");
+                    } catch {}
                   }}
                   className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border border-border bg-muted hover:bg-muted/80 transition-colors ml-auto"
                   title="Reset checklist view"
