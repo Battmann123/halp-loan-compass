@@ -153,50 +153,72 @@ const GovernmentGrantsCalculator = () => {
     why?: string;
     source?: { label: string; url: string };
   };
-  const EligibilityChecklist = ({ items }: { items: ChecklistItem[] }) => (
-    <div className="mt-3 mb-2 rounded-md border border-border/60 bg-muted/30 p-3">
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground/80 mb-2 font-semibold">
-        Eligibility checklist
-      </p>
-      <ul className="space-y-1.5">
-        {items.map((it, i) => (
-          <li key={i} className="flex items-start gap-2 text-xs">
-            {it.passed
-              ? <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
-              : <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />}
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-baseline gap-x-2">
-                <span className={`font-medium ${it.passed ? "text-foreground" : "text-destructive"}`}>
-                  {it.label}
-                </span>
-                {it.detail && <span className="text-muted-foreground">— {it.detail}</span>}
+  const EligibilityChecklist = ({
+    items,
+    showOnlyFails = false,
+    expandAllWhy = false,
+  }: {
+    items: ChecklistItem[];
+    showOnlyFails?: boolean;
+    expandAllWhy?: boolean;
+  }) => {
+    const containerRef = React.useRef<HTMLUListElement>(null);
+
+    React.useEffect(() => {
+      if (!containerRef.current) return;
+      const details = containerRef.current.querySelectorAll<HTMLDetailsElement>("details");
+      details.forEach((d) => {
+        d.open = expandAllWhy;
+      });
+    }, [expandAllWhy]);
+
+    const visibleItems = showOnlyFails ? items.filter((it) => !it.passed) : items;
+
+    return (
+      <div className="mt-3 mb-2 rounded-md border border-border/60 bg-muted/30 p-3">
+        <p className="text-[10px] uppercase tracking-wide text-muted-foreground/80 mb-2 font-semibold">
+          Eligibility checklist
+        </p>
+        <ul ref={containerRef} className="space-y-1.5">
+          {visibleItems.map((it, i) => (
+            <li key={i} className="flex items-start gap-2 text-xs">
+              {it.passed
+                ? <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
+                : <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />}
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-baseline gap-x-2">
+                  <span className={`font-medium ${it.passed ? "text-foreground" : "text-destructive"}`}>
+                    {it.label}
+                  </span>
+                  {it.detail && <span className="text-muted-foreground">— {it.detail}</span>}
+                </div>
+                {!it.passed && it.reason && (
+                  <p className="text-[11px] text-destructive/90 mt-0.5">{it.reason}</p>
+                )}
+                {!it.passed && it.why && (
+                  <details className="mt-1 group">
+                    <summary className="cursor-pointer text-[11px] text-primary hover:underline list-none inline-flex items-center gap-1 select-none">
+                      <span className="group-open:hidden">Why? ▸</span>
+                      <span className="hidden group-open:inline">Hide ▾</span>
+                    </summary>
+                    <div className="mt-1 p-2 rounded bg-background/60 border border-border/50 text-[11px] text-muted-foreground leading-relaxed">
+                      {it.why}
+                    </div>
+                  </details>
+                )}
+                {it.source && (
+                  <a href={it.source.url} target="_blank" rel="noreferrer"
+                     className="text-[11px] text-primary hover:underline inline-block mt-0.5">
+                    Source: {it.source.label} ↗
+                  </a>
+                )}
               </div>
-              {!it.passed && it.reason && (
-                <p className="text-[11px] text-destructive/90 mt-0.5">{it.reason}</p>
-              )}
-              {!it.passed && it.why && (
-                <details className="mt-1 group">
-                  <summary className="cursor-pointer text-[11px] text-primary hover:underline list-none inline-flex items-center gap-1 select-none">
-                    <span className="group-open:hidden">Why? ▸</span>
-                    <span className="hidden group-open:inline">Hide ▾</span>
-                  </summary>
-                  <div className="mt-1 p-2 rounded bg-background/60 border border-border/50 text-[11px] text-muted-foreground leading-relaxed">
-                    {it.why}
-                  </div>
-                </details>
-              )}
-              {it.source && (
-                <a href={it.source.url} target="_blank" rel="noreferrer"
-                   className="text-[11px] text-primary hover:underline inline-block mt-0.5">
-                  Source: {it.source.label} ↗
-                </a>
-              )}
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
