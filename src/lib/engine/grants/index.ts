@@ -16,6 +16,8 @@ import { round } from "../util";
 
 export interface GovernmentGrantsInput {
   state: AusState;
+  /** 5% Deposit Scheme region — capital / regional centre / rest-of-state. Defaults to "capital". */
+  region?: "capital" | "regional" | "rest";
   propertyValue: number;
   deposit: number;
   isFirstHomeBuyer: boolean;
