@@ -645,14 +645,30 @@ const GovernmentGrantsCalculator = () => {
                     { label: "Annual contribution within $15,000 cap",
                       passed: (Number(fhssAnnualContribution) || 0) <= 15000,
                       detail: `your $${(Number(fhssAnnualContribution) || 0).toLocaleString()} · counted $${fhssAnnualCapped.toLocaleString()}`,
+                      reason: (Number(fhssAnnualContribution) || 0) > 15000
+                        ? `Anything above $15,000/yr won't count toward FHSS — only $15,000 of your contribution is releasable.`
+                        : undefined,
+                      why: (Number(fhssAnnualContribution) || 0) > 15000
+                        ? "FHSS only releases up to $15,000 of voluntary contributions per financial year. Extra contributions stay locked in super until retirement. They're not lost — they still get the concessional tax treatment — but they can't be withdrawn for a deposit."
+                        : undefined,
                       source: FHSS_SOURCE },
                     { label: "Per-person total within $50,000 cap",
                       passed: fhssGrossContrib <= 50000,
                       detail: `total contributed $${fhssGrossContrib.toLocaleString()}`,
+                      reason: fhssGrossContrib > 50000
+                        ? `Only $50,000 per person can be released — the remaining $${(fhssGrossContrib - 50000).toLocaleString()} stays locked in super.`
+                        : undefined,
+                      why: fhssGrossContrib > 50000
+                        ? "The lifetime FHSS release cap is $50,000 per person. Couples can each contribute and release, giving $100k combined. Contributions above the per-person cap aren't lost but can't be withdrawn for the deposit."
+                        : undefined,
                       source: FHSS_SOURCE },
                     { label: "Must be first home buyer (intend to occupy ≥ 6 months in first year)",
                       passed: firstHomeBuyer,
                       detail: firstHomeBuyer ? "confirmed" : "tick FHB above",
+                      reason: firstHomeBuyer ? undefined : "FHSS is restricted to genuine first home buyers planning to live in the property.",
+                      why: firstHomeBuyer
+                        ? undefined
+                        : "FHSS requires you to be a first home buyer and to move into the property within 12 months of settlement and live there for at least 6 of the first 12 months. Investors and people who've owned property in Australia before don't qualify (some hardship exceptions exist).",
                       source: FHSS_SOURCE },
                     { label: "Voluntary contributions only (not employer SG)",
                       passed: true,
