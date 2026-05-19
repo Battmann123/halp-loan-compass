@@ -61,8 +61,43 @@ const GovernmentGrantsCalculator = () => {
   });
 
   const r = calc.result;
-  const depositPct = pv > 0 ? ((dep / pv) * 100).toFixed(1) : "0.0";
+  const depositPctNum = pv > 0 ? (dep / pv) * 100 : 0;
+  const depositPct = depositPctNum.toFixed(1);
   const caps = PRICE_CAPS[state];
+
+  // ── Per-stream context for the breakdown rows ──────────────────────────────
+  const fhogRule = FHOG_BY_STATE[state];
+  const fhogCashAmount = (isRegional && fhogRule.regionalSplit) ? fhogRule.regionalSplit.regional : fhogRule.amount;
+
+  const dutyNoFhb = calculateStampDuty({
+    value: pv, state, isFirstHomeBuyer: false, occupancy: "owner-occupier",
+    category: newProperty ? "new" : "established",
+  }).result.duty;
+  const dutyAsFhb = calculateStampDuty({
+    value: pv, state, isFirstHomeBuyer: firstHomeBuyer, occupancy: "owner-occupier",
+    category: newProperty ? "new" : "established",
+  }).result.duty;
+
+  const depositCap = caps[region];
+  const minDepositPct = isSingleParent ? 2 : 5;
+  const htbIncomeCap = isCouple ? 160000 : 100000;
+  const htbEquityPct = newProperty ? 40 : 30;
+  const incomeNum = Number(householdIncome) || 0;
+  const HTB_STATES: AusState[] = ["NSW", "VIC", "QLD", "SA", "ACT", "NT", "WA"];
+
+  const fhssAnnualCapped = Math.min(Number(fhssAnnualContribution) || 0, 15000);
+  const fhssGrossContrib = fhssAnnualCapped * (Number(fhssYearsContributing) || 0);
+
+  // Tiny row helper for breakdown tables
+  const Row = ({ label, value, ok }: { label: string; value: React.ReactNode; ok?: boolean }) => (
+    <div className="flex justify-between items-baseline gap-3 text-xs py-1 border-b border-border/40 last:border-0">
+      <span className="text-muted-foreground">{label}</span>
+      <span className={`font-medium ${ok === true ? "text-green-700" : ok === false ? "text-destructive" : "text-foreground"}`}>
+        {value}
+      </span>
+    </div>
+  );
+
 
   return (
     <div className="min-h-screen flex flex-col">
