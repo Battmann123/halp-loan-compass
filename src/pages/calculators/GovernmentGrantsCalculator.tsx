@@ -275,84 +275,160 @@ const GovernmentGrantsCalculator = () => {
 
               {/* FHOG */}
               <div className="bg-white p-4 rounded-lg border-2 border-border">
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-2">
                   {r.fhogAmount > 0
                     ? <CheckCircle2 className="h-5 w-5 text-green-600" />
                     : <XCircle className="h-5 w-5 text-muted-foreground" />}
                   <span className="font-semibold">First Home Owner Grant (FHOG)</span>
                 </div>
-                <p className={`text-2xl font-bold ${r.fhogAmount > 0 ? "text-green-600" : "text-muted-foreground"}`}>
+                <p className={`text-2xl font-bold mb-2 ${r.fhogAmount > 0 ? "text-green-600" : "text-muted-foreground"}`}>
                   ${r.fhogAmount.toLocaleString()}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">{r.fhogReason}</p>
+                <div className="space-y-0.5">
+                  <Row label={`${STATE_LABELS[state]} FHOG amount`}
+                       value={fhogCashAmount > 0 ? `$${fhogCashAmount.toLocaleString()}` : "No cash grant"} />
+                  <Row label="Property type required"
+                       value={fhogRule.newOnly ? "New build only" : "New or established"}
+                       ok={fhogRule.newOnly ? newProperty : true} />
+                  <Row label="Property value cap"
+                       value={fhogRule.valueCap > 0 ? `$${fhogRule.valueCap.toLocaleString()}` : "No cap"}
+                       ok={fhogRule.valueCap === 0 || pv <= fhogRule.valueCap} />
+                  <Row label="First home buyer required" value="Yes" ok={firstHomeBuyer} />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 italic">
+                  {r.fhogAmount > 0 ? "✓ " : ""}{r.fhogReason}
+                </p>
               </div>
 
               {/* Stamp duty concession */}
               <div className="bg-white p-4 rounded-lg border-2 border-border">
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-2">
                   {r.stampDutyConcession > 0
                     ? <CheckCircle2 className="h-5 w-5 text-blue-600" />
                     : <XCircle className="h-5 w-5 text-muted-foreground" />}
                   <span className="font-semibold">Stamp Duty Concession</span>
                 </div>
-                <p className={`text-2xl font-bold ${r.stampDutyConcession > 0 ? "text-blue-600" : "text-muted-foreground"}`}>
+                <p className={`text-2xl font-bold mb-2 ${r.stampDutyConcession > 0 ? "text-blue-600" : "text-muted-foreground"}`}>
                   ${r.stampDutyConcession.toLocaleString()}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Saving vs non-FHB duty for a {newProperty ? "new" : "established"} {STATE_LABELS[state]} property.
+                <div className="space-y-0.5">
+                  <Row label="Duty if NOT a first home buyer" value={`$${Math.round(dutyNoFhb).toLocaleString()}`} />
+                  <Row label={`Duty as ${firstHomeBuyer ? "FHB" : "non-FHB"} (your case)`}
+                       value={`$${Math.round(dutyAsFhb).toLocaleString()}`} />
+                  <Row label="Your concession (saving)"
+                       value={`$${r.stampDutyConcession.toLocaleString()}`}
+                       ok={r.stampDutyConcession > 0} />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 italic">
+                  {firstHomeBuyer
+                    ? r.stampDutyConcession > 0
+                      ? `✓ FHB concession applied for a ${newProperty ? "new" : "established"} ${STATE_LABELS[state]} property.`
+                      : `Property value above the ${STATE_LABELS[state]} FHB concession threshold — no saving available.`
+                    : "Tick \"First Home Buyer\" to see the concession you'd qualify for."}
                 </p>
               </div>
 
               {/* 5% Deposit Scheme */}
               <div className="bg-white p-4 rounded-lg border-2 border-border">
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-2">
                   {r.depositSchemeEligible
                     ? <CheckCircle2 className="h-5 w-5 text-primary" />
                     : <XCircle className="h-5 w-5 text-muted-foreground" />}
-                  <span className="font-semibold">{r.depositSchemeName}</span>
+                  <span className="font-semibold">
+                    {isSingleParent
+                      ? "5% Deposit Scheme — Single Parent stream (2%)"
+                      : "Australian Government 5% Deposit Scheme"}
+                  </span>
                 </div>
-                <p className={`text-sm font-semibold ${r.depositSchemeEligible ? "text-primary" : "text-muted-foreground"}`}>
+                <p className={`text-sm font-semibold mb-2 ${r.depositSchemeEligible ? "text-primary" : "text-muted-foreground"}`}>
                   {r.depositSchemeEligible ? "Eligible — no LMI payable" : "Not eligible"}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">{r.depositSchemeReason}</p>
+                <div className="space-y-0.5">
+                  <Row label={`Property cap (${STATE_LABELS[state]} ${region})`}
+                       value={`$${depositCap.toLocaleString()}`}
+                       ok={pv <= depositCap} />
+                  <Row label="Your property value"
+                       value={`$${pv.toLocaleString()}`} />
+                  <Row label={`Minimum deposit required`}
+                       value={`${minDepositPct}%`} />
+                  <Row label="Your deposit"
+                       value={`${depositPct}% ($${dep.toLocaleString()})`}
+                       ok={depositPctNum >= minDepositPct} />
+                  <Row label="First home buyer required" value="Yes" ok={firstHomeBuyer} />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 italic">
+                  {r.depositSchemeEligible ? "✓ " : ""}{r.depositSchemeReason}
+                </p>
               </div>
 
               {/* Help to Buy */}
               {evaluateHelpToBuy && (
                 <div className="bg-white p-4 rounded-lg border-2 border-border">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-2">
                     {r.helpToBuyEligible
                       ? <CheckCircle2 className="h-5 w-5 text-accent" />
                       : <XCircle className="h-5 w-5 text-muted-foreground" />}
                     <span className="font-semibold">Help to Buy (Shared Equity)</span>
                   </div>
                   {r.helpToBuyEligible && (
-                    <p className="text-2xl font-bold text-accent">
+                    <p className="text-2xl font-bold text-accent mb-2">
                       ${r.helpToBuyEquity.toLocaleString()}{" "}
                       <span className="text-sm font-normal text-muted-foreground">gov equity</span>
                     </p>
                   )}
-                  <p className="text-xs text-muted-foreground mt-1">{r.helpToBuyReason}</p>
+                  <div className="space-y-0.5">
+                    <Row label={`State participates (${state})`}
+                         value={HTB_STATES.includes(state) ? "Yes" : "No (TAS opted out)"}
+                         ok={HTB_STATES.includes(state)} />
+                    <Row label={`Income cap (${isCouple ? "couple" : "single"})`}
+                         value={`$${htbIncomeCap.toLocaleString()}`}
+                         ok={incomeNum <= htbIncomeCap} />
+                    <Row label="Your household income"
+                         value={`$${incomeNum.toLocaleString()}`} />
+                    <Row label="Minimum deposit"
+                         value="2%"
+                         ok={depositPctNum >= 2} />
+                    <Row label={`Gov equity share (${newProperty ? "new" : "existing"})`}
+                         value={`${htbEquityPct}%`} />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2 italic">
+                    {r.helpToBuyEligible ? "✓ " : ""}{r.helpToBuyReason}
+                  </p>
                 </div>
               )}
 
               {/* FHSS */}
               {evaluateFhss && (
                 <div className="bg-white p-4 rounded-lg border-2 border-border">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-2">
                     {r.fhssNetForDeposit > 0
                       ? <CheckCircle2 className="h-5 w-5 text-green-600" />
                       : <XCircle className="h-5 w-5 text-muted-foreground" />}
                     <span className="font-semibold">First Home Super Saver (FHSS)</span>
                   </div>
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-2xl font-bold text-green-600 mb-2">
                     ${r.fhssNetForDeposit.toLocaleString()}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Net for deposit (gross withdrawable: ${r.fhssWithdrawable.toLocaleString()})
-                  </p>
+                  <div className="space-y-0.5">
+                    <Row label="Annual contribution cap" value="$15,000"
+                         ok={(Number(fhssAnnualContribution) || 0) <= 15000} />
+                    <Row label="Your annual contribution"
+                         value={`$${(Number(fhssAnnualContribution) || 0).toLocaleString()} (counted: $${fhssAnnualCapped.toLocaleString()})`} />
+                    <Row label="Per-person total cap" value="$50,000" />
+                    <Row label={`Total contributed (${fhssYearsContributing} yrs${isCouple ? ", couple" : ""})`}
+                         value={`$${fhssGrossContrib.toLocaleString()}${isCouple ? " × 2" : ""}`} />
+                    <Row label="Gross withdrawable"
+                         value={`$${r.fhssWithdrawable.toLocaleString()}`} />
+                    <Row label="Less withdrawal tax (marginal − 30%)"
+                         value={`−$${(r.fhssWithdrawable - r.fhssNetForDeposit).toLocaleString()}`} />
+                    <Row label="Net available for deposit"
+                         value={`$${r.fhssNetForDeposit.toLocaleString()}`}
+                         ok={r.fhssNetForDeposit > 0} />
+                  </div>
                 </div>
               )}
+
+
 
               <Button className="w-full bg-gradient-to-r from-primary to-accent" asChild>
                 <Link to="/apply">Apply for Pre-Approval</Link>
