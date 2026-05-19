@@ -515,6 +515,28 @@ const GovernmentGrantsCalculator = () => {
                       <span className="text-sm font-normal text-muted-foreground">gov equity</span>
                     </p>
                   )}
+                  <EligibilityChecklist items={[
+                    { label: `${STATE_LABELS[state]} participates in Help to Buy`,
+                      passed: HTB_STATES.includes(state),
+                      detail: HTB_STATES.includes(state) ? "in scheme" : "TAS opted out",
+                      source: HELP_TO_BUY_SOURCE },
+                    { label: `Household income within ${isCouple ? "couple" : "single"} cap`,
+                      passed: incomeNum <= htbIncomeCap,
+                      detail: `cap $${htbIncomeCap.toLocaleString()} · yours $${incomeNum.toLocaleString()}`,
+                      source: HELP_TO_BUY_SOURCE },
+                    { label: "Deposit ≥ 2% of property value",
+                      passed: depositPctNum >= 2,
+                      detail: `your deposit ${depositPct}%`,
+                      source: HELP_TO_BUY_SOURCE },
+                    { label: `Property type sets gov equity (${newProperty ? "new = up to 40%" : "existing = up to 30%"})`,
+                      passed: true,
+                      detail: `${htbEquityPct}% gov equity in your case`,
+                      source: HELP_TO_BUY_SOURCE },
+                    { label: "10,000 places nationally per year",
+                      passed: true,
+                      detail: "subject to allocation when applying",
+                      source: HELP_TO_BUY_SOURCE },
+                  ]} />
                   <div className="space-y-0.5">
                     <Row label={`State participates (${state})`}
                          value={HTB_STATES.includes(state) ? "Yes" : "No (TAS opted out)"}
