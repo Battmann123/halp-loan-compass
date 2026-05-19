@@ -701,8 +701,11 @@ const GovernmentGrantsCalculator = () => {
                   <p className="text-2xl font-bold text-green-600 mb-2">
                     ${r.fhssNetForDeposit.toLocaleString()}
                   </p>
-                  <EligibilityChecklist items={[
-                    { label: "Annual contribution within $15,000 cap",
+                  <EligibilityChecklist
+                    showOnlyFails={showOnlyFails}
+                    expandAllWhy={expandAllWhy}
+                    items={[
+                      { label: "Annual contribution within $15,000 cap",
                       passed: (Number(fhssAnnualContribution) || 0) <= 15000,
                       detail: `your $${(Number(fhssAnnualContribution) || 0).toLocaleString()} · counted $${fhssAnnualCapped.toLocaleString()}`,
                       reason: (Number(fhssAnnualContribution) || 0) > 15000
