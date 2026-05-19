@@ -7,129 +7,61 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Gift, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Gift, ArrowLeft, CheckCircle2, XCircle, Info } from "lucide-react";
 import { Link } from "react-router-dom";
-import { calculateStampDuty, type AusState } from "@/lib/calculations";
+import { calculateGovernmentGrants, PRICE_CAPS } from "@/lib/engine/grants";
+import type { AusState } from "@/lib/engine";
+
+type Region = "capital" | "regional" | "rest";
+
+const STATE_LABELS: Record<AusState, string> = {
+  NSW: "New South Wales", VIC: "Victoria", QLD: "Queensland", SA: "South Australia",
+  WA: "Western Australia", TAS: "Tasmania", NT: "Northern Territory", ACT: "Australian Capital Territory",
+};
 
 const GovernmentGrantsCalculator = () => {
-  const [propertyValue, setPropertyValue] = useState(650000);
-  const [state, setState] = useState("nsw");
+  // Core inputs
+  const [propertyValue, setPropertyValue] = useState<string | number>(650000);
+  const [deposit, setDeposit] = useState<string | number>(50000);
+  const [state, setState] = useState<AusState>("NSW");
+  const [region, setRegion] = useState<Region>("capital");
   const [firstHomeBuyer, setFirstHomeBuyer] = useState(true);
   const [newProperty, setNewProperty] = useState(true);
-  const [deposit, setDeposit] = useState(50000);
+  const [isRegional, setIsRegional] = useState(false);
 
-  const calculateGrants = () => {
-    let fhog = 0;
-    let depositScheme = false;
-    let stampDutyExemption = 0;
-    const stateUpper = state.toUpperCase() as AusState;
+  // Optional streams
+  const [isSingleParent, setIsSingleParent] = useState(false);
+  const [evaluateHelpToBuy, setEvaluateHelpToBuy] = useState(false);
+  const [isCouple, setIsCouple] = useState(false);
+  const [householdIncome, setHouseholdIncome] = useState<string | number>(95000);
 
-    // Stamp duty saving = (full duty as non-FHB) − (duty as FHB).
-    // This uses the same shared logic as the Stamp Duty calculator for consistency.
-    const dutyWithoutFhb = calculateStampDuty({
-      value: propertyValue,
-      state: stateUpper,
-      isFirstHomeBuyer: false,
-      occupancy: "owner-occupier",
-      category: newProperty ? "new" : "established",
-    }).duty;
-    const dutyWithFhb = calculateStampDuty({
-      value: propertyValue,
-      state: stateUpper,
-      isFirstHomeBuyer: firstHomeBuyer,
-      occupancy: "owner-occupier",
-      category: newProperty ? "new" : "established",
-    }).duty;
-    if (firstHomeBuyer) stampDutyExemption = Math.max(0, dutyWithoutFhb - dutyWithFhb);
+  const [evaluateFhss, setEvaluateFhss] = useState(false);
+  const [fhssAnnualContribution, setFhssAnnualContribution] = useState<string | number>(15000);
+  const [fhssYearsContributing, setFhssYearsContributing] = useState<string | number>(3);
 
-    // First Home Owner Grant (FHOG) — varies by state, mostly new builds only
-    if (state === "nsw" && firstHomeBuyer && newProperty && propertyValue <= 750000) fhog = 10000;
-    if (state === "vic" && firstHomeBuyer && newProperty && propertyValue <= 750000) fhog = 10000;
-    if (state === "qld" && firstHomeBuyer && newProperty && propertyValue <= 750000) fhog = 30000;
-    if (state === "sa" && firstHomeBuyer && newProperty) fhog = 15000;
-    if (state === "wa" && firstHomeBuyer && newProperty && propertyValue <= 1000000) fhog = 10000;
-    if (state === "tas" && firstHomeBuyer && newProperty && propertyValue <= 750000) fhog = 10000;
-    if (state === "nt" && firstHomeBuyer) fhog = newProperty ? 50000 : 10000;
-    // ACT: no FHOG — concession applied via stamp duty exemption above
+  const pv = Number(propertyValue) || 0;
+  const dep = Number(deposit) || 0;
 
-    // 5% Deposit Scheme (Home Guarantee Scheme) eligibility — Oct 2025 caps
-    const depositPercentage = (deposit / propertyValue) * 100;
-    if (firstHomeBuyer && depositPercentage >= 5 && depositPercentage < 20) {
-      const cap: Record<string, number> = {
-        nsw: 1500000, vic: 950000, qld: 1000000, sa: 900000,
-        wa: 850000, tas: 700000, nt: 600000, act: 1000000,
-      };
-      if (propertyValue <= (cap[state] ?? 0)) depositScheme = true;
-    }
+  const calc = calculateGovernmentGrants({
+    state,
+    region,
+    propertyValue: pv,
+    deposit: dep,
+    isFirstHomeBuyer: firstHomeBuyer,
+    newProperty,
+    isRegional,
+    isSingleParent,
+    evaluateHelpToBuy,
+    householdIncome: Number(householdIncome) || 0,
+    isCouple,
+    evaluateFhss,
+    fhssAnnualContribution: Number(fhssAnnualContribution) || 0,
+    fhssYearsContributing: Number(fhssYearsContributing) || 0,
+  });
 
-    const totalGrants = fhog + stampDutyExemption;
-
-    return {
-      fhog,
-      stampDutyExemption: Math.round(stampDutyExemption),
-      depositScheme,
-      totalGrants: Math.round(totalGrants),
-      depositPercentage: ((deposit / propertyValue) * 100).toFixed(1),
-    };
-  };
-
-  const results = calculateGrants();
-
-  const getStateGrantDetails = () => {
-    const details = {
-      nsw: {
-        fhog: 10000,
-        limit: 750000,
-        stampLimit: 800000,
-        depositScheme: 1500000,
-      },
-      vic: {
-        fhog: 10000,
-        limit: 750000,
-        stampLimit: 600000,
-        depositScheme: 950000,
-      },
-      qld: {
-        fhog: 30000,
-        limit: 750000,                 // FHOG cap (total value, new builds)
-        stampLimit: 0,                 // From 1 May 2025: no cap on new homes / vacant land
-        depositScheme: 1000000,        // HGS cap from 1 Oct 2025 (Brisbane / GC / SC)
-      },
-      sa: {
-        fhog: 15000,
-        limit: 0,                      // No cap as of Feb 2025
-        stampLimit: 0,
-        depositScheme: 900000,         // HGS cap from 1 Oct 2025 (Adelaide)
-      },
-      wa: {
-        fhog: 10000,
-        limit: 1000000,                // $1M north, $750k south
-        stampLimit: 700000,            // FHB sliding scale top (established)
-        depositScheme: 850000,         // HGS cap from 1 Oct 2025 (Perth)
-      },
-      tas: {
-        fhog: 10000,
-        limit: 750000,
-        stampLimit: 750000,
-        depositScheme: 700000,         // HGS cap from 1 Oct 2025 (Hobart)
-      },
-      nt: {
-        fhog: 50000,                   // $50k for new, $10k for established
-        limit: 0,
-        stampLimit: 650000,            // FHB reduction up to $650k
-        depositScheme: 600000,
-      },
-      act: {
-        fhog: 0,                       // No FHOG — Home Buyer Concession Scheme instead
-        limit: 0,
-        stampLimit: 1020000,           // Full HBCS exemption ≤ $1.02M (PPR)
-        depositScheme: 1000000,        // HGS cap from 1 Oct 2025
-      },
-    };
-    return details[state as keyof typeof details];
-  };
-
-  const stateDetails = getStateGrantDetails();
+  const r = calc.result;
+  const depositPct = pv > 0 ? ((dep / pv) * 100).toFixed(1) : "0.0";
+  const caps = PRICE_CAPS[state];
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -147,7 +79,8 @@ const GovernmentGrantsCalculator = () => {
             <h1 className="text-3xl md:text-4xl font-bold">Government Grants Calculator</h1>
           </div>
           <p className="text-lg text-muted-foreground">
-            Calculate available grants and benefits including the 5% deposit scheme
+            All available grants in one view — FHOG, stamp duty concessions, the new Australian Government
+            5% Deposit Scheme (incl. 2% Single Parent stream), Help to Buy shared equity, and FHSS.
           </p>
         </div>
 
@@ -162,13 +95,8 @@ const GovernmentGrantsCalculator = () => {
                 <Label htmlFor="propertyValue">Property Purchase Price</Label>
                 <div className="relative mt-2">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                  <Input
-                    id="propertyValue"
-                    type="number"
-                    value={propertyValue}
-                    onChange={(e) => setPropertyValue(Number(e.target.value))}
-                    className="pl-7"
-                  />
+                  <Input id="propertyValue" type="number" value={propertyValue}
+                    onChange={(e) => setPropertyValue(e.target.value)} className="pl-7" />
                 </div>
               </div>
 
@@ -176,60 +104,121 @@ const GovernmentGrantsCalculator = () => {
                 <Label htmlFor="deposit">Your Deposit Amount</Label>
                 <div className="relative mt-2">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                  <Input
-                    id="deposit"
-                    type="number"
-                    value={deposit}
-                    onChange={(e) => setDeposit(Number(e.target.value))}
-                    className="pl-7"
-                  />
+                  <Input id="deposit" type="number" value={deposit}
+                    onChange={(e) => setDeposit(e.target.value)} className="pl-7" />
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Deposit percentage: {results.depositPercentage}%
-                </p>
+                <p className="text-xs text-muted-foreground mt-1">Deposit percentage: {depositPct}%</p>
               </div>
 
-              <div>
-                <Label htmlFor="state">State/Territory</Label>
-                <Select value={state} onValueChange={setState}>
-                  <SelectTrigger className="mt-2">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="nsw">New South Wales</SelectItem>
-                    <SelectItem value="vic">Victoria</SelectItem>
-                    <SelectItem value="qld">Queensland</SelectItem>
-                    <SelectItem value="sa">South Australia</SelectItem>
-                    <SelectItem value="wa">Western Australia</SelectItem>
-                    <SelectItem value="tas">Tasmania</SelectItem>
-                    <SelectItem value="nt">Northern Territory</SelectItem>
-                    <SelectItem value="act">Australian Capital Territory</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="state">State/Territory</Label>
+                  <Select value={state} onValueChange={(v) => setState(v as AusState)}>
+                    <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(STATE_LABELS) as AusState[]).map((s) => (
+                        <SelectItem key={s} value={s}>{STATE_LABELS[s]}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="region">Region (5% Scheme cap)</Label>
+                  <Select value={region} onValueChange={(v) => setRegion(v as Region)}>
+                    <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="capital">Capital city / major</SelectItem>
+                      <SelectItem value="regional">Regional centre</SelectItem>
+                      <SelectItem value="rest">Rest of state</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="firstHomeBuyer" 
-                    checked={firstHomeBuyer}
-                    onCheckedChange={(checked) => setFirstHomeBuyer(checked as boolean)}
-                  />
-                  <Label htmlFor="firstHomeBuyer" className="cursor-pointer">
-                    I am a First Home Buyer
+                  <Checkbox id="fhb" checked={firstHomeBuyer}
+                    onCheckedChange={(c) => setFirstHomeBuyer(c as boolean)} />
+                  <Label htmlFor="fhb" className="cursor-pointer">I am a First Home Buyer</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="new" checked={newProperty}
+                    onCheckedChange={(c) => setNewProperty(c as boolean)} />
+                  <Label htmlFor="new" className="cursor-pointer">Purchasing a new property</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="regional" checked={isRegional}
+                    onCheckedChange={(c) => setIsRegional(c as boolean)} />
+                  <Label htmlFor="regional" className="cursor-pointer">Regional area (affects VIC FHOG)</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="sp" checked={isSingleParent}
+                    onCheckedChange={(c) => setIsSingleParent(c as boolean)} />
+                  <Label htmlFor="sp" className="cursor-pointer">
+                    Single Parent / Legal Guardian (2% deposit stream)
                   </Label>
                 </div>
+              </div>
 
+              {/* Help to Buy block */}
+              <div className="border-t pt-4 space-y-3">
                 <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="newProperty" 
-                    checked={newProperty}
-                    onCheckedChange={(checked) => setNewProperty(checked as boolean)}
-                  />
-                  <Label htmlFor="newProperty" className="cursor-pointer">
-                    Purchasing a New Property
+                  <Checkbox id="htb" checked={evaluateHelpToBuy}
+                    onCheckedChange={(c) => setEvaluateHelpToBuy(c as boolean)} />
+                  <Label htmlFor="htb" className="cursor-pointer font-semibold">
+                    Evaluate Help to Buy (shared equity)
                   </Label>
                 </div>
+                {evaluateHelpToBuy && (
+                  <div className="ml-6 space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="couple" checked={isCouple}
+                        onCheckedChange={(c) => setIsCouple(c as boolean)} />
+                      <Label htmlFor="couple" className="cursor-pointer">Applying as a couple</Label>
+                    </div>
+                    <div>
+                      <Label htmlFor="income">Household gross income (combined)</Label>
+                      <div className="relative mt-2">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                        <Input id="income" type="number" value={householdIncome}
+                          onChange={(e) => setHouseholdIncome(e.target.value)} className="pl-7" />
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Income cap: ${isCouple ? "160,000 (couple)" : "100,000 (single)"}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* FHSS block */}
+              <div className="border-t pt-4 space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="fhss" checked={evaluateFhss}
+                    onCheckedChange={(c) => setEvaluateFhss(c as boolean)} />
+                  <Label htmlFor="fhss" className="cursor-pointer font-semibold">
+                    Evaluate First Home Super Saver (FHSS)
+                  </Label>
+                </div>
+                {evaluateFhss && (
+                  <div className="ml-6 grid grid-cols-2 gap-3">
+                    <div>
+                      <Label htmlFor="fhssAnnual">Annual contribution</Label>
+                      <div className="relative mt-2">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                        <Input id="fhssAnnual" type="number" value={fhssAnnualContribution}
+                          onChange={(e) => setFhssAnnualContribution(e.target.value)} className="pl-7" />
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">Cap: $15,000/yr</p>
+                    </div>
+                    <div>
+                      <Label htmlFor="fhssYears">Years contributing</Label>
+                      <Input id="fhssYears" type="number" className="mt-2" value={fhssYearsContributing}
+                        onChange={(e) => setFhssYearsContributing(e.target.value)} />
+                      <p className="text-xs text-muted-foreground mt-1">Max $50k per person</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -239,253 +228,227 @@ const GovernmentGrantsCalculator = () => {
             <CardHeader>
               <CardTitle>Your Potential Benefits</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
               <div className="bg-gradient-to-r from-primary to-accent p-6 rounded-lg text-white">
-                <p className="text-sm opacity-90 mb-2">Total Grants & Savings</p>
-                <p className="text-4xl font-bold">${results.totalGrants.toLocaleString()}</p>
+                <p className="text-sm opacity-90 mb-2">Total Cash Benefit</p>
+                <p className="text-4xl font-bold">${r.totalCashBenefit.toLocaleString()}</p>
+                <p className="text-xs opacity-80 mt-2">
+                  FHOG + Stamp duty concession + FHSS net (excludes shared equity & LMI-saved)
+                </p>
               </div>
 
-              <div className="space-y-4">
-                {results.fhog > 0 && (
-                  <div className="bg-white p-4 rounded-lg border-2 border-green-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <CheckCircle2 className="h-5 w-5 text-green-600" />
-                      <span className="font-semibold text-green-800">First Home Owner Grant</span>
-                    </div>
-                    <p className="text-2xl font-bold text-green-600">${results.fhog.toLocaleString()}</p>
-                  </div>
-                )}
-
-                {results.stampDutyExemption > 0 && (
-                  <div className="bg-white p-4 rounded-lg border-2 border-blue-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <CheckCircle2 className="h-5 w-5 text-blue-600" />
-                      <span className="font-semibold text-blue-800">Stamp Duty Exemption</span>
-                    </div>
-                    <p className="text-2xl font-bold text-blue-600">${results.stampDutyExemption.toLocaleString()}</p>
-                  </div>
-                )}
-
-                {results.depositScheme && (
-                  <div className="bg-white p-4 rounded-lg border-2 border-primary">
-                    <div className="flex items-center gap-2 mb-2">
-                      <CheckCircle2 className="h-5 w-5 text-primary" />
-                      <span className="font-semibold">5% Deposit Scheme Eligible</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      You may be eligible for the First Home Guarantee scheme, allowing you to purchase 
-                      with as little as 5% deposit without paying LMI.
-                    </p>
-                  </div>
-                )}
-
-                {!firstHomeBuyer && (
-                  <div className="bg-yellow-50 p-4 rounded-lg border-2 border-yellow-200">
-                    <p className="text-sm text-yellow-800">
-                      ℹ️ These grants are generally only available to first home buyers. 
-                      Select "First Home Buyer" to see available benefits.
-                    </p>
-                  </div>
-                )}
+              {/* FHOG */}
+              <div className="bg-white p-4 rounded-lg border-2 border-border">
+                <div className="flex items-center gap-2 mb-1">
+                  {r.fhogAmount > 0
+                    ? <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    : <XCircle className="h-5 w-5 text-muted-foreground" />}
+                  <span className="font-semibold">First Home Owner Grant (FHOG)</span>
+                </div>
+                <p className={`text-2xl font-bold ${r.fhogAmount > 0 ? "text-green-600" : "text-muted-foreground"}`}>
+                  ${r.fhogAmount.toLocaleString()}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">{r.fhogReason}</p>
               </div>
 
-              <Button className="w-full bg-gradient-to-r from-primary to-accent">
-                Apply for Pre-Approval
+              {/* Stamp duty concession */}
+              <div className="bg-white p-4 rounded-lg border-2 border-border">
+                <div className="flex items-center gap-2 mb-1">
+                  {r.stampDutyConcession > 0
+                    ? <CheckCircle2 className="h-5 w-5 text-blue-600" />
+                    : <XCircle className="h-5 w-5 text-muted-foreground" />}
+                  <span className="font-semibold">Stamp Duty Concession</span>
+                </div>
+                <p className={`text-2xl font-bold ${r.stampDutyConcession > 0 ? "text-blue-600" : "text-muted-foreground"}`}>
+                  ${r.stampDutyConcession.toLocaleString()}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Saving vs non-FHB duty for a {newProperty ? "new" : "established"} {STATE_LABELS[state]} property.
+                </p>
+              </div>
+
+              {/* 5% Deposit Scheme */}
+              <div className="bg-white p-4 rounded-lg border-2 border-border">
+                <div className="flex items-center gap-2 mb-1">
+                  {r.depositSchemeEligible
+                    ? <CheckCircle2 className="h-5 w-5 text-primary" />
+                    : <XCircle className="h-5 w-5 text-muted-foreground" />}
+                  <span className="font-semibold">{r.depositSchemeName}</span>
+                </div>
+                <p className={`text-sm font-semibold ${r.depositSchemeEligible ? "text-primary" : "text-muted-foreground"}`}>
+                  {r.depositSchemeEligible ? "Eligible — no LMI payable" : "Not eligible"}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">{r.depositSchemeReason}</p>
+              </div>
+
+              {/* Help to Buy */}
+              {evaluateHelpToBuy && (
+                <div className="bg-white p-4 rounded-lg border-2 border-border">
+                  <div className="flex items-center gap-2 mb-1">
+                    {r.helpToBuyEligible
+                      ? <CheckCircle2 className="h-5 w-5 text-accent" />
+                      : <XCircle className="h-5 w-5 text-muted-foreground" />}
+                    <span className="font-semibold">Help to Buy (Shared Equity)</span>
+                  </div>
+                  {r.helpToBuyEligible && (
+                    <p className="text-2xl font-bold text-accent">
+                      ${r.helpToBuyEquity.toLocaleString()}{" "}
+                      <span className="text-sm font-normal text-muted-foreground">gov equity</span>
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">{r.helpToBuyReason}</p>
+                </div>
+              )}
+
+              {/* FHSS */}
+              {evaluateFhss && (
+                <div className="bg-white p-4 rounded-lg border-2 border-border">
+                  <div className="flex items-center gap-2 mb-1">
+                    {r.fhssNetForDeposit > 0
+                      ? <CheckCircle2 className="h-5 w-5 text-green-600" />
+                      : <XCircle className="h-5 w-5 text-muted-foreground" />}
+                    <span className="font-semibold">First Home Super Saver (FHSS)</span>
+                  </div>
+                  <p className="text-2xl font-bold text-green-600">
+                    ${r.fhssNetForDeposit.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Net for deposit (gross withdrawable: ${r.fhssWithdrawable.toLocaleString()})
+                  </p>
+                </div>
+              )}
+
+              <Button className="w-full bg-gradient-to-r from-primary to-accent" asChild>
+                <Link to="/apply">Apply for Pre-Approval</Link>
               </Button>
             </CardContent>
           </Card>
         </div>
 
+        {/* Source Citations */}
+        <Card className="mt-8 border bg-muted/30">
+          <CardContent className="pt-6 space-y-3 text-xs text-muted-foreground">
+            <div className="flex items-start gap-2">
+              <Info className="h-4 w-4 mt-0.5 shrink-0" />
+              <div>
+                <p className="font-semibold text-foreground mb-1">
+                  Assumptions (FY{calc.fyYear}, engine v{calc.engineVersion})
+                </p>
+                <ul className="space-y-1 list-disc ml-4">
+                  {calc.assumptions.map((a, i) => <li key={i}>{a}</li>)}
+                </ul>
+              </div>
+            </div>
+            <div>
+              <p className="font-semibold text-foreground mb-1">Sources</p>
+              <ul className="space-y-1 list-disc ml-4">
+                {calc.sources.map((s, i) => (
+                  <li key={i}>
+                    <a href={s.url} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                      {s.label}
+                    </a>{" "}
+                    <span className="opacity-70">(as of {s.asOf})</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* 5% Deposit Scheme Details */}
         <Card className="mt-8 border-2 bg-gradient-to-br from-primary/5 to-accent/5">
           <CardHeader>
-            <CardTitle>Australian Government 5% Deposit Scheme (Home Guarantee Scheme)</CardTitle>
+            <CardTitle>Australian Government 5% Deposit Scheme</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              The Home Guarantee Scheme (formerly First Home Loan Deposit Scheme) helps eligible first home 
-              buyers purchase a home with as little as 5% deposit, without paying Lenders Mortgage Insurance (LMI).
+              Rebranded from the Home Guarantee Scheme on <strong>1 October 2025</strong>. The federal
+              government guarantees the deposit shortfall so eligible buyers can purchase with as little as
+              5% (or 2% for single parents) without paying Lenders Mortgage Insurance.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  Eligibility Requirements
+                  <CheckCircle2 className="h-5 w-5 text-primary" /> What changed Oct 2025
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground ml-7">
-                  <li>• Must be an Australian citizen (18+ years)</li>
-                  <li>• First home buyer (never owned property)</li>
-                  <li>• Minimum 5% genuine savings deposit</li>
-                  <li>• Property value under location-specific cap (see below)</li>
-                  <li>• Must move in within 12 months</li>
-                  <li>• Income limits may apply</li>
+                  <li>• No income caps (previously $125k single / $200k couple)</li>
+                  <li>• Unlimited places (previously 35,000/yr)</li>
+                  <li>• Higher property price caps per region</li>
+                  <li>• Regional FHB Guarantee folded into the main stream</li>
+                  <li>• New Single Parent / Guardian 2% deposit stream</li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  Key Benefits
+                  <CheckCircle2 className="h-5 w-5 text-primary" /> Key Benefits
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground ml-7">
-                  <li>• Purchase with just 5% deposit</li>
-                  <li>• No Lenders Mortgage Insurance (save $20,000-$30,000)</li>
-                  <li>• Government guarantee up to 15% of property value</li>
-                  <li>• Available for new and existing properties</li>
-                  <li>• 50,000 places available annually</li>
+                  <li>• Purchase with just 5% deposit (2% for single parents)</li>
+                  <li>• No Lenders Mortgage Insurance (typically saves $15k–$30k)</li>
+                  <li>• Government guarantees up to 15% (or 18%) of property value</li>
+                  <li>• Available for new and established properties</li>
+                  <li>• Must move in within 12 months & live there 6+ months</li>
                 </ul>
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-lg mt-6">
-              <h3 className="font-semibold mb-3">Property Price Caps by Location (Effective October 1, 2025)</h3>
-              <div className="space-y-4">
-                <div>
-                  <p className="font-semibold text-primary mb-2">New South Wales</p>
-                  <div className="grid grid-cols-2 gap-3 text-sm ml-4">
-                    <div>
-                      <p className="text-muted-foreground">Sydney & Regional Centres</p>
-                      <p className="font-semibold">$1,500,000</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Other Areas</p>
-                      <p className="font-semibold">$800,000</p>
-                    </div>
-                  </div>
+            <div className="bg-white p-4 rounded-lg mt-4">
+              <h3 className="font-semibold mb-3">
+                Property Price Caps — {STATE_LABELS[state]} (Effective 1 October 2025)
+              </h3>
+              <div className="grid grid-cols-3 gap-3 text-sm">
+                <div className="p-3 rounded border bg-muted/20">
+                  <p className="text-muted-foreground text-xs">Capital city / major</p>
+                  <p className="font-semibold text-lg">${caps.capital.toLocaleString()}</p>
                 </div>
-                
-                <div>
-                  <p className="font-semibold text-primary mb-2">Victoria</p>
-                  <div className="grid grid-cols-2 gap-3 text-sm ml-4">
-                    <div>
-                      <p className="text-muted-foreground">Melbourne & Regional Centres</p>
-                      <p className="font-semibold">$950,000</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Other Areas</p>
-                      <p className="font-semibold">$650,000</p>
-                    </div>
-                  </div>
+                <div className="p-3 rounded border bg-muted/20">
+                  <p className="text-muted-foreground text-xs">Regional centre</p>
+                  <p className="font-semibold text-lg">${caps.regional.toLocaleString()}</p>
                 </div>
-
-                <div>
-                  <p className="font-semibold text-primary mb-2">Other Regions</p>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm ml-4">
-                    <div>
-                      <p className="text-muted-foreground">Brisbane / Gold Coast / Sunshine Coast</p>
-                      <p className="font-semibold">$1,000,000</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Adelaide</p>
-                      <p className="font-semibold">$900,000</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Perth</p>
-                      <p className="font-semibold">$850,000</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Hobart</p>
-                      <p className="font-semibold">$700,000</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Canberra (ACT)</p>
-                      <p className="font-semibold">$1,000,000</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Darwin / NT</p>
-                      <p className="font-semibold">$600,000</p>
-                    </div>
-                  </div>
+                <div className="p-3 rounded border bg-muted/20">
+                  <p className="text-muted-foreground text-xs">Rest of state</p>
+                  <p className="font-semibold text-lg">${caps.rest.toLocaleString()}</p>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-4">
-                * Price caps vary by specific location within NSW and VIC. Contact us for precise eligibility for your property location.
-              </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* State Grants Comparison */}
+        {/* Help to Buy info */}
         <Card className="mt-8 border-2">
           <CardHeader>
-            <CardTitle>State-by-State Government Grants (2024-26)</CardTitle>
+            <CardTitle>Help to Buy — Shared Equity Scheme</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 font-semibold">State</th>
-                    <th className="text-right py-3 font-semibold">FHOG Amount</th>
-                    <th className="text-right py-3 font-semibold">Price Limit</th>
-                    <th className="text-right py-3 font-semibold">Property Type</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  <tr>
-                    <td className="py-3">NSW</td>
-                    <td className="text-right py-3">$10,000</td>
-                    <td className="text-right py-3">$600k-$750k*</td>
-                    <td className="text-right py-3">New only</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3">VIC</td>
-                    <td className="text-right py-3">$10,000</td>
-                    <td className="text-right py-3">$750,000</td>
-                    <td className="text-right py-3">New only</td>
-                  </tr>
-                  <tr className="bg-primary/5">
-                    <td className="py-3">QLD</td>
-                    <td className="text-right py-3 font-semibold text-primary">$30,000</td>
-                    <td className="text-right py-3">$750,000</td>
-                    <td className="text-right py-3">New only</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3">SA</td>
-                    <td className="text-right py-3">$15,000</td>
-                    <td className="text-right py-3">No cap**</td>
-                    <td className="text-right py-3">New only</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3">WA</td>
-                    <td className="text-right py-3">$10,000</td>
-                    <td className="text-right py-3">$750k-$1M***</td>
-                    <td className="text-right py-3">New only</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3">TAS</td>
-                    <td className="text-right py-3">$10,000</td>
-                    <td className="text-right py-3">$750,000</td>
-                    <td className="text-right py-3">New/off-plan</td>
-                  </tr>
-                  <tr className="bg-primary/5">
-                    <td className="py-3">NT</td>
-                    <td className="text-right py-3 font-semibold text-primary">$50,000</td>
-                    <td className="text-right py-3">No cap</td>
-                    <td className="text-right py-3">New homes</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3">ACT</td>
-                    <td className="text-right py-3">Stamp Duty****</td>
-                    <td className="text-right py-3">N/A</td>
-                    <td className="text-right py-3">Concession</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          <CardContent className="space-y-3 text-sm text-muted-foreground">
+            <p>
+              Federal shared-equity scheme — applications opened <strong>5 December 2025</strong>. The
+              government takes an equity share so eligible buyers borrow less.
+            </p>
+            <ul className="space-y-1 list-disc ml-5">
+              <li>Up to <strong>40% equity</strong> for new homes, <strong>30%</strong> for existing</li>
+              <li>Minimum <strong>2% deposit</strong></li>
+              <li>Income caps: <strong>$100k single / $160k couple</strong> combined</li>
+              <li>10,000 places nationally per year</li>
+              <li>Available in NSW, VIC, QLD, SA, ACT, NT, WA — TAS opted out</li>
+            </ul>
+          </CardContent>
+        </Card>
 
-            <div className="space-y-2 text-xs text-muted-foreground mt-4">
-              <p>* NSW: $600k for new homes, $750k if building/owner-builder</p>
-              <p>** SA: No property value cap removed from June 6, 2024</p>
-              <p>*** WA: $750k south of 26th parallel, $1M north of 26th parallel</p>
-              <p>**** ACT: No FHOG but offers Home Buyer Concession Scheme (full stamp duty concession)</p>
-              <p className="mt-3">
-                <strong>Note:</strong> NT offers $10,000 for established homes. QLD grant ($30,000) applies to contracts 
-                signed between November 20, 2023 and June 30, 2026. Additional stamp duty concessions and eligibility 
-                criteria apply in all states. Contact HALP for detailed information.
-              </p>
-            </div>
+        {/* FHSS info */}
+        <Card className="mt-8 border-2">
+          <CardHeader>
+            <CardTitle>First Home Super Saver (FHSS)</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <p>
+              Save for a first-home deposit inside super at concessional tax rates, then withdraw it.
+              Cap: <strong>$15,000/yr countable</strong>, <strong>$50,000 total per person</strong>
+              (couples can each contribute = $100k combined). Withdrawal is taxed at marginal rate less
+              a 30% offset.
+            </p>
           </CardContent>
         </Card>
 
@@ -493,13 +456,12 @@ const GovernmentGrantsCalculator = () => {
         <Card className="mt-8 bg-muted/50">
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">
-              <strong>Important Disclaimer:</strong> Government grants and schemes are subject to eligibility 
-              criteria, application processes, and may change without notice. The Home Guarantee Scheme has 
-              limited places available each financial year (50,000 nationally). Grant amounts, property price 
-              caps, and eligibility requirements vary by state and are updated regularly. This calculator 
-              provides estimates only and does not guarantee grant approval. You must meet all eligibility 
-              criteria and apply through appropriate channels. Please contact a licensed mortgage broker 
-              through HALP for current information and assistance with grant applications.
+              <strong>Important Disclaimer:</strong> Government grants and schemes are subject to
+              eligibility criteria, application processes, and may change without notice. Grant amounts,
+              property price caps, and eligibility requirements vary by state and region and are updated
+              regularly. This calculator provides estimates only and does not guarantee approval. Please
+              contact a licensed mortgage broker through HALP for current information and assistance with
+              grant applications.
             </p>
           </CardContent>
         </Card>
