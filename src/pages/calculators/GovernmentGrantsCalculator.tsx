@@ -414,6 +414,23 @@ const GovernmentGrantsCalculator = () => {
                 <p className={`text-2xl font-bold mb-2 ${r.stampDutyConcession > 0 ? "text-blue-600" : "text-muted-foreground"}`}>
                   ${r.stampDutyConcession.toLocaleString()}
                 </p>
+                <EligibilityChecklist items={[
+                  { label: "First home buyer", passed: firstHomeBuyer,
+                    detail: firstHomeBuyer ? "confirmed" : "concession applies to FHBs only",
+                    source: STAMP_DUTY_SOURCES[state] },
+                  { label: `Property qualifies under ${STATE_LABELS[state]} FHB concession`,
+                    passed: firstHomeBuyer && r.stampDutyConcession > 0,
+                    detail: firstHomeBuyer
+                      ? (r.stampDutyConcession > 0
+                          ? `saving $${r.stampDutyConcession.toLocaleString()}`
+                          : `value above ${STATE_LABELS[state]} concession threshold`)
+                      : "tick FHB to evaluate",
+                    source: STAMP_DUTY_SOURCES[state] },
+                  { label: `Property type (${newProperty ? "new" : "established"})`,
+                    passed: true,
+                    detail: "both treated under each state's concession rules",
+                    source: STAMP_DUTY_SOURCES[state] },
+                ]} />
                 <div className="space-y-0.5">
                   <Row label="Duty if NOT a first home buyer" value={`$${Math.round(dutyNoFhb).toLocaleString()}`} />
                   <Row label={`Duty as ${firstHomeBuyer ? "FHB" : "non-FHB"} (your case)`}
