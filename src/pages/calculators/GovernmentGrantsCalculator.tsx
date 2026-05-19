@@ -571,6 +571,28 @@ const GovernmentGrantsCalculator = () => {
                   <p className="text-2xl font-bold text-green-600 mb-2">
                     ${r.fhssNetForDeposit.toLocaleString()}
                   </p>
+                  <EligibilityChecklist items={[
+                    { label: "Annual contribution within $15,000 cap",
+                      passed: (Number(fhssAnnualContribution) || 0) <= 15000,
+                      detail: `your $${(Number(fhssAnnualContribution) || 0).toLocaleString()} · counted $${fhssAnnualCapped.toLocaleString()}`,
+                      source: FHSS_SOURCE },
+                    { label: "Per-person total within $50,000 cap",
+                      passed: fhssGrossContrib <= 50000,
+                      detail: `total contributed $${fhssGrossContrib.toLocaleString()}`,
+                      source: FHSS_SOURCE },
+                    { label: "Must be first home buyer (intend to occupy ≥ 6 months in first year)",
+                      passed: firstHomeBuyer,
+                      detail: firstHomeBuyer ? "confirmed" : "tick FHB above",
+                      source: FHSS_SOURCE },
+                    { label: "Voluntary contributions only (not employer SG)",
+                      passed: true,
+                      detail: "salary sacrifice or personal contributions",
+                      source: FHSS_SOURCE },
+                    { label: "Withdrawal taxed at marginal rate less 30% offset",
+                      passed: true,
+                      detail: "applied automatically on release",
+                      source: FHSS_SOURCE },
+                  ]} />
                   <div className="space-y-0.5">
                     <Row label="Annual contribution cap" value="$15,000"
                          ok={(Number(fhssAnnualContribution) || 0) <= 15000} />
