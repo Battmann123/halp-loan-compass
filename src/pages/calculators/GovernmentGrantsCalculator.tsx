@@ -628,8 +628,11 @@ const GovernmentGrantsCalculator = () => {
                       <span className="text-sm font-normal text-muted-foreground">gov equity</span>
                     </p>
                   )}
-                  <EligibilityChecklist items={[
-                    { label: `${STATE_LABELS[state]} participates in Help to Buy`,
+                  <EligibilityChecklist
+                    showOnlyFails={showOnlyFails}
+                    expandAllWhy={expandAllWhy}
+                    items={[
+                      { label: `${STATE_LABELS[state]} participates in Help to Buy`,
                       passed: HTB_STATES.includes(state),
                       detail: HTB_STATES.includes(state) ? "in scheme" : "TAS opted out",
                       reason: HTB_STATES.includes(state) ? undefined : `${STATE_LABELS[state]} is not currently in the Help to Buy program.`,
