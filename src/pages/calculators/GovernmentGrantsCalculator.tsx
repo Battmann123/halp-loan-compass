@@ -41,8 +41,20 @@ const GovernmentGrantsCalculator = () => {
   const [fhssYearsContributing, setFhssYearsContributing] = useState<string | number>(3);
 
   // Global checklist controls
-  const [showOnlyFails, setShowOnlyFails] = useState(false);
-  const [expandAllWhy, setExpandAllWhy] = useState(false);
+  const [showOnlyFails, setShowOnlyFails] = useState(() => {
+    try { return localStorage.getItem("ggc_showOnlyFails") === "true"; } catch { return false; }
+  });
+  const [expandAllWhy, setExpandAllWhy] = useState(() => {
+    try { return localStorage.getItem("ggc_expandAllWhy") === "true"; } catch { return false; }
+  });
+
+  useEffect(() => {
+    try { localStorage.setItem("ggc_showOnlyFails", String(showOnlyFails)); } catch {}
+  }, [showOnlyFails]);
+
+  useEffect(() => {
+    try { localStorage.setItem("ggc_expandAllWhy", String(expandAllWhy)); } catch {}
+  }, [expandAllWhy]);
 
   const pv = Number(propertyValue) || 0;
   const dep = Number(deposit) || 0;
@@ -413,6 +425,10 @@ const GovernmentGrantsCalculator = () => {
                   onClick={() => {
                     setShowOnlyFails(false);
                     setExpandAllWhy(false);
+                    try {
+                      localStorage.removeItem("ggc_showOnlyFails");
+                      localStorage.removeItem("ggc_expandAllWhy");
+                    } catch {}
                   }}
                   className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border border-border bg-muted hover:bg-muted/80 transition-colors ml-auto"
                   title="Reset checklist view"
