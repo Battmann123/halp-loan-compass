@@ -143,6 +143,10 @@ const GovernmentGrantsCalculator = () => {
     label: string;
     passed: boolean;
     detail?: string;
+    /** One-line reason shown inline when the criterion fails. */
+    reason?: string;
+    /** Longer explanation revealed when the user expands "Why?". */
+    why?: string;
     source?: { label: string; url: string };
   };
   const EligibilityChecklist = ({ items }: { items: ChecklistItem[] }) => (
@@ -163,6 +167,20 @@ const GovernmentGrantsCalculator = () => {
                 </span>
                 {it.detail && <span className="text-muted-foreground">— {it.detail}</span>}
               </div>
+              {!it.passed && it.reason && (
+                <p className="text-[11px] text-destructive/90 mt-0.5">{it.reason}</p>
+              )}
+              {!it.passed && it.why && (
+                <details className="mt-1 group">
+                  <summary className="cursor-pointer text-[11px] text-primary hover:underline list-none inline-flex items-center gap-1 select-none">
+                    <span className="group-open:hidden">Why? ▸</span>
+                    <span className="hidden group-open:inline">Hide ▾</span>
+                  </summary>
+                  <div className="mt-1 p-2 rounded bg-background/60 border border-border/50 text-[11px] text-muted-foreground leading-relaxed">
+                    {it.why}
+                  </div>
+                </details>
+              )}
               {it.source && (
                 <a href={it.source.url} target="_blank" rel="noreferrer"
                    className="text-[11px] text-primary hover:underline inline-block mt-0.5">
