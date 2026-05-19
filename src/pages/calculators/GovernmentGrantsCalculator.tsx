@@ -40,6 +40,10 @@ const GovernmentGrantsCalculator = () => {
   const [fhssAnnualContribution, setFhssAnnualContribution] = useState<string | number>(15000);
   const [fhssYearsContributing, setFhssYearsContributing] = useState<string | number>(3);
 
+  // Global checklist controls
+  const [showOnlyFails, setShowOnlyFails] = useState(false);
+  const [expandAllWhy, setExpandAllWhy] = useState(false);
+
   const pv = Number(propertyValue) || 0;
   const dep = Number(deposit) || 0;
 
