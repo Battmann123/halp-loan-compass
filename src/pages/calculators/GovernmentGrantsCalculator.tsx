@@ -499,8 +499,11 @@ const GovernmentGrantsCalculator = () => {
                 <p className={`text-2xl font-bold mb-2 ${r.stampDutyConcession > 0 ? "text-blue-600" : "text-muted-foreground"}`}>
                   ${r.stampDutyConcession.toLocaleString()}
                 </p>
-                <EligibilityChecklist items={[
-                  { label: "First home buyer", passed: firstHomeBuyer,
+                <EligibilityChecklist
+                  showOnlyFails={showOnlyFails}
+                  expandAllWhy={expandAllWhy}
+                  items={[
+                    { label: "First home buyer", passed: firstHomeBuyer,
                     detail: firstHomeBuyer ? "confirmed" : "concession applies to FHBs only",
                     reason: firstHomeBuyer ? undefined : "Tick the FHB box — stamp duty concessions are reserved for first home buyers.",
                     why: "Every state limits the headline stamp duty concession to genuine first home buyers (you and your partner can't have previously owned residential property in Australia). Non-FHBs pay full transfer duty.",
