@@ -402,6 +402,7 @@ const GovernmentGrantsCalculator = () => {
                 <p className="text-xs text-muted-foreground mt-2 italic">
                   {r.depositSchemeEligible ? "✓ " : ""}{r.depositSchemeReason}
                 </p>
+                <SourceList items={[DEPOSIT_SCHEME_SOURCE]} />
               </div>
 
               {/* Help to Buy */}
