@@ -560,8 +560,11 @@ const GovernmentGrantsCalculator = () => {
                 <p className={`text-sm font-semibold mb-2 ${r.depositSchemeEligible ? "text-primary" : "text-muted-foreground"}`}>
                   {r.depositSchemeEligible ? "Eligible — no LMI payable" : "Not eligible"}
                 </p>
-                <EligibilityChecklist items={[
-                  { label: "First home buyer", passed: firstHomeBuyer,
+                <EligibilityChecklist
+                  showOnlyFails={showOnlyFails}
+                  expandAllWhy={expandAllWhy}
+                  items={[
+                    { label: "First home buyer", passed: firstHomeBuyer,
                     detail: firstHomeBuyer ? "confirmed" : "scheme requires FHB",
                     reason: firstHomeBuyer ? undefined : "The 5% Deposit Scheme is restricted to first home buyers.",
                     why: "From 1 Oct 2025 the Australian Government 5% Deposit Scheme is still FHB-only — the government guarantees the LMI shortfall on the assumption you're entering the market for the first time. Investors and previous owners aren't eligible.",
