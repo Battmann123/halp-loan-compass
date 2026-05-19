@@ -162,9 +162,9 @@ const GovernmentGrantsCalculator = () => {
     showOnlyFails?: boolean;
     expandAllWhy?: boolean;
   }) => {
-    const containerRef = React.useRef<HTMLUListElement>(null);
+    const containerRef = useRef<HTMLUListElement>(null);
 
-    React.useEffect(() => {
+    useEffect(() => {
       if (!containerRef.current) return;
       const details = containerRef.current.querySelectorAll<HTMLDetailsElement>("details");
       details.forEach((d) => {
