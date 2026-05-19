@@ -451,6 +451,8 @@ const GovernmentGrantsCalculator = () => {
                 <EligibilityChecklist items={[
                   { label: "First home buyer", passed: firstHomeBuyer,
                     detail: firstHomeBuyer ? "confirmed" : "concession applies to FHBs only",
+                    reason: firstHomeBuyer ? undefined : "Tick the FHB box — stamp duty concessions are reserved for first home buyers.",
+                    why: "Every state limits the headline stamp duty concession to genuine first home buyers (you and your partner can't have previously owned residential property in Australia). Non-FHBs pay full transfer duty.",
                     source: STAMP_DUTY_SOURCES[state] },
                   { label: `Property qualifies under ${STATE_LABELS[state]} FHB concession`,
                     passed: firstHomeBuyer && r.stampDutyConcession > 0,
@@ -459,6 +461,12 @@ const GovernmentGrantsCalculator = () => {
                           ? `saving $${r.stampDutyConcession.toLocaleString()}`
                           : `value above ${STATE_LABELS[state]} concession threshold`)
                       : "tick FHB to evaluate",
+                    reason: firstHomeBuyer && r.stampDutyConcession === 0
+                      ? `Property value $${pv.toLocaleString()} is above the ${STATE_LABELS[state]} FHB concession threshold — full duty applies.`
+                      : undefined,
+                    why: firstHomeBuyer && r.stampDutyConcession === 0
+                      ? `Each state has a full-exemption threshold and a partial-concession (taper) band above it. Once the price exceeds the taper ceiling the concession disappears and you pay duty at the standard rate. Buying under the threshold — or in a state with a higher cap — restores the saving.`
+                      : undefined,
                     source: STAMP_DUTY_SOURCES[state] },
                   { label: `Property type (${newProperty ? "new" : "established"})`,
                     passed: true,
