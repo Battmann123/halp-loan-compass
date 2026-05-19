@@ -368,6 +368,7 @@ const GovernmentGrantsCalculator = () => {
                       : `Property value above the ${STATE_LABELS[state]} FHB concession threshold — no saving available.`
                     : "Tick \"First Home Buyer\" to see the concession you'd qualify for."}
                 </p>
+                <SourceList items={[STAMP_DUTY_SOURCES[state]]} />
               </div>
 
               {/* 5% Deposit Scheme */}
