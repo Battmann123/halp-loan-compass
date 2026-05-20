@@ -11,9 +11,15 @@ import { Receipt, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { calculateStampDuty, type AusState, type PropertyCategory } from "@/lib/calculations";
 
-const StampDutyCalculator = () => {
+interface StampDutyCalculatorProps {
+  initialState?: string;
+  lockState?: boolean;
+  embedded?: boolean;
+}
+
+const StampDutyCalculator = ({ initialState, lockState = false, embedded = false }: StampDutyCalculatorProps = {}) => {
   const [propertyValue, setPropertyValue] = useState("650000");
-  const [state, setState] = useState("nsw");
+  const [state, setState] = useState((initialState ?? "nsw").toLowerCase());
   const [firstHomeBuyer, setFirstHomeBuyer] = useState(true);
   const [propertyType, setPropertyType] = useState<"primary" | "investment">("primary");
   const [foreignPurchaser, setForeignPurchaser] = useState(false);
