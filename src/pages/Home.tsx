@@ -55,11 +55,11 @@ const Home = () => {
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Your Home Loan <span className="text-secondary">Specialists</span>
+            Your first home, <span className="text-secondary">without the bank-speak.</span>
           </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-95">
-            HALP Home Loans brings 30 years of expertise to help you secure your dream home. 
-            Specialists in first home buyers, house & land packages, overseas buyers, and government grants.
+            5% deposit options, grants up to $45,000, and 40+ lenders compared.
+            We do the running around — you pick the keys.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Link to="/apply">
@@ -69,7 +69,7 @@ const Home = () => {
             </Link>
             <Link to="/apply">
               <Button size="lg" variant="outline" className="text-lg px-8 py-6 h-auto bg-white/10 border-white text-white hover:bg-white hover:text-primary shadow-xl">
-                Contact Tim Egan
+                Talk To A Broker
               </Button>
             </Link>
           </div>
