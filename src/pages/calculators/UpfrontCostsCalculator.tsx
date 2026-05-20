@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import { DollarSign, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 import { calculateStampDuty, calculateLmi, type AusState, type PropertyCategory } from "@/lib/calculations";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 const UpfrontCostsCalculator = () => {
   const [propertyValue, setPropertyValue] = useState("650000");
@@ -335,23 +336,7 @@ const UpfrontCostsCalculator = () => {
             </CardContent>
           </Card>
 
-          <Card className="mt-8 bg-secondary/30">
-            <CardHeader>
-              <CardTitle>Important Disclaimer</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground space-y-2">
-              <p>
-                This calculator provides estimates based on current government stamp duty rates as of 2024. 
-                Actual costs may vary based on specific circumstances, property type, and any additional state-based 
-                concessions or exemptions that may apply.
-              </p>
-              <p>
-                Professional fees and lender costs are industry averages and may differ between providers.
-                For accurate cost estimates and personalized advice, please{" "}
-                <Link to="/" className="text-primary hover:underline">contact our mortgage brokers</Link>.
-              </p>
-            </CardContent>
-          </Card>
+        <CalculatorDisclaimer kind="upfront-costs" />
         </div>
       </section>
 

@@ -11,6 +11,7 @@ import SEO from "@/components/SEO";
 import { calculatorSchema, generateBreadcrumb } from "@/lib/structuredData";
 import { Calculator, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 const RepaymentCalculator = () => {
   const [loanAmount, setLoanAmount] = useState("600000");
@@ -279,17 +280,7 @@ const RepaymentCalculator = () => {
           </CardContent>
         </Card>
 
-        {/* Disclaimer */}
-        <Card className="mt-8 bg-muted/50">
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground">
-              <strong>Disclaimer:</strong> This calculator provides estimates only. Actual loan repayments may vary 
-              based on individual circumstances, lender fees, and interest rate changes. Results are for 
-              illustrative purposes and should not be considered financial advice. Please consult with a 
-              licensed mortgage broker through HALP for accurate quotes tailored to your situation.
-            </p>
-          </CardContent>
-        </Card>
+        <CalculatorDisclaimer kind="repayment" />
       </div>
 
       <Footer />

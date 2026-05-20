@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import { TrendingUp, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { monthlyRepayment } from "@/lib/calculations";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 const BorrowingPowerCalculator = () => {
   const [numApplicants, setNumApplicants] = useState("one");
@@ -355,19 +356,7 @@ const BorrowingPowerCalculator = () => {
           </CardContent>
         </Card>
 
-        {/* Disclaimer */}
-        <Card className="mt-8 bg-muted/50">
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground">
-              <strong>Important Disclaimer:</strong> This calculator provides a simplified estimate of borrowing 
-              capacity. Actual lending decisions are made by financial institutions based on comprehensive 
-              assessment of your financial situation, including credit history, employment stability, and specific 
-              lender policies. Different lenders have different criteria and may offer different amounts. The results 
-              should not be considered financial advice or a guarantee of loan approval. For an accurate assessment, 
-              please contact a licensed mortgage broker through HALP.
-            </p>
-          </CardContent>
-        </Card>
+        <CalculatorDisclaimer kind="borrowing-power" />
       </div>
 
       <Footer />

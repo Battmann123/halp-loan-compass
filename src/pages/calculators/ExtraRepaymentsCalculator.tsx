@@ -9,6 +9,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { PiggyBank, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 const ExtraRepaymentsCalculator = () => {
   const [loanAmount, setLoanAmount] = useState("500000");
@@ -379,21 +380,7 @@ const ExtraRepaymentsCalculator = () => {
             </CardContent>
           </Card>
 
-          <Card className="mt-8 bg-secondary/30">
-            <CardHeader>
-              <CardTitle>Important Disclaimer</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground space-y-2">
-              <p>
-                This calculator provides estimates only. Check your loan contract for any restrictions on extra repayments, 
-                particularly for fixed-rate loans which may have annual limits or penalties.
-              </p>
-              <p>
-                For advice on loan features and strategies to pay off your mortgage faster, please{" "}
-                <Link to="/" className="text-primary hover:underline">contact our mortgage brokers</Link>.
-              </p>
-            </CardContent>
-          </Card>
+        <CalculatorDisclaimer kind="extra-repayments" />
         </div>
       </section>
 

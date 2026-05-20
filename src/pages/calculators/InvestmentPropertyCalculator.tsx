@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { calculateIncomeTax } from "@/lib/calculations";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 export default function InvestmentPropertyCalculator() {
   // Property and Loan Details
@@ -537,12 +538,7 @@ export default function InvestmentPropertyCalculator() {
             </div>
           </Card>
           
-          <Card className="p-6 mt-6 bg-muted">
-            <h3 className="text-lg font-semibold mb-2">Important Disclaimer</h3>
-            <p className="text-sm text-muted-foreground">
-              This calculator provides estimates only and should not be considered financial advice. Actual costs, returns, and tax implications vary based on individual circumstances, property location, market conditions, and current tax laws. Tax calculations use 2024-25 Australian tax brackets as a guide. For personalized advice, please consult with a qualified mortgage broker, accountant, or financial adviser.
-            </p>
-          </Card>
+        <CalculatorDisclaimer kind="investment-property" />
         </div>
       </main>
       

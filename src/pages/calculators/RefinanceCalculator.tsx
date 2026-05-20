@@ -7,6 +7,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { RefreshCw, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 const RefinanceCalculator = () => {
   const [currentLoan, setCurrentLoan] = useState("500000");
@@ -304,21 +305,7 @@ const RefinanceCalculator = () => {
             </CardContent>
           </Card>
 
-          <Card className="mt-8 bg-secondary/30">
-            <CardHeader>
-              <CardTitle>Important Disclaimer</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground space-y-2">
-              <p>
-                This calculator provides estimates only. Actual savings and costs vary based on your specific loan terms, 
-                break costs, and individual circumstances. Always obtain a full comparison and consider all factors before refinancing.
-              </p>
-              <p>
-                For personalized refinancing advice and competitive loan comparisons, please{" "}
-                <Link to="/" className="text-primary hover:underline">contact our mortgage brokers</Link>.
-              </p>
-            </CardContent>
-          </Card>
+        <CalculatorDisclaimer kind="refinance" />
         </div>
       </section>
 

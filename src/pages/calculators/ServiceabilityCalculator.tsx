@@ -7,6 +7,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Scale, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 const ServiceabilityCalculator = () => {
   const [income, setIncome] = useState("120000");
@@ -231,22 +232,7 @@ const ServiceabilityCalculator = () => {
             </CardContent>
           </Card>
 
-          <Card className="mt-8 bg-secondary/30">
-            <CardHeader>
-              <CardTitle>Important Disclaimer</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground space-y-2">
-              <p>
-                This calculator provides estimates only and should not be relied upon for financial decisions. 
-                Actual serviceability assessments vary between lenders and depend on many factors including credit history, 
-                employment stability, and individual lender policies.
-              </p>
-              <p>
-                For accurate serviceability assessment and personalized advice, please{" "}
-                <Link to="/" className="text-primary hover:underline">contact our mortgage brokers</Link>.
-              </p>
-            </CardContent>
-          </Card>
+        <CalculatorDisclaimer kind="serviceability" />
         </div>
       </section>
 

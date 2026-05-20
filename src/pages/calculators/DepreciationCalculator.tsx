@@ -8,6 +8,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Calendar, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 const DepreciationCalculator = () => {
   const [propertyValue, setPropertyValue] = useState("650000");
@@ -313,21 +314,7 @@ const DepreciationCalculator = () => {
             </CardContent>
           </Card>
 
-          <Card className="mt-8 bg-secondary/30">
-            <CardHeader>
-              <CardTitle>Important Disclaimer</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground space-y-2">
-              <p>
-                This calculator provides estimates only. Actual depreciation deductions require a professional 
-                Quantity Surveyor's report. Tax benefits depend on your individual marginal tax rate and circumstances.
-              </p>
-              <p>
-                Always consult with a qualified tax advisor or accountant. For investment property finance advice, 
-                please <Link to="/" className="text-primary hover:underline">contact our mortgage brokers</Link>.
-              </p>
-            </CardContent>
-          </Card>
+        <CalculatorDisclaimer kind="depreciation" />
         </div>
       </section>
 

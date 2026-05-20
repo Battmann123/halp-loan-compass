@@ -11,6 +11,7 @@ import { FileText, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { calculateLmi, type AusState } from "@/lib/calculations";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 const LMICalculator = () => {
   const { toast } = useToast();
@@ -381,21 +382,7 @@ const LMICalculator = () => {
             </CardContent>
           </Card>
 
-          <Card className="mt-8 bg-secondary/30">
-            <CardHeader>
-              <CardTitle>Important Disclaimer</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground space-y-2">
-              <p>
-                This calculator provides estimates only. Actual LMI costs vary significantly between lenders and depend on 
-                many factors. LMI rates shown are indicative only.
-              </p>
-              <p>
-                For accurate LMI quotes and to explore options for reducing or avoiding LMI, please{" "}
-                <Link to="/" className="text-primary hover:underline">contact our mortgage brokers</Link>.
-              </p>
-            </CardContent>
-          </Card>
+        <CalculatorDisclaimer kind="lmi" />
         </div>
       </section>
 
