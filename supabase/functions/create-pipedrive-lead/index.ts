@@ -87,8 +87,13 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    // Rate limiting by IP
-    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    // Rate limiting by IP - use Cloudflare's verified client IP, falling back to the
+    // rightmost X-Forwarded-For entry (Cloudflare appends the real IP to the right).
+    // The leftmost XFF value is attacker-controlled and must NOT be trusted.
+    const cfIp = req.headers.get("cf-connecting-ip")?.trim();
+    const xffParts = req.headers.get("x-forwarded-for")?.split(",") ?? [];
+    const xffIp = xffParts.length ? xffParts[xffParts.length - 1].trim() : "";
+    const ip = cfIp || xffIp || "unknown";
     if (await isRateLimited(ip)) {
       return new Response(
         JSON.stringify({ error: "Too many requests. Please try again later." }),
