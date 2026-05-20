@@ -11,6 +11,7 @@ import RepaymentCalculator from "./pages/calculators/RepaymentCalculator";
 import BorrowingPowerCalculator from "./pages/calculators/BorrowingPowerCalculator";
 import StampDutyCalculator from "./pages/calculators/StampDutyCalculator";
 import GovernmentGrantsCalculator from "./pages/calculators/GovernmentGrantsCalculator";
+import StateCalculatorPage from "./pages/calculators/StateCalculatorPage";
 import ServiceabilityCalculator from "./pages/calculators/ServiceabilityCalculator";
 import LMICalculator from "./pages/calculators/LMICalculator";
 import UpfrontCostsCalculator from "./pages/calculators/UpfrontCostsCalculator";
