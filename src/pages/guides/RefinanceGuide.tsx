@@ -3,7 +3,41 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Calculator, BookOpen, ArrowLeft, RefreshCw, DollarSign } from "lucide-react";
+import SEO from "@/components/SEO";
+import GuideFAQ from "@/components/GuideFAQ";
+import GuideStatsBar from "@/components/GuideStatsBar";
+import { Calculator, BookOpen, ArrowLeft, RefreshCw, DollarSign, Percent, Clock, Wallet } from "lucide-react";
+
+const refinanceStats = [
+  { icon: Percent, value: "0.50%", label: "Typical break-even rate gap to make refinancing worthwhile" },
+  { icon: DollarSign, value: "$2K–$4K", label: "Switching costs (discharge + new loan setup)" },
+  { icon: Clock, value: "2–4 yrs", label: "Common cashback clawback window" },
+  { icon: Wallet, value: "80% LVR", label: "Stay below to avoid new LMI on refinance" },
+];
+
+const refinanceFAQs = [
+  {
+    q: "When is it worth refinancing my home loan?",
+    a: "A common rule of thumb is refinancing pays off when the new rate is at least 0.50% lower than your current rate and you plan to stay in the loan for 2+ years. Always include switching costs ($2K–$4K), potential LMI if above 80% LVR, and any cashback clawback in your calculation.",
+  },
+  {
+    q: "What does it cost to refinance?",
+    a: "Expect $300–$900 discharge fee from your current lender, $0–$600 application/establishment fee with the new lender, $300–$400 in government mortgage registration and discharge fees, plus a valuation (often free). For fixed-rate loans, break costs can add thousands more.",
+  },
+  {
+    q: "What is a cashback clawback?",
+    a: "Many lenders offer $2,000–$4,000 cashback for refinancing to them. If you refinance away within their clawback window (typically 2–4 years) they reclaim the cashback. Read the terms before chasing cashback offers.",
+  },
+  {
+    q: "Will refinancing affect my credit score?",
+    a: "Yes — each application creates a credit enquiry. Multiple enquiries in a short period can lower your score. To minimise the impact, get pre-qualified informally first and only formally apply with the lender you intend to use.",
+  },
+  {
+    q: "Can I refinance to access equity?",
+    a: "Yes — 'cash out' refinancing lets you increase the loan to access accumulated equity, often for renovations, an investment property deposit, or debt consolidation. Lenders scrutinise the purpose of cash-out funds and may require evidence (quotes, contracts).",
+  },
+];
+
 
 const RefinanceGuide = () => {
   return (
