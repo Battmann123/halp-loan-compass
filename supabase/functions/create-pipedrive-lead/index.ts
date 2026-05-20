@@ -98,7 +98,7 @@ const handler = async (req: Request): Promise<Response> => {
     if (leadData.website && leadData.website.length > 0) {
       // Silently accept to not tip off bots
       return new Response(
-        JSON.stringify({ success: true, personId: 0, leadId: "0" }),
+        JSON.stringify({ success: true }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
