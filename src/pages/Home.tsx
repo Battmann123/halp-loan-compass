@@ -171,16 +171,15 @@ const Home = () => {
         <div className="container mx-auto text-center max-w-4xl">
           <Calculator className="h-16 w-16 mx-auto mb-6" />
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            13 Specialized Home Loan Calculators
+            How much can you actually afford?
           </h2>
           <p className="text-xl mb-8 opacity-95">
-            A comprehensive mortgage calculator suite, designed specifically for 
-            house & land packages, new properties, and school zone purchases.
+            Crunch the numbers in plain English. No sign-up, no email collected — just answers.
           </p>
           <Button size="lg" variant="secondary" className="text-lg px-8 py-6 h-auto shadow-xl">
             <Link to="/calculators" className="flex items-center gap-2">
               <Calculator className="h-5 w-5" />
-              Explore All Calculators
+              Run The Numbers
             </Link>
           </Button>
         </div>
