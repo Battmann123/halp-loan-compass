@@ -1,66 +1,51 @@
-## Goal
+## Background
 
-Merge Claude's audited calculator engine (FY26-27 rates, B1–B12 fixes, new calculators, sources/assumptions metadata) into this Lovable repo **without changing the look or structure** of the existing pages, headers, navigation, or guides.
+There is no `mortgage_calculator_suite` module in the repo. The existing 15 calculators live under `src/pages/calculators/*`. The two genuinely state-dependent ones are **Stamp Duty** and **Government Grants** (Upfront Costs also includes stamp duty but is broader).
 
-## What stays exactly as-is
+For SEO, the best 12-page expansion is **per-state landing pages** of the two state-sensitive calculators. They each target a high-intent long-tail keyword (e.g. "stamp duty calculator NSW", "first home owner grant VIC") that the single generic page can't rank for well.
 
-- `Navigation.tsx`, `Footer.tsx`, `Home.tsx`, `Calculators.tsx` category layout
-- All 13 guide pages and their copy
-- Loan-type pages, FAQ, Sponsors, Disclaimer, Privacy, Terms
-- SEO component, brand voice, "Your Home Loan Specialists" positioning
-- Lead form + Pipedrive edge function
-- Tailwind tokens / design system
+## Proposed 12 pages
 
-## What gets replaced or added
+Stamp Duty Calculator — one per state/territory (8):
+- `/calculators/stamp-duty/nsw`
+- `/calculators/stamp-duty/vic`
+- `/calculators/stamp-duty/qld`
+- `/calculators/stamp-duty/wa`
+- `/calculators/stamp-duty/sa`
+- `/calculators/stamp-duty/tas`
+- `/calculators/stamp-duty/act`
+- `/calculators/stamp-duty/nt`
 
-### 1. Calculation engine (foundation — batch 1)
-- Rewrite `src/lib/calculations.ts` from Claude's `calculator-engine` source:
-  - Audit fixes B1–B12
-  - FY26-27 tax brackets, Medicare levy, LITO
-  - State-specific stamp duty (NSW foreign 9%, QLD AFAD 8%, NSW LMI duty 9%, full VIC FHB exemption ≤ $750k, ACT FHB $1.02M cap, etc.)
-  - LMI matrix, LVR tiers
-  - `CalcResult<T>` wrapper with `sources[]`, `assumptions[]`, `fyYear`, `engineVersion`
-- Add `src/lib/calculations/` sub-modules if the engine is split (one file per calc), re-exported from `calculations.ts` so existing imports keep working.
+Government Grants Calculator — one per state for the four highest-volume (4):
+- `/calculators/government-grants/nsw`
+- `/calculators/government-grants/vic`
+- `/calculators/government-grants/qld`
+- `/calculators/government-grants/wa`
 
-### 2. Wire existing 16 calculators to new engine (batch 2)
-- Update each `src/pages/calculators/*.tsx` to call new engine functions.
-- Keep input fields, labels, and result section structure identical.
-- Add a small reusable `<SourceCitationFooter sources assumptions fyYear />` rendered under each result block — visually subtle, matches current card style.
+Total: **12 new routes**.
 
-### 3. New calculators (batch 3)
-Add five pages + routes + cards on `/calculators`:
-- Land Tax Calculator
-- Loan Consolidation Calculator
-- Deposit Savings Calculator
-- Help to Buy Calculator
-- 5% Deposit Scheme Calculator (Home Guarantee Scheme)
+## How each page works
 
-Each follows the existing page template (Navigation → hero → inputs card → results card → CTASection → Footer) so headers, breadcrumbs, and link patterns are uniform.
+- Reuses the existing `StampDutyCalculator` / `GovernmentGrantsCalculator` components but pre-selects and **locks** the state to the page's state.
+- Per-page `<Helmet>` block with state-specific `<title>`, meta description, canonical, and `WebPage` + `BreadcrumbList` JSON-LD.
+- State-specific intro copy (H1, ~120-word explainer, current rates/thresholds summary table, "last updated" date) above the calculator — this is the content that earns rankings.
+- FAQ section using `FAQPage` JSON-LD with 3-4 state-specific questions ("How much is stamp duty in NSW for a $700k home?", "Does VIC waive stamp duty for first home buyers?", etc.).
+- Internal links: each state page links to the other state variants and back to the generic calculator.
 
-### 4. Cross-reference + freshness (batch 4)
-- Update `RatesFreshness.tsx` with new FY year + engine version
-- Update `StateComparison.tsx` and `InputChecklist.tsx` to include new calculators
-- Add the new calculators to `sitemap.xml` and `Calculators.tsx` category grid
-- Update guide cross-links
+## Wiring
 
-## Technical notes
+- Add a `StateCalculatorPage` wrapper component that takes `{ state, calculator }` props, renders Helmet + intro + locked calculator + FAQ.
+- Add 12 routes in `src/App.tsx`.
+- Update `scripts/generate-sitemap.ts` `entries` array to include all 12 URLs.
+- Add the new pages to the calculator index / navigation grid so they're discoverable.
 
-- Keep numeric inputs as empty strings + `Number(val) || 0` (existing convention).
-- All result metadata typed as `CalcResult<T> = { value: T; sources: Source[]; assumptions: string[]; fyYear: string; engineVersion: string }`.
-- No backend changes. No new dependencies expected.
-- Type-check after each batch before moving to the next.
-- I'll post a freshness log at the very end (per your earlier preference).
+## Out of scope
 
-## Sequence
+- No backend or engine changes — uses existing state-aware logic in `src/lib/engine/*`.
+- No new content for the other 13 calculators; they remain a single page each.
+- No changes to the existing generic `/calculators/stamp-duty` and `/calculators/government-grants` pages beyond adding internal links to the new state variants.
 
-```text
-Batch 1: engine port + type-check
-Batch 2: wire 16 existing calculators + SourceCitationFooter
-Batch 3: 5 new calculators + routes + Calculators.tsx cards
-Batch 4: freshness, sitemap, state comparison, checklist, guide links
-Freshness log
-```
+## Confirm before I build
 
-## What I need from you next
-
-Upload the engine `src/` files (drop them all in one message — labelled "Batch 1 of X" if split). Once I have them I start with Batch 1 and won't pause for approval between batches unless I hit a real ambiguity.
+1. Are the 12 routes above the right split, or do you want 6 states × 2 calcs (drop ACT/NT, add VIC/QLD/SA/TAS grants)?
+2. OK to **lock** the state selector on each per-state page (vs. just pre-selecting it)?
