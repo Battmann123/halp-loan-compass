@@ -457,7 +457,7 @@ const StampDutyCalculator = ({ initialState, lockState = false, embedded = false
         </Card>
       </div>
 
-      <Footer />
+      {!embedded && <Footer />}
     </div>
   );
 };
