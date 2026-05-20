@@ -1,5 +1,7 @@
+import { useState, useMemo } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,14 +24,32 @@ import {
   Sparkles,
 } from "lucide-react";
 
+type Category = "Grants" | "Stamp Duty" | "Repayments" | "Borrowing Power" | "Investment" | "Other";
+
+interface Guide {
+  title: string;
+  description: string;
+  icon: typeof BookOpen;
+  link: string;
+  calculatorLink: string;
+  calculatorLabel?: string;
+  showTryCalculator?: boolean;
+  categories: Category[];
+  highlight?: string;
+}
+
 const Guides = () => {
-  const guides = [
+  const guides: Guide[] = [
     {
       title: "Government Grants Guide",
       description:
         "First Home Guarantee (5% deposit, no income or place caps since Oct 2025), Help to Buy shared equity (up to 40% on new builds), FHSS, Family Home Guarantee, plus state FHOG amounts from $10K (NSW/VIC/WA) up to $50K (NT).",
       icon: DollarSign,
       link: "/guides/government-grants",
+      calculatorLink: "/calculators/government-grants",
+      calculatorLabel: "Check what you qualify for",
+      showTryCalculator: true,
+      categories: ["Grants"],
       highlight: "Updated Apr 2026",
     },
     {
@@ -38,6 +58,10 @@ const Guides = () => {
         "State-by-state FHB exemptions and concessions: NSW exempt to $800K, VIC exempt to $600K, QLD zero duty on new homes (no price cap), SA stamp duty abolished on new builds, plus ACT, WA, TAS and NT.",
       icon: Home,
       link: "/guides/stamp-duty",
+      calculatorLink: "/calculators/stamp-duty",
+      calculatorLabel: "Calculate your stamp duty",
+      showTryCalculator: true,
+      categories: ["Stamp Duty"],
       highlight: "Updated Apr 2026",
     },
     {
@@ -46,6 +70,8 @@ const Guides = () => {
         "Plan your full purchase budget. Worked examples show combined government benefits of $52K–$72K on a typical $580K–$650K first home — bringing a 20% deposit requirement down to as little as 2–5%.",
       icon: PiggyBank,
       link: "/guides/upfront-costs",
+      calculatorLink: "/calculators/upfront-costs",
+      categories: ["Grants", "Stamp Duty"],
     },
     {
       title: "LMI Guide",
@@ -53,6 +79,10 @@ const Guides = () => {
         "How Lenders Mortgage Insurance works, when it applies, and how to avoid it — including the federal 5% Deposit Scheme which can save $14,000–$30,000 in LMI on properties from $500K to $1M.",
       icon: Shield,
       link: "/guides/lmi",
+      calculatorLink: "/calculators/lmi",
+      calculatorLabel: "Estimate your LMI",
+      showTryCalculator: true,
+      categories: ["Borrowing Power", "Grants"],
     },
     {
       title: "Borrowing Power Guide",
@@ -60,6 +90,8 @@ const Guides = () => {
         "How lenders calculate your capacity using income, expenses, debts and a stress-test buffer — plus strategies to maximise your borrowing power without overextending.",
       icon: TrendingUp,
       link: "/guides/borrowing-power",
+      calculatorLink: "/calculators/borrowing-power",
+      categories: ["Borrowing Power"],
     },
     {
       title: "Loan Repayment Guide",
@@ -67,6 +99,8 @@ const Guides = () => {
         "Master Principal & Interest vs Interest Only, weekly/fortnightly/monthly frequencies, and money-saving strategies that can shave years off your mortgage.",
       icon: Calculator,
       link: "/guides/repayment",
+      calculatorLink: "/calculators/repayment",
+      categories: ["Repayments"],
     },
     {
       title: "Serviceability Guide",
@@ -74,6 +108,8 @@ const Guides = () => {
         "How lenders assess your ability to service a loan — including the ~3% stress-test buffer, HEM benchmarks, and income shading rules that differ between lenders.",
       icon: BarChart3,
       link: "/guides/serviceability",
+      calculatorLink: "/calculators/serviceability",
+      categories: ["Borrowing Power"],
     },
     {
       title: "Extra Repayments Guide",
@@ -81,6 +117,8 @@ const Guides = () => {
         "How extra payments compound: pay fortnightly instead of monthly, redirect tax returns, and start early to save tens of thousands in interest.",
       icon: Calendar,
       link: "/guides/extra-repayments",
+      calculatorLink: "/calculators/extra-repayments",
+      categories: ["Repayments"],
     },
     {
       title: "Refinance Guide",
@@ -88,6 +126,8 @@ const Guides = () => {
         "Decide whether to refinance using a full cost/benefit framework — break costs, switching fees (typically $2K–$4K), LMI re-payable above 80% LVR, and cashback clawback terms.",
       icon: RefreshCw,
       link: "/guides/refinance",
+      calculatorLink: "/calculators/refinance",
+      categories: ["Repayments"],
     },
     {
       title: "Lender Comparison Guide",
@@ -95,6 +135,8 @@ const Guides = () => {
         "Compare 40+ lenders on rate, fees, features (offset, redraw, splits), and policy — including specialist lenders for self-employed, temporary visa holders, and non-residents.",
       icon: Scale,
       link: "/guides/lender-comparison",
+      calculatorLink: "/calculators/lender-comparison",
+      categories: ["Borrowing Power", "Repayments"],
     },
     {
       title: "Investment Property Guide",
@@ -102,6 +144,8 @@ const Guides = () => {
         "Analyse rental returns, cash flow, depreciation and capital growth. Includes structuring tips, interest-only strategies, and how new builds maximise tax benefits.",
       icon: Building,
       link: "/guides/investment-property",
+      calculatorLink: "/calculators/investment-property",
+      categories: ["Investment"],
     },
     {
       title: "Depreciation Guide",
@@ -109,6 +153,8 @@ const Guides = () => {
         "Maximise tax via Division 43 (capital works) and Division 40 (plant & equipment). Note: second-hand residential property acquired after 9 May 2017 has restricted P&E deductions.",
       icon: Percent,
       link: "/guides/depreciation",
+      calculatorLink: "/calculators/depreciation",
+      categories: ["Investment"],
     },
     {
       title: "Capital Gains Guide",
@@ -116,11 +162,37 @@ const Guides = () => {
         "Navigate CGT on investment property sales — the 50% discount for individuals holding 12+ months, main residence exemption, and timing strategies to minimise tax.",
       icon: Coins,
       link: "/guides/capital-gains",
+      calculatorLink: "/calculators/capital-gains",
+      categories: ["Investment"],
     },
   ];
 
+  const filters: Array<"All" | Category> = [
+    "All",
+    "Grants",
+    "Stamp Duty",
+    "Repayments",
+    "Borrowing Power",
+    "Investment",
+  ];
+  const [activeFilter, setActiveFilter] = useState<"All" | Category>("All");
+
+  const visibleGuides = useMemo(
+    () =>
+      activeFilter === "All"
+        ? guides
+        : guides.filter((g) => g.categories.includes(activeFilter)),
+    [activeFilter]
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SEO
+        title="Home Loan Guides — grants, stamp duty, LMI, borrowing power"
+        description="Plain-English Australian home loan guides updated for April 2026. Every federal and state first home buyer scheme, stamp duty rules by state, LMI, repayments and borrowing power explained."
+        canonical="https://halp-loan-compass.lovable.app/guides"
+        keywords="home loan guides Australia, first home buyer grants 2026, stamp duty by state, LMI calculator, borrowing power, FHOG, First Home Guarantee, Help to Buy"
+      />
       <Navigation />
 
       <main className="flex-1">
@@ -192,11 +264,40 @@ const Guides = () => {
           </div>
         </section>
 
+        {/* Filter chips */}
+        <section className="pt-10">
+          <div className="container mx-auto px-4">
+            <div className="max-w-7xl mx-auto">
+              <div className="flex flex-wrap items-center gap-2" role="tablist" aria-label="Filter guides by topic">
+                <span className="text-sm text-muted-foreground mr-2">Filter:</span>
+                {filters.map((f) => {
+                  const active = f === activeFilter;
+                  return (
+                    <button
+                      key={f}
+                      role="tab"
+                      aria-selected={active}
+                      onClick={() => setActiveFilter(f)}
+                      className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                        active
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-background text-foreground border-border hover:bg-secondary"
+                      }`}
+                    >
+                      {f}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Guides Grid */}
-        <section className="py-16">
+        <section className="py-10">
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-              {guides.map((guide, index) => (
+              {visibleGuides.map((guide, index) => (
                 <Card key={index} className="flex flex-col hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="flex items-start justify-between mb-4 gap-2">
@@ -210,17 +311,37 @@ const Guides = () => {
                       )}
                     </div>
                     <CardTitle className="text-xl">{guide.title}</CardTitle>
-                    <CardDescription className="mt-2">{guide.description}</CardDescription>
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {guide.categories.map((c) => (
+                        <Badge key={c} variant="outline" className="text-xs">
+                          {c}
+                        </Badge>
+                      ))}
+                    </div>
+                    <CardDescription className="mt-3">{guide.description}</CardDescription>
                   </CardHeader>
-                  <CardContent className="mt-auto">
+                  <CardContent className="mt-auto space-y-2">
                     <Link to={guide.link}>
                       <Button variant="outline" className="w-full">
                         Read Guide
                       </Button>
                     </Link>
+                    {guide.showTryCalculator && (
+                      <Link to={guide.calculatorLink}>
+                        <Button className="w-full">
+                          <Calculator className="h-4 w-4 mr-2" />
+                          {guide.calculatorLabel ?? "Try the calculator"}
+                        </Button>
+                      </Link>
+                    )}
                   </CardContent>
                 </Card>
               ))}
+              {visibleGuides.length === 0 && (
+                <p className="text-muted-foreground col-span-full text-center py-12">
+                  No guides match this filter yet.
+                </p>
+              )}
             </div>
           </div>
         </section>
