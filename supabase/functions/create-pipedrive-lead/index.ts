@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const ALLOWED_ORIGINS = [
   "https://halp-loan-compass.lovable.app",
@@ -17,20 +18,51 @@ function getCorsHeaders(req: Request) {
   };
 }
 
-// Simple in-memory rate limiter (per function instance)
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+const supabaseAdmin = createClient(
+  Deno.env.get("SUPABASE_URL")!,
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  { auth: { persistSession: false } }
+);
+
+// Persistent rate limiter backed by Postgres. Survives cold starts and is shared across instances.
+async function isRateLimited(ip: string): Promise<boolean> {
+  const now = new Date();
+  const windowCutoff = new Date(now.getTime() - RATE_WINDOW_MS);
+
+  const { data: existing, error: selectError } = await supabaseAdmin
+    .from("lead_submission_rate_limits")
+    .select("id, count, window_start")
+    .eq("ip_address", ip)
+    .maybeSingle();
+
+  if (selectError) {
+    console.error("Rate limit lookup failed:", selectError);
+    return false; // Fail-open to avoid blocking legit users on transient DB issues
+  }
+
+  // No record, or current window has expired -> reset
+  if (!existing || new Date(existing.window_start) < windowCutoff) {
+    const { error: upsertError } = await supabaseAdmin
+      .from("lead_submission_rate_limits")
+      .upsert(
+        { ip_address: ip, count: 1, window_start: now.toISOString(), updated_at: now.toISOString() },
+        { onConflict: "ip_address" }
+      );
+    if (upsertError) console.error("Rate limit reset failed:", upsertError);
     return false;
   }
-  entry.count++;
-  return entry.count > RATE_LIMIT;
+
+  if (existing.count >= RATE_LIMIT) return true;
+
+  const { error: updateError } = await supabaseAdmin
+    .from("lead_submission_rate_limits")
+    .update({ count: existing.count + 1, updated_at: now.toISOString() })
+    .eq("id", existing.id);
+  if (updateError) console.error("Rate limit increment failed:", updateError);
+  return false;
 }
 
 // Input validation schema
@@ -57,7 +89,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     // Rate limiting by IP
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-    if (isRateLimited(ip)) {
+    if (await isRateLimited(ip)) {
       return new Response(
         JSON.stringify({ error: "Too many requests. Please try again later." }),
         { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
