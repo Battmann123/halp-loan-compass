@@ -3,11 +3,46 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import GuideFAQ from "@/components/GuideFAQ";
 import { Calculator, BookOpen, ArrowLeft, DollarSign } from "lucide-react";
+
+const borrowingPowerFAQs = [
+  {
+    q: "How do lenders calculate borrowing power?",
+    a: "Lenders assess your net income, subtract living expenses (HEM benchmark or your declared expenses, whichever is higher), subtract existing debt commitments, then test whether you can afford the proposed loan repayment at the assessment rate (the actual rate plus a ~3% buffer required by APRA).",
+  },
+  {
+    q: "What is the APRA serviceability buffer?",
+    a: "Since October 2021 APRA has required lenders to assess loan repayments at the actual interest rate plus a 3 percentage point buffer. So if your rate is 6.0%, the lender tests whether you can afford repayments at 9.0%. This reduces borrowing power by roughly 25–30% versus testing at the actual rate.",
+  },
+  {
+    q: "How much can a single person on $100K borrow?",
+    a: "A rough guide: a single applicant earning $100K with no debts, no dependents and a 20% deposit can borrow approximately $500K–$580K depending on the lender. With HECS debt, dependents or other loans, this drops significantly.",
+  },
+  {
+    q: "Do credit cards reduce my borrowing power?",
+    a: "Yes — lenders assess credit cards on the limit, not the balance. A $10,000 limit typically reduces borrowing power by ~$40,000–$50,000. Cancelling or reducing unused credit card limits before applying can materially increase what you can borrow.",
+  },
+  {
+    q: "How does HECS/HELP affect borrowing power?",
+    a: "Lenders treat HECS repayments as ongoing debt commitments. The compulsory repayment scales with income (1%–10% of pre-tax income). A $50K HECS balance on a $100K income reduces borrowing power by roughly $40K–$70K depending on lender policy.",
+  },
+  {
+    q: "Why do different lenders give different borrowing limits?",
+    a: "Lenders use different living expense floors (HEM), apply different shading to bonus, overtime, rental and self-employed income, treat existing debt differently, and use different stress-test methodologies. Borrowing limits can vary by $100K+ between lenders for the same applicant.",
+  },
+];
 
 const BorrowingPowerGuide = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Borrowing Power Guide — how much can I borrow in Australia?"
+        description="How lenders calculate borrowing capacity in Australia: income assessment, the 3% APRA stress test buffer, HEM living expenses, debts and HECS — and strategies to maximise what you can borrow."
+        canonical="https://halp-loan-compass.lovable.app/guides/borrowing-power"
+        keywords="borrowing power calculator, how much can I borrow, APRA serviceability buffer, HEM, mortgage capacity Australia"
+      />
       <Navigation />
 
       {/* Hero Section */}
@@ -324,6 +359,7 @@ const BorrowingPowerGuide = () => {
               </ul>
             </CardContent>
           </Card>
+          <GuideFAQ items={borrowingPowerFAQs} />
 
           {/* CTA */}
           <div className="bg-secondary/30 rounded-lg p-8 text-center">

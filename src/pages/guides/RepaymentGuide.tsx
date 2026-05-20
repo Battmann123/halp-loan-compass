@@ -3,11 +3,46 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import GuideFAQ from "@/components/GuideFAQ";
 import { Calculator, BookOpen, ArrowLeft, DollarSign } from "lucide-react";
+
+const repaymentFAQs = [
+  {
+    q: "What's the difference between Principal & Interest and Interest Only?",
+    a: "Principal & Interest (P&I) repayments pay down the loan balance each month, so over the loan term you fully repay the mortgage. Interest Only (IO) repayments only cover the interest charge — the balance does not reduce. IO is usually limited to 5 years and costs more in total interest, but is common for investors maximising tax deductions.",
+  },
+  {
+    q: "Should I pay weekly, fortnightly or monthly?",
+    a: "Fortnightly repayments set at half the monthly amount mean you make 26 payments per year (the equivalent of 13 monthly payments instead of 12). On a typical 30-year loan this can shave 4–5 years off the term and save tens of thousands in interest. Weekly works similarly. Most lenders allow you to switch frequency at no cost.",
+  },
+  {
+    q: "How is my mortgage repayment calculated?",
+    a: "The standard P&I formula is: M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is the loan amount, r is the monthly interest rate (annual rate / 12), and n is the number of monthly payments (years × 12). Example: $500,000 at 6.0% over 30 years = $2,998/month.",
+  },
+  {
+    q: "How much does a 0.25% rate change cost me?",
+    a: "On a $500,000 loan over 30 years, a 0.25% rate change moves the monthly repayment by roughly $80, and total interest paid over 30 years by roughly $29,000. On a $750,000 loan it's around $120/month and $43,000 over the life of the loan.",
+  },
+  {
+    q: "What is an offset account and how does it save interest?",
+    a: "An offset account is a transaction account linked to your home loan. The balance is offset against the loan balance when interest is calculated — so $20,000 in offset on a $500,000 loan means you only pay interest on $480,000. Unlike extra repayments, offset funds stay liquid and accessible.",
+  },
+  {
+    q: "Can I make extra repayments on a fixed rate loan?",
+    a: "Most fixed rate loans cap extra repayments at $10,000–$30,000 per year (lender dependent). Exceeding the cap or paying out the loan early may trigger break costs. Variable rate loans typically allow unlimited extra repayments.",
+  },
+];
 
 const RepaymentGuide = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Mortgage Repayment Guide — P&I vs IO, frequency, extra repayments"
+        description="How home loan repayments work in Australia: Principal & Interest vs Interest Only, weekly vs fortnightly vs monthly, offset accounts, extra repayments and the formula behind it all."
+        canonical="https://halp-loan-compass.lovable.app/guides/repayment"
+        keywords="mortgage repayment calculator, principal and interest, interest only, fortnightly repayments, offset account, extra repayments Australia"
+      />
       <Navigation />
 
       {/* Hero Section */}
@@ -301,6 +336,7 @@ const RepaymentGuide = () => {
               </ul>
             </CardContent>
           </Card>
+          <GuideFAQ items={repaymentFAQs} />
 
           {/* CTA */}
           <div className="bg-secondary/30 rounded-lg p-8 text-center">

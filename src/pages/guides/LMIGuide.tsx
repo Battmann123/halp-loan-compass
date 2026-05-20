@@ -3,11 +3,46 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import GuideFAQ from "@/components/GuideFAQ";
 import { Calculator, BookOpen, ArrowLeft, Shield, DollarSign } from "lucide-react";
+
+const lmiFAQs = [
+  {
+    q: "What is Lenders Mortgage Insurance (LMI)?",
+    a: "LMI is a one-off insurance premium that protects the lender (not you) when you borrow more than 80% of the property's value. It typically costs between $5,000 and $30,000 depending on loan size and LVR, and is usually capitalised onto the loan.",
+  },
+  {
+    q: "How much is LMI on a $500K, $750K and $1M property?",
+    a: "Rough estimates at 90% LVR: $500K loan ~$8,500, $750K loan ~$17,000, $1M loan ~$30,000. At 95% LVR these figures roughly double. Exact premiums vary by lender, insurer (Helia or QBE), and your loan-to-value ratio.",
+  },
+  {
+    q: "How can I avoid paying LMI?",
+    a: "Three main ways: (1) save a 20% deposit, (2) use the federal First Home Guarantee 5% Deposit Scheme as an eligible first home buyer, or (3) qualify for a professional waiver (doctors, lawyers, accountants and other listed occupations can borrow up to 90% LMI-free with some lenders).",
+  },
+  {
+    q: "Does the First Home Guarantee replace LMI?",
+    a: "Yes — under the First Home Guarantee scheme the federal government guarantees the portion of your loan above 80% LVR, so the lender does not require LMI. This saves eligible buyers $14,000 to $30,000 on properties from $500K to $1M.",
+  },
+  {
+    q: "Is LMI tax deductible?",
+    a: "LMI is generally not tax deductible on an owner-occupied home. For investment properties, LMI can be claimed as a borrowing cost spread over five years (or the loan term, whichever is shorter).",
+  },
+  {
+    q: "Do I get LMI refunded if I refinance?",
+    a: "Usually no. LMI is a one-off premium that is not transferable between lenders or refundable on refinance. If you refinance above 80% LVR you may need to pay a new LMI premium with the new lender.",
+  },
+];
 
 const LMIGuide = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="LMI Guide 2026 — how Lenders Mortgage Insurance works in Australia"
+        description="How LMI is calculated, when it applies, typical premiums by loan size and LVR, and how to avoid it — including the federal 5% Deposit Scheme that saves first home buyers $14K–$30K."
+        canonical="https://halp-loan-compass.lovable.app/guides/lmi"
+        keywords="LMI calculator, Lenders Mortgage Insurance Australia, avoid LMI, 5% deposit scheme, First Home Guarantee LMI, LVR"
+      />
       <Navigation />
 
       <section className="bg-gradient-to-br from-primary via-accent to-primary py-12 px-4">
@@ -176,6 +211,8 @@ const LMIGuide = () => {
               </ul>
             </CardContent>
           </Card>
+
+          <GuideFAQ items={lmiFAQs} />
 
           <div className="bg-secondary/30 rounded-lg p-8 text-center">
             <Calculator className="h-12 w-12 mx-auto mb-4 text-primary" />

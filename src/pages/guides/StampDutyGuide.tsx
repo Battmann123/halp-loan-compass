@@ -3,11 +3,46 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import GuideFAQ from "@/components/GuideFAQ";
 import { Calculator, BookOpen, ArrowLeft, DollarSign, MapPin } from "lucide-react";
+
+const stampDutyFAQs = [
+  {
+    q: "Do first home buyers pay stamp duty in NSW?",
+    a: "No — eligible NSW first home buyers pay zero stamp duty on new or established homes up to $800,000, with concessions tapering up to $1,000,000. The property must be your principal place of residence and you must live in it within 12 months of settlement.",
+  },
+  {
+    q: "What is the VIC first home buyer stamp duty exemption?",
+    a: "Victorian first home buyer owner-occupiers get a full stamp duty exemption on properties up to $600,000, with concessions on a sliding scale up to $750,000. The off-the-plan duty concession has been extended to 20 October 2026.",
+  },
+  {
+    q: "Does Queensland charge stamp duty on new homes?",
+    a: "From 1 May 2025 Queensland charges zero stamp duty on new homes and vacant land bought by first home buyers, with no price cap. Established homes still attract duty but FHBs are exempt up to $700,000 and receive concessions up to $800,000.",
+  },
+  {
+    q: "Has South Australia abolished stamp duty?",
+    a: "SA has abolished stamp duty for eligible first home buyers on new homes and vacant land, with no price cap from 6 June 2024. Established home FHBs may still receive concessions.",
+  },
+  {
+    q: "When is stamp duty payable?",
+    a: "Stamp duty is generally payable within 3 months of settlement in most states (NSW, VIC, QLD), though some states require it at or before settlement. Your conveyancer or solicitor usually arranges payment as part of settlement funds.",
+  },
+  {
+    q: "Do foreign buyers pay extra stamp duty in Australia?",
+    a: "Yes — most states apply a foreign purchaser surcharge of 7%–8% on top of standard duty. Permanent residents and Australian citizens are exempt from the surcharge, and some temporary visa holders may qualify for exemptions in specific states.",
+  },
+];
 
 const StampDutyGuide = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Stamp Duty Guide 2026 — NSW, VIC, QLD, SA, WA, TAS, ACT, NT"
+        description="State-by-state Australian stamp duty rules updated for 2026. First home buyer exemptions, thresholds, foreign surcharges and off-the-plan concessions for every state and territory."
+        canonical="https://halp-loan-compass.lovable.app/guides/stamp-duty"
+        keywords="stamp duty calculator, NSW stamp duty, VIC stamp duty, QLD stamp duty, first home buyer stamp duty exemption, transfer duty Australia"
+      />
       <Navigation />
 
       {/* Hero Section */}
@@ -348,6 +383,7 @@ const StampDutyGuide = () => {
               </ul>
             </CardContent>
           </Card>
+          <GuideFAQ items={stampDutyFAQs} />
 
           {/* CTA */}
           <div className="bg-secondary/30 rounded-lg p-8 text-center">
