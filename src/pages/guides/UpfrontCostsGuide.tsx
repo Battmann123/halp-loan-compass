@@ -42,6 +42,12 @@ const upfrontFAQs = [
 const UpfrontCostsGuide = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Upfront Costs Guide 2026 — what you really need to buy a home"
+        description="The full cost breakdown for buying a home in Australia in 2026: deposit, stamp duty, LMI, conveyancing, inspections and fees — plus how grants can drop your effective deposit to 2–5%."
+        canonical="https://halp-loan-compass.lovable.app/guides/upfront-costs"
+        keywords="upfront costs home loan, settlement costs Australia, deposit calculator, conveyancing fees, first home buyer costs"
+      />
       <Navigation />
 
       <section className="bg-gradient-to-br from-primary via-accent to-primary py-12 px-4">
