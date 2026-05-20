@@ -265,6 +265,21 @@ const GovernmentGrantsCalculator = ({ initialState, lockState = false, embedded 
           </>
         )}
 
+        {!embedded && (
+          <div className="mb-6 p-4 rounded-lg border bg-muted/30">
+            <p className="text-sm font-medium mb-2">State-specific first home buyer grant guides:</p>
+            <div className="flex flex-wrap gap-2">
+              {[["nsw","NSW"],["vic","VIC"],["qld","QLD"],["wa","WA"]].map(([slug,label]) => (
+                <Link key={slug} to={`/calculators/government-grants/${slug}`}
+                  className="px-3 py-1 text-xs rounded-md border hover:border-primary hover:text-primary transition-colors">
+                  {label} grants & concessions
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+
         <div className="grid md:grid-cols-2 gap-8">
           {/* Input Section */}
           <Card className="border-2">
