@@ -158,52 +158,46 @@ const Calculators = () => {
         <div className="container mx-auto text-center text-white max-w-4xl">
           <Calculator className="h-16 w-16 mx-auto mb-6" />
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Home Loan Calculators Australia
+            How much can you actually afford?
           </h1>
           <p className="text-xl md:text-2xl opacity-95 mb-4">
-            A comprehensive mortgage calculator suite
+            Crunch the numbers in plain English.
           </p>
           <p className="text-lg opacity-90">
-            Specially designed for house & land packages, new properties, and school zone purchases
+            No sign-up, no email collected — just answers.
           </p>
         </div>
       </section>
 
-      {/* Benefits */}
+      {/* Quick-answer buttons */}
       <section className="py-12 px-4 bg-secondary/30">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-6xl mx-auto">
+        <div className="container mx-auto max-w-5xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              "13 Specialized Calculators",
-              "Australian-Specific",
-              "House & Land Focus",
-              "School Zone Integration",
-              "Investment Analysis",
-              "Mobile Optimized",
-            ].map((benefit) => (
-              <div key={benefit} className="text-center">
-                <div className="bg-primary/10 rounded-full w-3 h-3 mx-auto mb-2"></div>
-                <p className="text-sm font-medium">{benefit}</p>
-              </div>
+              { to: "/calculators/borrowing-power", emoji: "💰", label: "How much can I borrow?" },
+              { to: "/calculators/repayment", emoji: "🏠", label: "What will my repayments be?" },
+              { to: "/calculators/upfront-costs", emoji: "🪙", label: "How much deposit do I need?" },
+              { to: "/calculators/comprehensive", emoji: "📋", label: "What's the total cost?" },
+            ].map((q) => (
+              <Link key={q.to} to={q.to}>
+                <Card className="h-full border-2 hover:border-primary hover:shadow-xl transition-all cursor-pointer">
+                  <CardContent className="p-6 text-center">
+                    <div className="text-4xl mb-3">{q.emoji}</div>
+                    <p className="font-semibold">{q.label}</p>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            Stamp duty, LMI, grants — the lot.
+          </p>
         </div>
       </section>
 
       {/* Main Content */}
       <section className="py-16 px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="prose max-w-none mb-12">
-            <h2 className="text-3xl font-bold mb-4">
-              Transform Your Property Dreams Into Financial Reality
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              HALP's calculator hub is Australia's most comprehensive collection of property and mortgage calculators, 
-              specifically designed for our specialized focus on house & land packages, new properties, and school zone purchases. 
-              Whether you're a first home buyer exploring the 5% deposit scheme, an investor analyzing new property tax benefits, 
-              or a family searching for the perfect home in the right school catchment, our calculators provide the insights you need.
-            </p>
-          </div>
 
           {/* Featured Comprehensive Calculator */}
           <Link to="/calculators/comprehensive" className="block mb-12">
