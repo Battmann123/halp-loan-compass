@@ -42,6 +42,12 @@ const refinanceFAQs = [
 const RefinanceGuide = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Refinance Guide 2026 — when to switch, costs, cashback clawback"
+        description="A clear cost/benefit framework for refinancing your home loan in Australia: break costs, switching fees, LMI above 80% LVR, cashback clawback windows, and when refinancing actually pays off."
+        canonical="https://halp-loan-compass.lovable.app/guides/refinance"
+        keywords="refinance home loan Australia, refinance calculator, switching costs, cashback home loan, break costs fixed rate"
+      />
       <Navigation />
 
       <section className="bg-gradient-to-br from-primary via-accent to-primary py-12 px-4">
