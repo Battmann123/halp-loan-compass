@@ -130,69 +130,39 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Why Choose HALP */}
+      {/* How It Works */}
       <section className="py-16 px-4">
         <div className="container mx-auto max-w-4xl">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-            30 Years of Trusted <span className="text-primary">Home Loan Expertise</span>
+            How It <span className="text-primary">Works</span>
           </h2>
           <p className="text-lg text-center text-muted-foreground mb-12">
-            We're a family-oriented team who understand that buying a home is one of life's biggest decisions. 
-            Whether you're a first home buyer, growing family, or seasoned investor – we're here to HALP 
-            every step of the way with honest advice and genuine care for your financial future.
+            A clear path from "I think I want to buy" to keys in your hand.
           </p>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <Card className="border-2">
-              <CardContent className="p-6">
-                <Building className="h-10 w-10 mb-4 text-primary" />
-                <h3 className="text-xl font-semibold mb-3">House & Land Package Finance</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Construction-to-permanent loans for turnkey packages</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Progress payment management during build phase</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Single approval process for land and construction</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Flexible deposit structures from 5% with government assistance</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2">
-              <CardContent className="p-6">
-                <TrendingUp className="h-10 w-10 mb-4 text-primary" />
-                <h3 className="text-xl font-semibold mb-3">New Home & Off-the-Plan Loans</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>New home depreciation benefits for investors</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Off-the-plan settlement flexibility (12-24 months)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Sunset clause protection and legal safeguards</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Brand new property warranties and insurance benefits</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
+          <ol className="space-y-4">
+            {[
+              { n: "1", t: "Tell us about you", d: "5 minutes, online." },
+              { n: "2", t: "We find your best 3 lenders", d: "Out of 40+ — matched to your situation." },
+              { n: "3", t: "You get pre-approved", d: "So you know exactly what you can spend." },
+              { n: "4", t: "Go house-hunting with a number you can trust", d: "No more guessing at open homes." },
+              { n: "5", t: "We settle the loan, you get the keys", d: "We handle the paperwork end-to-end." },
+            ].map((s) => (
+              <li key={s.n}>
+                <Card className="border-2">
+                  <CardContent className="p-5 flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">
+                      {s.n}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-1">{s.t}</h3>
+                      <p className="text-sm text-muted-foreground">{s.d}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
