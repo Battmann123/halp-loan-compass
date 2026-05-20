@@ -89,7 +89,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     // Rate limiting by IP
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-    if (isRateLimited(ip)) {
+    if (await isRateLimited(ip)) {
       return new Response(
         JSON.stringify({ error: "Too many requests. Please try again later." }),
         { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
