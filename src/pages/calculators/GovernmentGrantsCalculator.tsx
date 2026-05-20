@@ -294,7 +294,7 @@ const GovernmentGrantsCalculator = ({ initialState, lockState = false, embedded 
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label htmlFor="state">State/Territory</Label>
-                  <Select value={state} onValueChange={(v) => setState(v as AusState)}>
+                  <Select value={state} onValueChange={(v) => setState(v as AusState)} disabled={lockState}>
                     <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {(Object.keys(STATE_LABELS) as AusState[]).map((s) => (
@@ -302,6 +302,11 @@ const GovernmentGrantsCalculator = ({ initialState, lockState = false, embedded 
                       ))}
                     </SelectContent>
                   </Select>
+                  {lockState && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      State locked. <Link to="/calculators/government-grants" className="text-primary hover:underline">All-states version</Link>
+                    </p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="region">Region (5% Scheme cap)</Label>
