@@ -197,11 +197,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        personId: personId,
-        leadId: leadResult.data.id,
-      }),
+      JSON.stringify({ success: true }),
       {
         status: 200,
         headers: { "Content-Type": "application/json", ...corsHeaders },
