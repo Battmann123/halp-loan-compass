@@ -44,24 +44,28 @@ const StampDutyCalculator = ({ initialState, lockState = false, embedded = false
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navigation />
+    <div className={embedded ? "" : "min-h-screen flex flex-col"}>
+      {!embedded && <Navigation />}
 
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
-        <Link to="/calculators" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
-          <ArrowLeft className="h-4 w-4" />
-          Back to All Calculators
-        </Link>
+      <div className={embedded ? "" : "container mx-auto px-4 py-8 max-w-5xl"}>
+        {!embedded && (
+          <>
+            <Link to="/calculators" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
+              <ArrowLeft className="h-4 w-4" />
+              Back to All Calculators
+            </Link>
 
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Receipt className="h-10 w-10 text-primary" />
-            <h1 className="text-3xl md:text-4xl font-bold">Stamp Duty Calculator</h1>
-          </div>
-          <p className="text-lg text-muted-foreground">
-            Calculate stamp duty for all Australian states and territories
-          </p>
-        </div>
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <Receipt className="h-10 w-10 text-primary" />
+                <h1 className="text-3xl md:text-4xl font-bold">Stamp Duty Calculator</h1>
+              </div>
+              <p className="text-lg text-muted-foreground">
+                Calculate stamp duty for all Australian states and territories
+              </p>
+            </div>
+          </>
+        )}
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Input Section */}
