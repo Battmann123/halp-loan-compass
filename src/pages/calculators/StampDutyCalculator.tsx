@@ -87,7 +87,7 @@ const StampDutyCalculator = ({ initialState, lockState = false, embedded = false
 
               <div>
                 <Label htmlFor="state">State/Territory</Label>
-                <Select value={state} onValueChange={setState}>
+                <Select value={state} onValueChange={setState} disabled={lockState}>
                   <SelectTrigger className="mt-2">
                     <SelectValue />
                   </SelectTrigger>
@@ -102,6 +102,11 @@ const StampDutyCalculator = ({ initialState, lockState = false, embedded = false
                     <SelectItem value="act">Australian Capital Territory</SelectItem>
                   </SelectContent>
                 </Select>
+                {lockState && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    State locked to match this page. <Link to="/calculators/stamp-duty" className="text-primary hover:underline">Use the all-states calculator</Link> to change.
+                  </p>
+                )}
               </div>
 
               <div>
