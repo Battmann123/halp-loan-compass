@@ -5,7 +5,15 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import GuideFAQ from "@/components/GuideFAQ";
-import { Calculator, BookOpen, ArrowLeft, Shield, DollarSign } from "lucide-react";
+import GuideStatsBar from "@/components/GuideStatsBar";
+import { Calculator, BookOpen, ArrowLeft, Shield, DollarSign, Percent, TrendingUp } from "lucide-react";
+
+const lmiStats = [
+  { icon: Percent, value: "80% LVR", label: "Threshold above which LMI applies" },
+  { icon: DollarSign, value: "$5K–$30K", label: "Typical LMI premium range" },
+  { icon: Shield, value: "$0", label: "LMI under the federal 5% Deposit Scheme" },
+  { icon: TrendingUp, value: "5 yrs", label: "Deduction period for investment-property LMI" },
+];
 
 const lmiFAQs = [
   {
@@ -65,6 +73,8 @@ const LMIGuide = () => {
 
       <section className="py-12 px-4">
         <div className="container mx-auto max-w-4xl space-y-8">
+          <GuideStatsBar stats={lmiStats} />
+
           
           <Card>
             <CardHeader>

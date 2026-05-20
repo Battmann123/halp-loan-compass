@@ -3,11 +3,51 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Calculator, BookOpen, ArrowLeft, TrendingUp, DollarSign } from "lucide-react";
+import SEO from "@/components/SEO";
+import GuideFAQ from "@/components/GuideFAQ";
+import GuideStatsBar from "@/components/GuideStatsBar";
+import { Calculator, BookOpen, ArrowLeft, TrendingUp, DollarSign, Percent, Building, Receipt } from "lucide-react";
+
+const investmentStats = [
+  { icon: Percent, value: "3–5%", label: "Typical gross rental yield, capital cities" },
+  { icon: Building, value: "100%", label: "Of interest deductible on investment loans" },
+  { icon: Receipt, value: "$5K–$15K", label: "Yr 1 depreciation on a typical new build" },
+  { icon: TrendingUp, value: "50%", label: "CGT discount for assets held 12+ months" },
+];
+
+const investmentFAQs = [
+  {
+    q: "Is interest on an investment property loan tax deductible?",
+    a: "Yes — interest on a loan used to purchase an income-producing investment property is fully tax deductible. This is the basis of negative gearing: when total expenses (interest, depreciation, rates, etc.) exceed rental income, the loss reduces your taxable income.",
+  },
+  {
+    q: "What is negative gearing?",
+    a: "Negative gearing occurs when the costs of owning a property exceed the rental income, creating a tax-deductible loss. Investors offset that loss against other income (salary), reducing their overall tax bill. The strategy relies on capital growth eventually exceeding accumulated losses.",
+  },
+  {
+    q: "Should I choose Interest Only or Principal & Interest for an investment loan?",
+    a: "Interest Only (IO) is common for investors because it maximises tax-deductible interest and keeps cash flow free for other investments. IO is typically limited to 5 years. P&I has lower total interest cost but reduces the deductible amount each year. Discuss the strategy with your accountant.",
+  },
+  {
+    q: "How much deposit do I need for an investment property?",
+    a: "Most lenders require 10–20% deposit for investment loans, with LMI applicable above 80% LVR. Investment loan rates are typically 0.20–0.40% higher than owner-occupier rates, and serviceability assessments are stricter (rental income is shaded by 20–25%).",
+  },
+  {
+    q: "What is the difference between new and established for investment?",
+    a: "New properties offer significantly higher depreciation deductions (Division 40 plant & equipment plus Division 43 capital works), often $5K–$15K in year one. Second-hand residential property bought after 9 May 2017 can only claim Division 43, materially reducing tax benefits.",
+  },
+];
+
 
 const InvestmentPropertyGuide = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Investment Property Guide 2026 — yields, gearing, depreciation, CGT"
+        description="A practical Australian investment property guide: rental yields, negative gearing, depreciation (Div 40 vs Div 43), capital growth, interest-only strategy and CGT planning."
+        canonical="https://halp-loan-compass.lovable.app/guides/investment-property"
+        keywords="investment property Australia, negative gearing, rental yield, property depreciation, interest only investment loan"
+      />
       <Navigation />
 
       <section className="bg-gradient-to-br from-primary via-accent to-primary py-12 px-4">
@@ -30,6 +70,8 @@ const InvestmentPropertyGuide = () => {
 
       <section className="py-12 px-4">
         <div className="container mx-auto max-w-4xl space-y-8">
+          <GuideStatsBar stats={investmentStats} />
+
           
           <Card>
             <CardHeader>
@@ -142,6 +184,8 @@ const InvestmentPropertyGuide = () => {
               </ul>
             </CardContent>
           </Card>
+
+          <GuideFAQ items={investmentFAQs} />
 
           <div className="bg-secondary/30 rounded-lg p-8 text-center">
             <Calculator className="h-12 w-12 mx-auto mb-4 text-primary" />

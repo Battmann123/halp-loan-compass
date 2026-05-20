@@ -5,7 +5,15 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import GuideFAQ from "@/components/GuideFAQ";
-import { Calculator, BookOpen, ArrowLeft, DollarSign } from "lucide-react";
+import GuideStatsBar from "@/components/GuideStatsBar";
+import { Calculator, BookOpen, ArrowLeft, DollarSign, Calendar, Percent, Banknote } from "lucide-react";
+
+const repaymentStats = [
+  { icon: Calendar, value: "26 pmts", label: "Fortnightly = 13 monthly equivalents per year" },
+  { icon: Percent, value: "0.25%", label: "Rate move ≈ $80/mo on $500K loan" },
+  { icon: Banknote, value: "$2,998", label: "Monthly P&I on $500K @ 6% over 30 yrs" },
+  { icon: DollarSign, value: "4–5 yrs", label: "Saved by switching monthly → fortnightly" },
+];
 
 const repaymentFAQs = [
   {
@@ -67,6 +75,8 @@ const RepaymentGuide = () => {
       {/* Main Content */}
       <section className="py-12 px-4">
         <div className="container mx-auto max-w-4xl space-y-8">
+          <GuideStatsBar stats={repaymentStats} />
+
           
           {/* What It Does */}
           <Card>
