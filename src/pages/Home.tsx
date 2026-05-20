@@ -253,12 +253,11 @@ const Home = () => {
         <div className="container mx-auto text-center max-w-3xl">
           <Users className="h-16 w-16 mx-auto mb-6 text-primary" />
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Let's HALP You Into Your Dream Home
+            Ready when you are.
           </h2>
           <p className="text-lg text-muted-foreground mb-8">
-            Our friendly team is ready to guide you through every step of your home loan journey. 
-            No jargon, no pressure – just honest advice from people who genuinely care about helping 
-            Australian families achieve their property dreams.
+            A quick chat. We'll tell you what you can borrow, what grants you qualify for,
+            and what your next move is. No pressure, no sales pitch.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/apply">
