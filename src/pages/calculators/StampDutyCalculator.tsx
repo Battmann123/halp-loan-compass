@@ -11,9 +11,15 @@ import { Receipt, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { calculateStampDuty, type AusState, type PropertyCategory } from "@/lib/calculations";
 
-const StampDutyCalculator = () => {
+interface StampDutyCalculatorProps {
+  initialState?: string;
+  lockState?: boolean;
+  embedded?: boolean;
+}
+
+const StampDutyCalculator = ({ initialState, lockState = false, embedded = false }: StampDutyCalculatorProps = {}) => {
   const [propertyValue, setPropertyValue] = useState("650000");
-  const [state, setState] = useState("nsw");
+  const [state, setState] = useState((initialState ?? "nsw").toLowerCase());
   const [firstHomeBuyer, setFirstHomeBuyer] = useState(true);
   const [propertyType, setPropertyType] = useState<"primary" | "investment">("primary");
   const [foreignPurchaser, setForeignPurchaser] = useState(false);
@@ -38,24 +44,46 @@ const StampDutyCalculator = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navigation />
+    <div className={embedded ? "" : "min-h-screen flex flex-col"}>
+      {!embedded && <Navigation />}
 
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
-        <Link to="/calculators" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
-          <ArrowLeft className="h-4 w-4" />
-          Back to All Calculators
-        </Link>
+      <div className={embedded ? "" : "container mx-auto px-4 py-8 max-w-5xl"}>
+        {!embedded && (
+          <>
+            <Link to="/calculators" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
+              <ArrowLeft className="h-4 w-4" />
+              Back to All Calculators
+            </Link>
 
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Receipt className="h-10 w-10 text-primary" />
-            <h1 className="text-3xl md:text-4xl font-bold">Stamp Duty Calculator</h1>
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <Receipt className="h-10 w-10 text-primary" />
+                <h1 className="text-3xl md:text-4xl font-bold">Stamp Duty Calculator</h1>
+              </div>
+              <p className="text-lg text-muted-foreground">
+                Calculate stamp duty for all Australian states and territories
+              </p>
+            </div>
+          </>
+        )}
+
+        {!embedded && (
+          <div className="mb-6 p-4 rounded-lg border bg-muted/30">
+            <p className="text-sm font-medium mb-2">State-specific stamp duty calculators:</p>
+            <div className="flex flex-wrap gap-2">
+              {[
+                ["nsw", "NSW"], ["vic", "VIC"], ["qld", "QLD"], ["wa", "WA"],
+                ["sa", "SA"], ["tas", "TAS"], ["act", "ACT"], ["nt", "NT"],
+              ].map(([slug, label]) => (
+                <Link key={slug} to={`/calculators/stamp-duty/${slug}`}
+                  className="px-3 py-1 text-xs rounded-md border hover:border-primary hover:text-primary transition-colors">
+                  {label} stamp duty
+                </Link>
+              ))}
+            </div>
           </div>
-          <p className="text-lg text-muted-foreground">
-            Calculate stamp duty for all Australian states and territories
-          </p>
-        </div>
+        )}
+
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Input Section */}
@@ -81,7 +109,7 @@ const StampDutyCalculator = () => {
 
               <div>
                 <Label htmlFor="state">State/Territory</Label>
-                <Select value={state} onValueChange={setState}>
+                <Select value={state} onValueChange={setState} disabled={lockState}>
                   <SelectTrigger className="mt-2">
                     <SelectValue />
                   </SelectTrigger>
@@ -96,6 +124,11 @@ const StampDutyCalculator = () => {
                     <SelectItem value="act">Australian Capital Territory</SelectItem>
                   </SelectContent>
                 </Select>
+                {lockState && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    State locked to match this page. <Link to="/calculators/stamp-duty" className="text-primary hover:underline">Use the all-states calculator</Link> to change.
+                  </p>
+                )}
               </div>
 
               <div>
@@ -442,7 +475,7 @@ const StampDutyCalculator = () => {
         </Card>
       </div>
 
-      <Footer />
+      {!embedded && <Footer />}
     </div>
   );
 };

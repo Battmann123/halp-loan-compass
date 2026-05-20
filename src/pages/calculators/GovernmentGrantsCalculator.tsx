@@ -20,11 +20,17 @@ const STATE_LABELS: Record<AusState, string> = {
   WA: "Western Australia", TAS: "Tasmania", NT: "Northern Territory", ACT: "Australian Capital Territory",
 };
 
-const GovernmentGrantsCalculator = () => {
+interface GovernmentGrantsCalculatorProps {
+  initialState?: AusState;
+  lockState?: boolean;
+  embedded?: boolean;
+}
+
+const GovernmentGrantsCalculator = ({ initialState, lockState = false, embedded = false }: GovernmentGrantsCalculatorProps = {}) => {
   // Core inputs
   const [propertyValue, setPropertyValue] = useState<string | number>(650000);
   const [deposit, setDeposit] = useState<string | number>(50000);
-  const [state, setState] = useState<AusState>("NSW");
+  const [state, setState] = useState<AusState>(initialState ?? "NSW");
   const [region, setRegion] = useState<Region>("capital");
   const [firstHomeBuyer, setFirstHomeBuyer] = useState(true);
   const [newProperty, setNewProperty] = useState(true);
@@ -233,27 +239,46 @@ const GovernmentGrantsCalculator = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navigation />
+    <div className={embedded ? "" : "min-h-screen flex flex-col"}>
+      {!embedded && <Navigation />}
 
 
 
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
-        <Link to="/calculators" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
-          <ArrowLeft className="h-4 w-4" />
-          Back to All Calculators
-        </Link>
+      <div className={embedded ? "" : "container mx-auto px-4 py-8 max-w-5xl"}>
+        {!embedded && (
+          <>
+            <Link to="/calculators" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
+              <ArrowLeft className="h-4 w-4" />
+              Back to All Calculators
+            </Link>
 
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Gift className="h-10 w-10 text-primary" />
-            <h1 className="text-3xl md:text-4xl font-bold">Government Grants Calculator</h1>
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <Gift className="h-10 w-10 text-primary" />
+                <h1 className="text-3xl md:text-4xl font-bold">Government Grants Calculator</h1>
+              </div>
+              <p className="text-lg text-muted-foreground">
+                All available grants in one view — FHOG, stamp duty concessions, the new Australian Government
+                5% Deposit Scheme (incl. 2% Single Parent stream), Help to Buy shared equity, and FHSS.
+              </p>
+            </div>
+          </>
+        )}
+
+        {!embedded && (
+          <div className="mb-6 p-4 rounded-lg border bg-muted/30">
+            <p className="text-sm font-medium mb-2">State-specific first home buyer grant guides:</p>
+            <div className="flex flex-wrap gap-2">
+              {[["nsw","NSW"],["vic","VIC"],["qld","QLD"],["wa","WA"]].map(([slug,label]) => (
+                <Link key={slug} to={`/calculators/government-grants/${slug}`}
+                  className="px-3 py-1 text-xs rounded-md border hover:border-primary hover:text-primary transition-colors">
+                  {label} grants & concessions
+                </Link>
+              ))}
+            </div>
           </div>
-          <p className="text-lg text-muted-foreground">
-            All available grants in one view — FHOG, stamp duty concessions, the new Australian Government
-            5% Deposit Scheme (incl. 2% Single Parent stream), Help to Buy shared equity, and FHSS.
-          </p>
-        </div>
+        )}
+
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Input Section */}
@@ -284,7 +309,7 @@ const GovernmentGrantsCalculator = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label htmlFor="state">State/Territory</Label>
-                  <Select value={state} onValueChange={(v) => setState(v as AusState)}>
+                  <Select value={state} onValueChange={(v) => setState(v as AusState)} disabled={lockState}>
                     <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {(Object.keys(STATE_LABELS) as AusState[]).map((s) => (
@@ -292,6 +317,11 @@ const GovernmentGrantsCalculator = () => {
                       ))}
                     </SelectContent>
                   </Select>
+                  {lockState && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      State locked. <Link to="/calculators/government-grants" className="text-primary hover:underline">All-states version</Link>
+                    </p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="region">Region (5% Scheme cap)</Label>
@@ -944,7 +974,7 @@ const GovernmentGrantsCalculator = () => {
         </Card>
       </div>
 
-      <Footer />
+      {!embedded && <Footer />}
     </div>
   );
 };
