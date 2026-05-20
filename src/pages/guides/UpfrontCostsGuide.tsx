@@ -70,6 +70,8 @@ const UpfrontCostsGuide = () => {
 
       <section className="py-12 px-4">
         <div className="container mx-auto max-w-4xl space-y-8">
+          <GuideStatsBar stats={upfrontStats} />
+
           
           <Card>
             <CardHeader>
