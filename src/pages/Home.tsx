@@ -55,11 +55,11 @@ const Home = () => {
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Your Home Loan <span className="text-secondary">Specialists</span>
+            Your first home, <span className="text-secondary">without the bank-speak.</span>
           </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-95">
-            HALP Home Loans brings 30 years of expertise to help you secure your dream home. 
-            Specialists in first home buyers, house & land packages, overseas buyers, and government grants.
+            5% deposit options, grants up to $45,000, and 40+ lenders compared.
+            We do the running around — you pick the keys.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Link to="/apply">
@@ -69,7 +69,7 @@ const Home = () => {
             </Link>
             <Link to="/apply">
               <Button size="lg" variant="outline" className="text-lg px-8 py-6 h-auto bg-white/10 border-white text-white hover:bg-white hover:text-primary shadow-xl">
-                Contact Tim Egan
+                Talk To A Broker
               </Button>
             </Link>
           </div>
@@ -90,109 +90,79 @@ const Home = () => {
             <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
               <CardContent className="p-6 text-center">
                 <Building className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">New Property Specialists</h3>
-                <p className="text-sm text-muted-foreground">House & land packages under 3 years</p>
+                <h3 className="font-semibold mb-2">House & Land, Made Simple</h3>
+                <p className="text-sm text-muted-foreground">Brand-new homes: one approval, one settlement, land + build.</p>
               </CardContent>
             </Card>
 
             <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
               <CardContent className="p-6 text-center">
                 <HomeIcon className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">First Home Buyer Experts</h3>
-                <p className="text-sm text-muted-foreground">5% deposit scheme, grants up to $45,000</p>
+                <h3 className="font-semibold mb-2">First Home? Start Here.</h3>
+                <p className="text-sm text-muted-foreground">5% deposit, $45K in grants, stamp duty exemptions explained.</p>
               </CardContent>
             </Card>
 
             <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
               <CardContent className="p-6 text-center">
                 <GraduationCap className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">School Zone Integration</h3>
-                <p className="text-sm text-muted-foreground">Find loans in preferred catchments</p>
+                <h3 className="font-semibold mb-2">Buy In The Right School Zone</h3>
+                <p className="text-sm text-muted-foreground">Search by school catchment, then we sort the loan.</p>
               </CardContent>
             </Card>
 
             <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
               <CardContent className="p-6 text-center">
                 <Users className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">Migrant-Friendly Service</h3>
-                <p className="text-sm text-muted-foreground">Expert guidance for overseas buyers</p>
+                <h3 className="font-semibold mb-2">New To Australia?</h3>
+                <p className="text-sm text-muted-foreground">Temporary visa loans, FIRB help, brokers who speak your language.</p>
               </CardContent>
             </Card>
 
             <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
               <CardContent className="p-6 text-center">
                 <Award className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">Compare 40+ Lenders</h3>
-                <p className="text-sm text-muted-foreground">Major banks & specialist financiers</p>
+                <h3 className="font-semibold mb-2">One Form. 40+ Lenders.</h3>
+                <p className="text-sm text-muted-foreground">Big banks, small lenders, specialists — we compare, you choose.</p>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
-      {/* Why Choose HALP */}
+      {/* How It Works */}
       <section className="py-16 px-4">
         <div className="container mx-auto max-w-4xl">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-            30 Years of Trusted <span className="text-primary">Home Loan Expertise</span>
+            How It <span className="text-primary">Works</span>
           </h2>
           <p className="text-lg text-center text-muted-foreground mb-12">
-            We're a family-oriented team who understand that buying a home is one of life's biggest decisions. 
-            Whether you're a first home buyer, growing family, or seasoned investor – we're here to HALP 
-            every step of the way with honest advice and genuine care for your financial future.
+            A clear path from "I think I want to buy" to keys in your hand.
           </p>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <Card className="border-2">
-              <CardContent className="p-6">
-                <Building className="h-10 w-10 mb-4 text-primary" />
-                <h3 className="text-xl font-semibold mb-3">House & Land Package Finance</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Construction-to-permanent loans for turnkey packages</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Progress payment management during build phase</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Single approval process for land and construction</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Flexible deposit structures from 5% with government assistance</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2">
-              <CardContent className="p-6">
-                <TrendingUp className="h-10 w-10 mb-4 text-primary" />
-                <h3 className="text-xl font-semibold mb-3">New Home & Off-the-Plan Loans</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>New home depreciation benefits for investors</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Off-the-plan settlement flexibility (12-24 months)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Sunset clause protection and legal safeguards</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span>Brand new property warranties and insurance benefits</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
+          <ol className="space-y-4">
+            {[
+              { n: "1", t: "Tell us about you", d: "5 minutes, online." },
+              { n: "2", t: "We find your best 3 lenders", d: "Out of 40+ — matched to your situation." },
+              { n: "3", t: "You get pre-approved", d: "So you know exactly what you can spend." },
+              { n: "4", t: "Go house-hunting with a number you can trust", d: "No more guessing at open homes." },
+              { n: "5", t: "We settle the loan, you get the keys", d: "We handle the paperwork end-to-end." },
+            ].map((s) => (
+              <li key={s.n}>
+                <Card className="border-2">
+                  <CardContent className="p-5 flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">
+                      {s.n}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-1">{s.t}</h3>
+                      <p className="text-sm text-muted-foreground">{s.d}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
@@ -201,16 +171,15 @@ const Home = () => {
         <div className="container mx-auto text-center max-w-4xl">
           <Calculator className="h-16 w-16 mx-auto mb-6" />
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            13 Specialized Home Loan Calculators
+            How much can you actually afford?
           </h2>
           <p className="text-xl mb-8 opacity-95">
-            A comprehensive mortgage calculator suite, designed specifically for 
-            house & land packages, new properties, and school zone purchases.
+            Crunch the numbers in plain English. No sign-up, no email collected — just answers.
           </p>
           <Button size="lg" variant="secondary" className="text-lg px-8 py-6 h-auto shadow-xl">
             <Link to="/calculators" className="flex items-center gap-2">
               <Calculator className="h-5 w-5" />
-              Explore All Calculators
+              Run The Numbers
             </Link>
           </Button>
         </div>
@@ -226,12 +195,11 @@ const Home = () => {
               <CardContent className="p-6">
                 <HomeIcon className="h-10 w-10 mb-4 text-primary" />
                 <h3 className="text-lg font-semibold mb-2">First Home Buyers</h3>
-                <p className="text-sm text-muted-foreground mb-3">400,000+ newly eligible</p>
+                <p className="text-sm text-muted-foreground mb-3">400,000+ newly eligible for the 5% deposit scheme</p>
                 <ul className="text-sm space-y-1 text-muted-foreground">
                   <li>• 5% deposit loans</li>
                   <li>• Grants up to $45,000</li>
                   <li>• Stamp duty exemptions</li>
-                  <li>• Complete buying guides</li>
                 </ul>
               </CardContent>
             </Card>
@@ -272,7 +240,7 @@ const Home = () => {
                   <li>• School catchment mapping</li>
                   <li>• Family home upgrades</li>
                   <li>• Flexible repayments</li>
-                  <li>• Future expansion planning</li>
+                  <li>• Room to grow with the family</li>
                 </ul>
               </CardContent>
             </Card>
@@ -285,12 +253,11 @@ const Home = () => {
         <div className="container mx-auto text-center max-w-3xl">
           <Users className="h-16 w-16 mx-auto mb-6 text-primary" />
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Let's HALP You Into Your Dream Home
+            Ready when you are.
           </h2>
           <p className="text-lg text-muted-foreground mb-8">
-            Our friendly team is ready to guide you through every step of your home loan journey. 
-            No jargon, no pressure – just honest advice from people who genuinely care about helping 
-            Australian families achieve their property dreams.
+            A quick chat. We'll tell you what you can borrow, what grants you qualify for,
+            and what your next move is. No pressure, no sales pitch.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/apply">
