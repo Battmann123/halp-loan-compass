@@ -359,6 +359,7 @@ const BorrowingPowerGuide = () => {
               </ul>
             </CardContent>
           </Card>
+          <GuideFAQ items={borrowingPowerFAQs} />
 
           {/* CTA */}
           <div className="bg-secondary/30 rounded-lg p-8 text-center">
