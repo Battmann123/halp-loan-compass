@@ -210,16 +210,15 @@ const Calculators = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="text-2xl font-bold group-hover:text-primary transition-colors">
-                        Comprehensive Property Finance Calculator
+                        The Big One: Plan Your Whole Purchase
                       </h3>
                       <span className="bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded">
                         NEW
                       </span>
                     </div>
                     <p className="text-muted-foreground mb-4">
-                      All-in-one property finance planning tool that combines loan affordability calculations 
-                      with complete purchase cost analysis. Get repayments, borrowing power, serviceability, 
-                      stamp duty, LMI, and upfront costs all in one comprehensive analysis.
+                      Repayments, borrowing power, stamp duty, LMI, grants, upfront costs.
+                      Every number you need, in one place.
                     </p>
                     <div className="flex flex-wrap gap-2">
                       <span className="text-xs bg-secondary px-2 py-1 rounded">Loan Repayments</span>
