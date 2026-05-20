@@ -336,6 +336,7 @@ const RepaymentGuide = () => {
               </ul>
             </CardContent>
           </Card>
+          <GuideFAQ items={repaymentFAQs} />
 
           {/* CTA */}
           <div className="bg-secondary/30 rounded-lg p-8 text-center">
