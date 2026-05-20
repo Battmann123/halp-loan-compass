@@ -5,7 +5,15 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import GuideFAQ from "@/components/GuideFAQ";
-import { Calculator, BookOpen, ArrowLeft, Gift, DollarSign } from "lucide-react";
+import GuideStatsBar from "@/components/GuideStatsBar";
+import { Calculator, BookOpen, ArrowLeft, Gift, DollarSign, Percent, Users, PiggyBank } from "lucide-react";
+
+const grantsStats = [
+  { icon: Percent, value: "5%", label: "Deposit under the First Home Guarantee" },
+  { icon: Gift, value: "$30K", label: "QLD FHOG on new builds (until 30 Jun 2026)" },
+  { icon: Users, value: "Up to 40%", label: "Government equity via Help to Buy (new builds)" },
+  { icon: PiggyBank, value: "$50K", label: "Max FHSS super-saver withdrawal per person" },
+];
 
 const grantsFAQs = [
   {
