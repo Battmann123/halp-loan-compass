@@ -959,7 +959,7 @@ const GovernmentGrantsCalculator = ({ initialState, lockState = false, embedded 
         </Card>
       </div>
 
-      <Footer />
+      {!embedded && <Footer />}
     </div>
   );
 };
