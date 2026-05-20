@@ -3,7 +3,41 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Calculator, BookOpen, ArrowLeft, TrendingDown, DollarSign } from "lucide-react";
+import SEO from "@/components/SEO";
+import GuideFAQ from "@/components/GuideFAQ";
+import GuideStatsBar from "@/components/GuideStatsBar";
+import { Calculator, BookOpen, ArrowLeft, TrendingDown, DollarSign, Percent, Hammer, Sofa } from "lucide-react";
+
+const depreciationStats = [
+  { icon: Percent, value: "2.5%", label: "Div 43 capital works rate over 40 years" },
+  { icon: Hammer, value: "$5K–$15K", label: "Typical Year 1 deduction on a new build" },
+  { icon: Sofa, value: "Div 40", label: "Plant & equipment depreciation rates vary" },
+  { icon: TrendingDown, value: "9 May 2017", label: "Cut-off for P&E claims on second-hand homes" },
+];
+
+const depreciationFAQs = [
+  {
+    q: "What is property depreciation?",
+    a: "Depreciation is a non-cash tax deduction reflecting the wear and tear of a building and its assets. It comes in two streams: Division 43 capital works (the building structure, depreciated at 2.5% per year over 40 years for buildings built after 16 September 1987) and Division 40 plant and equipment (carpets, blinds, appliances, etc.).",
+  },
+  {
+    q: "Can I claim depreciation on a second-hand property?",
+    a: "For residential property bought after 9 May 2017, you generally cannot claim Division 40 plant and equipment on second-hand items — only on items you install yourself. Division 43 capital works is still claimable. Commercial property and new residential are unaffected by this rule.",
+  },
+  {
+    q: "Do I need a quantity surveyor's depreciation schedule?",
+    a: "Yes — to maximise legitimate deductions you need a tax-deductible depreciation schedule prepared by a qualified quantity surveyor. They typically cost $600–$800 once-off and routinely uncover $5,000+ in first-year deductions, especially on newer properties.",
+  },
+  {
+    q: "How much depreciation can I expect on a new build?",
+    a: "A new $600K investment property often produces $8,000–$15,000 in deductions in year one (combined Div 40 and Div 43), tapering over time. Older properties usually produce $2,000–$5,000 per year of Div 43 only.",
+  },
+  {
+    q: "How does depreciation affect capital gains tax?",
+    a: "Division 40 deductions reduce your cost base for CGT — so depreciation is effectively recouped at sale. However, you get the benefit of the deduction now and the cost later (often at a 50% CGT discount), so it remains a net win in most cases.",
+  },
+];
+
 
 const DepreciationGuide = () => {
   return (
