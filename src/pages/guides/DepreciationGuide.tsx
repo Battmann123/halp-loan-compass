@@ -42,6 +42,12 @@ const depreciationFAQs = [
 const DepreciationGuide = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Depreciation Guide 2026 — Division 40 & 43 for property investors"
+        description="How property depreciation works in Australia: Division 43 capital works at 2.5% over 40 years, Division 40 plant and equipment, the 9 May 2017 second-hand rule, and how to maximise claims."
+        canonical="https://halp-loan-compass.lovable.app/guides/depreciation"
+        keywords="property depreciation Australia, Division 40, Division 43, quantity surveyor depreciation schedule, investment property tax"
+      />
       <Navigation />
 
       <section className="bg-gradient-to-br from-primary via-accent to-primary py-12 px-4">
