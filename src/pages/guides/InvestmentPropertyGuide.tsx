@@ -42,6 +42,12 @@ const investmentFAQs = [
 const InvestmentPropertyGuide = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Investment Property Guide 2026 — yields, gearing, depreciation, CGT"
+        description="A practical Australian investment property guide: rental yields, negative gearing, depreciation (Div 40 vs Div 43), capital growth, interest-only strategy and CGT planning."
+        canonical="https://halp-loan-compass.lovable.app/guides/investment-property"
+        keywords="investment property Australia, negative gearing, rental yield, property depreciation, interest only investment loan"
+      />
       <Navigation />
 
       <section className="bg-gradient-to-br from-primary via-accent to-primary py-12 px-4">
