@@ -20,11 +20,17 @@ const STATE_LABELS: Record<AusState, string> = {
   WA: "Western Australia", TAS: "Tasmania", NT: "Northern Territory", ACT: "Australian Capital Territory",
 };
 
-const GovernmentGrantsCalculator = () => {
+interface GovernmentGrantsCalculatorProps {
+  initialState?: AusState;
+  lockState?: boolean;
+  embedded?: boolean;
+}
+
+const GovernmentGrantsCalculator = ({ initialState, lockState = false, embedded = false }: GovernmentGrantsCalculatorProps = {}) => {
   // Core inputs
   const [propertyValue, setPropertyValue] = useState<string | number>(650000);
   const [deposit, setDeposit] = useState<string | number>(50000);
-  const [state, setState] = useState<AusState>("NSW");
+  const [state, setState] = useState<AusState>(initialState ?? "NSW");
   const [region, setRegion] = useState<Region>("capital");
   const [firstHomeBuyer, setFirstHomeBuyer] = useState(true);
   const [newProperty, setNewProperty] = useState(true);
