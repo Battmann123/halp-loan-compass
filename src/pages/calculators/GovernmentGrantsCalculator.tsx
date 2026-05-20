@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { calculateGovernmentGrants, FHOG_BY_STATE, PRICE_CAPS } from "@/lib/engine/grants";
 import { calculateStampDuty } from "@/lib/engine/property";
 import type { AusState } from "@/lib/engine";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 type Region = "capital" | "regional" | "rest";
 
@@ -959,19 +960,7 @@ const GovernmentGrantsCalculator = ({ initialState, lockState = false, embedded 
           </CardContent>
         </Card>
 
-        {/* Disclaimer */}
-        <Card className="mt-8 bg-muted/50">
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground">
-              <strong>Important Disclaimer:</strong> Government grants and schemes are subject to
-              eligibility criteria, application processes, and may change without notice. Grant amounts,
-              property price caps, and eligibility requirements vary by state and region and are updated
-              regularly. This calculator provides estimates only and does not guarantee approval. Please
-              contact a licensed mortgage broker through HALP for current information and assistance with
-              grant applications.
-            </p>
-          </CardContent>
-        </Card>
+        <CalculatorDisclaimer kind="government-grants" />
       </div>
 
       {!embedded && <Footer />}

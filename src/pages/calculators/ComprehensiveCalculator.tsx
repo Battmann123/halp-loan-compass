@@ -12,6 +12,7 @@ import { Calculator, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { calculateStampDuty as sharedStampDuty, calculateLmi as sharedLmi, monthlyRepayment as sharedRepayment, type AusState } from "@/lib/calculations";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 interface CalculationResult {
   // Loan Repayment
@@ -635,18 +636,7 @@ const ComprehensiveCalculator = () => {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="pt-6">
-              <h3 className="text-xl font-semibold mb-3">Important Disclaimer</h3>
-              <p className="text-sm text-muted-foreground">
-                This calculator provides estimates only and should not be relied upon as financial advice. 
-                Actual loan approval, interest rates, fees, and government grant eligibility depend on your 
-                individual circumstances and lender policies. Stamp duty rates and government schemes are 
-                subject to change. Always consult with a licensed mortgage broker or financial advisor before 
-                making property purchase decisions.
-              </p>
-            </CardContent>
-          </Card>
+        <CalculatorDisclaimer kind="comprehensive" />
         </div>
       </div>
 

@@ -9,6 +9,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Scale, Check, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 const LenderComparisonCalculator = () => {
   const [loanAmount, setLoanAmount] = useState("500000");
@@ -459,21 +460,7 @@ const LenderComparisonCalculator = () => {
             </CardContent>
           </Card>
 
-          <Card className="mt-8 bg-secondary/30">
-            <CardHeader>
-              <CardTitle>Important Disclaimer</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground space-y-2">
-              <p>
-                Rates and fees shown are indicative only and change daily. Actual rates depend on your loan amount, 
-                deposit, credit history, employment, and property. Not all applicants will qualify for advertised rates.
-              </p>
-              <p>
-                For current rates and a personalized comparison, please{" "}
-                <Link to="/" className="text-primary hover:underline">contact our mortgage brokers</Link> for a free consultation.
-              </p>
-            </CardContent>
-          </Card>
+        <CalculatorDisclaimer kind="lender-comparison" />
         </div>
       </section>
 

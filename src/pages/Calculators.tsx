@@ -174,24 +174,22 @@ const Calculators = () => {
         <div className="container mx-auto max-w-5xl">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { to: "/calculators/borrowing-power", emoji: "💰", label: "How much can I borrow?" },
-              { to: "/calculators/repayment", emoji: "🏠", label: "What will my repayments be?" },
-              { to: "/calculators/upfront-costs", emoji: "🪙", label: "How much deposit do I need?" },
-              { to: "/calculators/comprehensive", emoji: "📋", label: "What's the total cost?" },
+              { to: "/calculators/borrowing-power", emoji: "💰", label: "How much can I borrow?", hint: "Your borrowing power" },
+              { to: "/calculators/repayment", emoji: "🏠", label: "What will my repayments be?", hint: "Weekly, fortnightly, monthly" },
+              { to: "/calculators/upfront-costs", emoji: "🪙", label: "How much deposit do I need?", hint: "Deposit + upfront costs" },
+              { to: "/calculators/comprehensive", emoji: "📋", label: "What's the total cost?", hint: "Stamp duty, LMI, grants — the lot" },
             ].map((q) => (
               <Link key={q.to} to={q.to}>
                 <Card className="h-full border-2 hover:border-primary hover:shadow-xl transition-all cursor-pointer">
                   <CardContent className="p-6 text-center">
                     <div className="text-4xl mb-3">{q.emoji}</div>
-                    <p className="font-semibold">{q.label}</p>
+                    <p className="font-semibold mb-1">{q.label}</p>
+                    <p className="text-xs text-muted-foreground">{q.hint}</p>
                   </CardContent>
                 </Card>
               </Link>
             ))}
           </div>
-          <p className="text-center text-sm text-muted-foreground mt-4">
-            Stamp duty, LMI, grants — the lot.
-          </p>
         </div>
       </section>
 

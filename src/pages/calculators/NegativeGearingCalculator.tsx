@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { calculateIncomeTax } from "@/lib/calculations";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 export default function NegativeGearingCalculator() {
   // Loan Details
@@ -449,12 +450,7 @@ export default function NegativeGearingCalculator() {
             </div>
           </Card>
           
-          <Card className="p-6 mt-6 bg-muted">
-            <h3 className="text-lg font-semibold mb-2">Important Disclaimer</h3>
-            <p className="text-sm text-muted-foreground">
-              This calculator provides estimates only and should not be considered financial advice. Tax laws are complex and individual circumstances vary significantly. Always consult with a qualified tax professional, accountant, or financial adviser before making investment property decisions. The calculator uses current Australian tax rates and assumes standard deduction rules.
-            </p>
-          </Card>
+        <CalculatorDisclaimer kind="negative-gearing" />
         </div>
       </main>
       

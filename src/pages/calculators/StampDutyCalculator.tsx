@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import { Receipt, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { calculateStampDuty, type AusState, type PropertyCategory } from "@/lib/calculations";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 interface StampDutyCalculatorProps {
   initialState?: string;
@@ -460,19 +461,7 @@ const StampDutyCalculator = ({ initialState, lockState = false, embedded = false
           </CardContent>
         </Card>
 
-        {/* Disclaimer */}
-        <Card className="mt-8 bg-muted/50">
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground">
-              <strong>Disclaimer:</strong> Stamp duty calculations are estimates based on general rates and 
-              concessions. Actual stamp duty may vary based on specific circumstances, property type, and 
-              current government policies. First home buyer concessions have eligibility criteria including 
-              residency requirements and property value limits. This calculator does not include foreign buyer 
-              surcharges or other additional duties. Please consult with a licensed conveyancer or solicitor 
-              for accurate calculations specific to your situation.
-            </p>
-          </CardContent>
-        </Card>
+        <CalculatorDisclaimer kind="stamp-duty" />
       </div>
 
       {!embedded && <Footer />}

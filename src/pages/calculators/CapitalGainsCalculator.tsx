@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import { Percent, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getMarginalRate } from "@/lib/calculations";
+import CalculatorDisclaimer from "@/components/CalculatorDisclaimer";
 
 const CapitalGainsCalculator = () => {
   const [purchasePrice, setPurchasePrice] = useState("500000");
@@ -313,21 +314,7 @@ const CapitalGainsCalculator = () => {
             </CardContent>
           </Card>
 
-          <Card className="mt-8 bg-secondary/30">
-            <CardHeader>
-              <CardTitle>Important Disclaimer</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground space-y-2">
-              <p>
-                This calculator provides estimates only and should not be used for tax planning. Actual CGT calculations 
-                can be complex and depend on many factors including partial exemptions, property improvements, and changes in usage.
-              </p>
-              <p>
-                Always consult with a qualified tax advisor or accountant for accurate CGT advice. For property finance advice, 
-                please <Link to="/" className="text-primary hover:underline">contact our mortgage brokers</Link>.
-              </p>
-            </CardContent>
-          </Card>
+        <CalculatorDisclaimer kind="capital-gains" />
         </div>
       </section>
 
