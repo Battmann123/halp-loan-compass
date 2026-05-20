@@ -239,27 +239,31 @@ const GovernmentGrantsCalculator = ({ initialState, lockState = false, embedded 
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navigation />
+    <div className={embedded ? "" : "min-h-screen flex flex-col"}>
+      {!embedded && <Navigation />}
 
 
 
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
-        <Link to="/calculators" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
-          <ArrowLeft className="h-4 w-4" />
-          Back to All Calculators
-        </Link>
+      <div className={embedded ? "" : "container mx-auto px-4 py-8 max-w-5xl"}>
+        {!embedded && (
+          <>
+            <Link to="/calculators" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
+              <ArrowLeft className="h-4 w-4" />
+              Back to All Calculators
+            </Link>
 
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Gift className="h-10 w-10 text-primary" />
-            <h1 className="text-3xl md:text-4xl font-bold">Government Grants Calculator</h1>
-          </div>
-          <p className="text-lg text-muted-foreground">
-            All available grants in one view — FHOG, stamp duty concessions, the new Australian Government
-            5% Deposit Scheme (incl. 2% Single Parent stream), Help to Buy shared equity, and FHSS.
-          </p>
-        </div>
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <Gift className="h-10 w-10 text-primary" />
+                <h1 className="text-3xl md:text-4xl font-bold">Government Grants Calculator</h1>
+              </div>
+              <p className="text-lg text-muted-foreground">
+                All available grants in one view — FHOG, stamp duty concessions, the new Australian Government
+                5% Deposit Scheme (incl. 2% Single Parent stream), Help to Buy shared equity, and FHSS.
+              </p>
+            </div>
+          </>
+        )}
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Input Section */}
