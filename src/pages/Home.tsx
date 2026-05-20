@@ -195,12 +195,11 @@ const Home = () => {
               <CardContent className="p-6">
                 <HomeIcon className="h-10 w-10 mb-4 text-primary" />
                 <h3 className="text-lg font-semibold mb-2">First Home Buyers</h3>
-                <p className="text-sm text-muted-foreground mb-3">400,000+ newly eligible</p>
+                <p className="text-sm text-muted-foreground mb-3">400,000+ newly eligible for the 5% deposit scheme</p>
                 <ul className="text-sm space-y-1 text-muted-foreground">
                   <li>• 5% deposit loans</li>
                   <li>• Grants up to $45,000</li>
                   <li>• Stamp duty exemptions</li>
-                  <li>• Complete buying guides</li>
                 </ul>
               </CardContent>
             </Card>
@@ -241,7 +240,7 @@ const Home = () => {
                   <li>• School catchment mapping</li>
                   <li>• Family home upgrades</li>
                   <li>• Flexible repayments</li>
-                  <li>• Future expansion planning</li>
+                  <li>• Room to grow with the family</li>
                 </ul>
               </CardContent>
             </Card>
