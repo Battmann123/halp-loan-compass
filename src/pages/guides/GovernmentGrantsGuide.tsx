@@ -3,11 +3,46 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
+import GuideFAQ from "@/components/GuideFAQ";
 import { Calculator, BookOpen, ArrowLeft, Gift, DollarSign } from "lucide-react";
+
+const grantsFAQs = [
+  {
+    q: "How much is the First Home Owner Grant (FHOG) in each state?",
+    a: "FHOG amounts in 2026: NSW $10,000 (new homes up to $600K build, $750K buy), VIC $10,000 (new homes up to $750K), QLD $30,000 (new builds, expires 30 June 2026 then reverts to $15,000), WA $10,000 (new homes), SA $15,000 (new homes up to $650K), TAS $10,000 (new homes), NT up to $50,000 (HomeGrown Territory and BuildBonus), ACT no FHOG (replaced by Home Buyer Concession).",
+  },
+  {
+    q: "What is the First Home Guarantee (5% Deposit Scheme)?",
+    a: "From 1 October 2025 the First Home Guarantee allows eligible first home buyers to purchase with just a 5% deposit and pay no LMI. Income caps, place caps and most price caps have been removed. Sydney's price cap is now $1.5M, Melbourne and Brisbane $1M, with regional caps varying by location.",
+  },
+  {
+    q: "How does Help to Buy work?",
+    a: "Launched 5 December 2025, Help to Buy is a shared equity scheme where the federal government takes up to 40% equity in a new home (30% on existing) in exchange for a contribution. Buyers need just a 2% deposit, pay no LMI, and only borrow for their share. Income caps apply ($90K single, $120K couple) along with state-specific price caps.",
+  },
+  {
+    q: "Can you combine FHOG with the First Home Guarantee?",
+    a: "Yes — most government schemes can be stacked. A typical NSW first home buyer can combine FHOG ($10K), First Home Guarantee (saves $15K–$25K in LMI), stamp duty exemption ($25K–$35K), and FHSS withdrawals — total benefits of $60K–$100K+.",
+  },
+  {
+    q: "What is the First Home Super Saver Scheme (FHSS)?",
+    a: "FHSS lets you save for a deposit inside super at the concessional tax rate. You can contribute up to $15,000 per year and withdraw up to $50,000 total ($100,000 per couple) plus associated earnings. Most savers see a 30%+ boost compared to saving in a normal bank account.",
+  },
+  {
+    q: "Who qualifies for the Family Home Guarantee?",
+    a: "The Family Home Guarantee supports single parents and single legal guardians of dependent children to buy a home with just a 2% deposit and no LMI. From October 2025, income and place caps have been removed; price caps mirror the First Home Guarantee.",
+  },
+];
 
 const GovernmentGrantsGuide = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Government Grants Guide 2026 — FHOG, First Home Guarantee, Help to Buy"
+        description="Every Australian first home buyer grant and scheme for 2026: First Home Guarantee 5% deposit, Help to Buy shared equity, FHOG by state ($10K–$50K), FHSS and Family Home Guarantee."
+        canonical="https://halp-loan-compass.lovable.app/guides/government-grants"
+        keywords="First Home Owner Grant 2026, FHOG NSW VIC QLD WA, First Home Guarantee, Help to Buy scheme, FHSS, government grants first home buyer"
+      />
       <Navigation />
 
       {/* Hero Section */}
