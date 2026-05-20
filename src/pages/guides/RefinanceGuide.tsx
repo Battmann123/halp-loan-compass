@@ -178,6 +178,8 @@ const RefinanceGuide = () => {
             </CardContent>
           </Card>
 
+          <GuideFAQ items={refinanceFAQs} />
+
           <div className="bg-secondary/30 rounded-lg p-8 text-center">
             <Calculator className="h-12 w-12 mx-auto mb-4 text-primary" />
             <h3 className="text-2xl font-bold mb-4">Calculate Your Refinance Savings</h3>
