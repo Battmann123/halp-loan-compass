@@ -69,6 +69,11 @@ const App = () => (
           <Route path="/calculators/repayment" element={<RepaymentCalculator />} />
           <Route path="/calculators/borrowing-power" element={<BorrowingPowerCalculator />} />
           <Route path="/calculators/stamp-duty" element={<StampDutyCalculator />} />
+          <Route path="/calculators/stamp-duty/:state" element={<StateCalculatorPage variant="stamp-duty" />} />
+          <Route
+            path="/calculators/government-grants/:state"
+            element={<StateCalculatorPage variant="government-grants" allowedStates={["nsw", "vic", "qld", "wa"]} />}
+          />
           <Route path="/calculators/government-grants" element={<GovernmentGrantsCalculator />} />
           <Route path="/calculators/serviceability" element={<ServiceabilityCalculator />} />
           <Route path="/calculators/lmi" element={<LMICalculator />} />
