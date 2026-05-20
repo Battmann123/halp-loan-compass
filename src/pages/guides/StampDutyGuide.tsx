@@ -5,7 +5,15 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import GuideFAQ from "@/components/GuideFAQ";
-import { Calculator, BookOpen, ArrowLeft, DollarSign, MapPin } from "lucide-react";
+import GuideStatsBar from "@/components/GuideStatsBar";
+import { Calculator, BookOpen, ArrowLeft, DollarSign, MapPin, Home, Percent, Globe } from "lucide-react";
+
+const stampDutyStats = [
+  { icon: Home, value: "$800K", label: "NSW FHB exempt threshold (new homes)" },
+  { icon: Percent, value: "$0", label: "QLD stamp duty on new homes (no cap)" },
+  { icon: DollarSign, value: "$25K+", label: "Typical FHB saving on a $650K purchase" },
+  { icon: Globe, value: "7–8%", label: "Foreign buyer surcharge most states" },
+];
 
 const stampDutyFAQs = [
   {
