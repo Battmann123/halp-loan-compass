@@ -3,7 +3,41 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Calculator, BookOpen, ArrowLeft, Wallet, DollarSign } from "lucide-react";
+import SEO from "@/components/SEO";
+import GuideFAQ from "@/components/GuideFAQ";
+import GuideStatsBar from "@/components/GuideStatsBar";
+import { Calculator, BookOpen, ArrowLeft, Wallet, DollarSign, Percent, FileText, Home } from "lucide-react";
+
+const upfrontStats = [
+  { icon: Percent, value: "2–5%", label: "Effective deposit after stacking grants" },
+  { icon: DollarSign, value: "$52K–$72K", label: "Combined FHB benefits on $580–$650K" },
+  { icon: FileText, value: "$1.5K–$3K", label: "Conveyancing & legal fees" },
+  { icon: Home, value: "$400–$700", label: "Building & pest inspection" },
+];
+
+const upfrontFAQs = [
+  {
+    q: "What upfront costs do I need beyond the deposit?",
+    a: "Beyond the deposit, budget for stamp duty (state dependent, often $0 for first home buyers under the threshold), LMI if borrowing above 80% LVR, conveyancing/legal ($1,500–$3,000), building and pest inspection ($400–$700), loan application fees ($0–$600), mortgage registration and transfer fees ($150–$350), and moving costs.",
+  },
+  {
+    q: "How much deposit do I actually need in 2026?",
+    a: "Traditional banks want 20% to avoid LMI. With the federal First Home Guarantee you only need 5% (no LMI). With Help to Buy you need just 2%. After stacking grants and stamp duty exemptions, many first home buyers complete a purchase with $30K–$60K total cash on a $600K home.",
+  },
+  {
+    q: "Can I use the FHOG as part of my deposit?",
+    a: "Generally the FHOG is paid at settlement (or progressively during construction for new builds), so it reduces the cash you need at settlement rather than being available before contract. You will still need genuine savings of 5% in most cases to satisfy the lender.",
+  },
+  {
+    q: "What is 'genuine savings' and how much do I need?",
+    a: "Genuine savings is money you have demonstrably saved over at least three months (not gifted, not borrowed). Most lenders require 5% of the purchase price as genuine savings when borrowing above 85–90% LVR. Rent paid for 12+ months can be accepted as a substitute by some lenders.",
+  },
+  {
+    q: "Should I include a buffer for cost overruns?",
+    a: "Yes — keep $5,000–$10,000 in reserve after settlement to cover urgent repairs, utility connections, white goods, and the inevitable 'we forgot about that' costs. Lenders also like to see post-settlement savings as evidence of financial discipline.",
+  },
+];
+
 
 const UpfrontCostsGuide = () => {
   return (
