@@ -5,7 +5,15 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import GuideFAQ from "@/components/GuideFAQ";
-import { Calculator, BookOpen, ArrowLeft, DollarSign } from "lucide-react";
+import GuideStatsBar from "@/components/GuideStatsBar";
+import { Calculator, BookOpen, ArrowLeft, DollarSign, TrendingUp, Percent, CreditCard } from "lucide-react";
+
+const borrowingStats = [
+  { icon: Percent, value: "+3%", label: "APRA stress-test buffer on actual rate" },
+  { icon: TrendingUp, value: "$500K+", label: "Typical capacity for $100K single, no debts" },
+  { icon: CreditCard, value: "$10K limit", label: "Credit card ≈ $40–$50K less borrowing" },
+  { icon: DollarSign, value: "$100K+", label: "Variance between lenders for same applicant" },
+];
 
 const borrowingPowerFAQs = [
   {
