@@ -146,7 +146,7 @@ const Home = () => {
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Who We Help</h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Card className="border-2 hover:border-primary transition-all">
               <CardContent className="p-6">
                 <HomeIcon className="h-10 w-10 mb-4 text-primary" />
