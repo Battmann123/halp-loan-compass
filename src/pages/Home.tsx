@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { organizationSchema, serviceSchema } from "@/lib/structuredData";
+import halpHero from "@/assets/halp-hero.jpg";
 import {
   Calculator,
   Home as HomeIcon,
@@ -42,29 +43,43 @@ const Home = () => {
           <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
         </div>
 
-        <div className="container mx-auto text-center relative">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-foreground max-w-4xl mx-auto">
-            Need <span className="text-primary">HALP</span> with your first home loan?
-          </h1>
-          <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto text-muted-foreground">
-            5% deposit options, grants up to $45,000, and 40+ lenders compared.
-            We do the running around — you pick the keys.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
-            <Link to="/apply">
-              <Button size="lg" className="text-base px-8 py-6 h-auto shadow-md hover:shadow-lg">
-                Get Pre-Approved
-              </Button>
-            </Link>
-            <Link to="/apply">
-              <Button size="lg" variant="outline" className="text-base px-8 py-6 h-auto">
-                Talk To A Broker
-              </Button>
-            </Link>
-          </div>
+        <div className="container mx-auto relative">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-foreground">
+                Need <span className="text-primary">HALP</span> with your first home loan?
+              </h1>
+              <p className="text-lg md:text-xl mb-10 text-muted-foreground">
+                5% deposit options, grants up to $45,000, and 40+ lenders compared.
+                We do the running around — you pick the keys.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-4">
+                <Link to="/apply">
+                  <Button size="lg" className="text-base px-8 py-6 h-auto shadow-md hover:shadow-lg">
+                    Get Pre-Approved
+                  </Button>
+                </Link>
+                <Link to="/apply">
+                  <Button size="lg" variant="outline" className="text-base px-8 py-6 h-auto">
+                    Talk To A Broker
+                  </Button>
+                </Link>
+              </div>
+            </div>
 
+            <div className="relative">
+              <div className="absolute -inset-4 bg-primary/10 rounded-3xl blur-2xl" />
+              <img
+                src={halpHero}
+                alt="HALP Home Loans broker helping a happy young couple secure their first home"
+                className="relative rounded-2xl shadow-2xl w-full h-auto object-cover"
+                loading="eager"
+              />
+            </div>
+          </div>
         </div>
       </section>
+
 
 
 
