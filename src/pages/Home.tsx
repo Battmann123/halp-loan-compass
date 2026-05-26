@@ -63,60 +63,10 @@ const Home = () => {
             </Link>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-border max-w-md mx-auto">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">House and Land Packages Pty Ltd</p>
-            <p className="text-xs text-muted-foreground/70 mt-1">presents</p>
-            <p className="text-sm font-semibold mt-2 tracking-wide text-foreground">HALP HOME LOANS & HALP FINANCE</p>
-          </div>
         </div>
       </section>
 
-      {/* Key Value Props */}
-      <section className="py-16 px-4 bg-secondary/30">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
-              <CardContent className="p-6 text-center">
-                <Building className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">House & Land, Made Simple</h3>
-                <p className="text-sm text-muted-foreground">Brand-new homes: one approval, one settlement, land + build.</p>
-              </CardContent>
-            </Card>
 
-            <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
-              <CardContent className="p-6 text-center">
-                <HomeIcon className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">First Home? Start Here.</h3>
-                <p className="text-sm text-muted-foreground">5% deposit, $45K in grants, stamp duty exemptions explained.</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
-              <CardContent className="p-6 text-center">
-                <GraduationCap className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">Buy In The Right School Zone</h3>
-                <p className="text-sm text-muted-foreground">Search by school catchment, then we sort the loan.</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
-              <CardContent className="p-6 text-center">
-                <Users className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">New To Australia?</h3>
-                <p className="text-sm text-muted-foreground">Temporary visa loans, FIRB help, brokers who speak your language.</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
-              <CardContent className="p-6 text-center">
-                <Award className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold mb-2">One Form. 40+ Lenders.</h3>
-                <p className="text-sm text-muted-foreground">Big banks, small lenders, specialists — we compare, you choose.</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
 
       {/* How It Works */}
       <section className="py-16 px-4">
