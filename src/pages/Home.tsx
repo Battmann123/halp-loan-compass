@@ -160,18 +160,6 @@ const Home = () => {
               </CardContent>
             </Card>
 
-            <Card className="border-2 hover:border-primary transition-all">
-              <CardContent className="p-6">
-                <Users className="h-10 w-10 mb-4 text-primary" />
-                <h3 className="text-lg font-semibold mb-2">Non-Residents</h3>
-                <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>• Overseas income assessment</li>
-                  <li>• Temporary visa lending</li>
-                  <li>• FIRB application assistance</li>
-                  <li>• Multi-language support</li>
-                </ul>
-              </CardContent>
-            </Card>
 
             <Card className="border-2 hover:border-primary transition-all">
               <CardContent className="p-6">
