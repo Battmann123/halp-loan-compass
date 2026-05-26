@@ -170,16 +170,18 @@ const Home = () => {
       </section>
 
       {/* Calculator CTA */}
-      <section className="py-16 px-4 bg-gradient-to-br from-primary to-accent text-white">
+      <section className="py-16 px-4 bg-foreground text-background">
         <div className="container mx-auto text-center max-w-4xl">
-          <Calculator className="h-16 w-16 mx-auto mb-6" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary mb-6">
+            <Calculator className="h-8 w-8 text-primary-foreground" />
+          </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             How much can you actually afford?
           </h2>
-          <p className="text-xl mb-8 opacity-95">
+          <p className="text-lg md:text-xl mb-8 text-background/70 max-w-2xl mx-auto">
             Crunch the numbers in plain English. No sign-up, no email collected — just answers.
           </p>
-          <Button size="lg" variant="secondary" className="text-lg px-8 py-6 h-auto shadow-xl">
+          <Button asChild size="lg" className="text-base px-8 py-6 h-auto">
             <Link to="/calculators" className="flex items-center gap-2">
               <Calculator className="h-5 w-5" />
               Run The Numbers
@@ -187,6 +189,7 @@ const Home = () => {
           </Button>
         </div>
       </section>
+
 
       {/* Who We Help */}
       <section className="py-16 px-4">
