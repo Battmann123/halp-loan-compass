@@ -44,7 +44,7 @@ const Home = () => {
 
         <div className="container mx-auto text-center relative">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-foreground max-w-4xl mx-auto">
-            Need <span className="text-primary">HALP</span> with the cheapest home loans?
+            Need <span className="text-primary">HALP</span> with your first home loan?
           </h1>
           <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto text-muted-foreground">
             5% deposit options, grants up to $45,000, and 40+ lenders compared.
