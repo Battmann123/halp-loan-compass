@@ -405,9 +405,27 @@ const Guides = () => {
                   );
                 })}
               </div>
+
+              {/* Clear filters */}
+              {(activeFilter !== "All" || activeState !== "All") && (
+                <div className="pt-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setActiveFilter("All");
+                      setActiveState("All");
+                    }}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Clear filters
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </section>
+
 
         {/* Guides Grid */}
         <section className="py-10">
@@ -433,7 +451,23 @@ const Guides = () => {
                           {c}
                         </Badge>
                       ))}
+                      {(() => {
+                        const s = guide.states;
+                        if (!s || s.length === 0 || s.length === ALL_STATES.length) {
+                          return (
+                            <Badge variant="secondary" className="text-xs inline-flex items-center gap-1">
+                              <MapPin className="h-3 w-3" /> All states
+                            </Badge>
+                          );
+                        }
+                        return s.map((st) => (
+                          <Badge key={st} variant="secondary" className="text-xs inline-flex items-center gap-1">
+                            <MapPin className="h-3 w-3" /> {st}
+                          </Badge>
+                        ));
+                      })()}
                     </div>
+
                     <CardDescription className="mt-3">{guide.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="mt-auto space-y-4">
