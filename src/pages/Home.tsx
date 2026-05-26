@@ -35,50 +35,53 @@ const Home = () => {
       />
       <Navigation />
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary via-accent to-primary py-20 px-4">
-        <div className="container mx-auto text-center text-white">
-          {/* Trust Badges */}
-          <div className="flex flex-wrap justify-center gap-6 mb-8">
-            <div className="flex items-center gap-2 text-sm opacity-90">
-              <Award className="h-5 w-5" />
+      {/* Hero Section — white-led, family-friendly */}
+      <section className="relative bg-gradient-to-b from-background to-secondary/40 py-20 px-4 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
+        </div>
+
+        <div className="container mx-auto text-center relative">
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            <div className="inline-flex items-center gap-2 text-sm text-muted-foreground bg-background border border-border rounded-full px-4 py-1.5 shadow-sm">
+              <Award className="h-4 w-4 text-primary" />
               <span>30 Years Experience</span>
             </div>
-            <div className="flex items-center gap-2 text-sm opacity-90">
-              <Shield className="h-5 w-5" />
+            <div className="inline-flex items-center gap-2 text-sm text-muted-foreground bg-background border border-border rounded-full px-4 py-1.5 shadow-sm">
+              <Shield className="h-4 w-4 text-primary" />
               <span>Licensed & Trusted</span>
             </div>
-            <div className="flex items-center gap-2 text-sm opacity-90">
-              <CheckCircle2 className="h-5 w-5" />
+            <div className="inline-flex items-center gap-2 text-sm text-muted-foreground bg-background border border-border rounded-full px-4 py-1.5 shadow-sm">
+              <CheckCircle2 className="h-4 w-4 text-primary" />
               <span>Fast Approvals</span>
             </div>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Your first home, <span className="text-secondary">without the bank-speak.</span>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-foreground max-w-4xl mx-auto">
+            Your first home, <span className="text-primary">without the bank-speak.</span>
           </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-95">
+          <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto text-muted-foreground">
             5% deposit options, grants up to $45,000, and 40+ lenders compared.
             We do the running around — you pick the keys.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
             <Link to="/apply">
-              <Button size="lg" variant="secondary" className="text-lg px-8 py-6 h-auto shadow-xl hover:shadow-2xl">
+              <Button size="lg" className="text-base px-8 py-6 h-auto shadow-md hover:shadow-lg">
                 Get Pre-Approved
               </Button>
             </Link>
             <Link to="/apply">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6 h-auto bg-white/10 border-white text-white hover:bg-white hover:text-primary shadow-xl">
+              <Button size="lg" variant="outline" className="text-base px-8 py-6 h-auto">
                 Talk To A Broker
               </Button>
             </Link>
           </div>
 
-          {/* Company Branding */}
-          <div className="mt-8 pt-8 border-t border-white/20">
-            <p className="text-sm opacity-70 uppercase tracking-wider">House and Land Packages Pty Ltd</p>
-            <p className="text-xs opacity-60 mt-1">presents</p>
-            <p className="text-lg font-semibold mt-2 tracking-wide">HALP HOME LOANS & HALP FINANCE</p>
+          <div className="mt-12 pt-8 border-t border-border max-w-md mx-auto">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">House and Land Packages Pty Ltd</p>
+            <p className="text-xs text-muted-foreground/70 mt-1">presents</p>
+            <p className="text-sm font-semibold mt-2 tracking-wide text-foreground">HALP HOME LOANS & HALP FINANCE</p>
           </div>
         </div>
       </section>
@@ -167,16 +170,18 @@ const Home = () => {
       </section>
 
       {/* Calculator CTA */}
-      <section className="py-16 px-4 bg-gradient-to-br from-primary to-accent text-white">
+      <section className="py-16 px-4 bg-foreground text-background">
         <div className="container mx-auto text-center max-w-4xl">
-          <Calculator className="h-16 w-16 mx-auto mb-6" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary mb-6">
+            <Calculator className="h-8 w-8 text-primary-foreground" />
+          </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             How much can you actually afford?
           </h2>
-          <p className="text-xl mb-8 opacity-95">
+          <p className="text-lg md:text-xl mb-8 text-background/70 max-w-2xl mx-auto">
             Crunch the numbers in plain English. No sign-up, no email collected — just answers.
           </p>
-          <Button size="lg" variant="secondary" className="text-lg px-8 py-6 h-auto shadow-xl">
+          <Button asChild size="lg" className="text-base px-8 py-6 h-auto">
             <Link to="/calculators" className="flex items-center gap-2">
               <Calculator className="h-5 w-5" />
               Run The Numbers
@@ -184,6 +189,7 @@ const Home = () => {
           </Button>
         </div>
       </section>
+
 
       {/* Who We Help */}
       <section className="py-16 px-4">
@@ -261,7 +267,7 @@ const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/apply">
-              <Button size="lg" className="text-lg px-8 py-6 h-auto bg-gradient-to-r from-primary to-accent shadow-xl">
+              <Button size="lg" className="text-base px-8 py-6 h-auto shadow-md">
                 <DollarSign className="h-5 w-5 mr-2" />
                 Get Pre-Approved Today
               </Button>
