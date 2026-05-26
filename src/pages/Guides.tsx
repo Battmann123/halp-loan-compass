@@ -405,9 +405,27 @@ const Guides = () => {
                   );
                 })}
               </div>
+
+              {/* Clear filters */}
+              {(activeFilter !== "All" || activeState !== "All") && (
+                <div className="pt-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setActiveFilter("All");
+                      setActiveState("All");
+                    }}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Clear filters
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </section>
+
 
         {/* Guides Grid */}
         <section className="py-10">
