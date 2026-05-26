@@ -267,7 +267,7 @@ const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/apply">
-              <Button size="lg" className="text-lg px-8 py-6 h-auto bg-gradient-to-r from-primary to-accent shadow-xl">
+              <Button size="lg" className="text-base px-8 py-6 h-auto shadow-md">
                 <DollarSign className="h-5 w-5 mr-2" />
                 Get Pre-Approved Today
               </Button>
