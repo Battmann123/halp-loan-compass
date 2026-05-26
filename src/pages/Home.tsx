@@ -43,23 +43,8 @@ const Home = () => {
         </div>
 
         <div className="container mx-auto text-center relative">
-          <div className="flex flex-wrap justify-center gap-3 mb-8">
-            <div className="inline-flex items-center gap-2 text-sm text-muted-foreground bg-background border border-border rounded-full px-4 py-1.5 shadow-sm">
-              <Award className="h-4 w-4 text-primary" />
-              <span>30 Years Experience</span>
-            </div>
-            <div className="inline-flex items-center gap-2 text-sm text-muted-foreground bg-background border border-border rounded-full px-4 py-1.5 shadow-sm">
-              <Shield className="h-4 w-4 text-primary" />
-              <span>Licensed & Trusted</span>
-            </div>
-            <div className="inline-flex items-center gap-2 text-sm text-muted-foreground bg-background border border-border rounded-full px-4 py-1.5 shadow-sm">
-              <CheckCircle2 className="h-4 w-4 text-primary" />
-              <span>Fast Approvals</span>
-            </div>
-          </div>
-
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-foreground max-w-4xl mx-auto">
-            Your first home, <span className="text-primary">without the bank-speak.</span>
+            Need <span className="text-primary">HALP</span> with the cheapest home loans?
           </h1>
           <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto text-muted-foreground">
             5% deposit options, grants up to $45,000, and 40+ lenders compared.
