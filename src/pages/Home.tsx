@@ -69,12 +69,55 @@ const Home = () => {
 
             <div className="relative flex items-center justify-center">
               <div className="absolute w-[90%] h-[90%] rounded-[2.5rem] bg-gradient-to-br from-primary/10 via-primary/5 to-transparent" />
+
+              {/* Decorative orbit rings */}
+              <svg
+                className="absolute inset-0 w-full h-full pointer-events-none text-primary/25"
+                viewBox="0 0 400 400"
+                fill="none"
+                aria-hidden="true"
+              >
+                <circle cx="200" cy="200" r="150" stroke="currentColor" strokeWidth="1" />
+                <circle cx="200" cy="200" r="185" stroke="currentColor" strokeWidth="1" />
+              </svg>
+
               <img
                 src={halpHero.url}
                 alt="HALP Home Loans broker helping a happy young couple secure their first home"
                 className="relative w-full h-auto object-contain drop-shadow-xl"
                 loading="eager"
               />
+
+              {/* Floating info chips */}
+              <div className="absolute top-4 left-0 sm:left-2 bg-background/95 backdrop-blur rounded-2xl shadow-lg border border-border px-4 py-3 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <DollarSign className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <div className="text-xs text-muted-foreground">Grants up to</div>
+                  <div className="font-bold text-sm text-foreground">$45,000</div>
+                </div>
+              </div>
+
+              <div className="absolute top-1/2 -translate-y-1/2 right-0 sm:right-2 bg-background/95 backdrop-blur rounded-2xl shadow-lg border border-border px-4 py-3 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <HomeIcon className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <div className="text-xs text-muted-foreground">Deposit from</div>
+                  <div className="font-bold text-sm text-foreground">Just 5%</div>
+                </div>
+              </div>
+
+              <div className="absolute bottom-6 left-0 sm:left-4 bg-background/95 backdrop-blur rounded-2xl shadow-lg border border-border px-4 py-3 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <div className="text-xs text-muted-foreground">Compare</div>
+                  <div className="font-bold text-sm text-foreground">40+ lenders</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
