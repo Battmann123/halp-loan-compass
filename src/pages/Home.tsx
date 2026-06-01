@@ -39,40 +39,40 @@ const Home = () => {
       {/* Hero Section — white-led, family-friendly */}
       <section className="relative bg-gradient-to-b from-background to-secondary/40 py-20 px-4 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
+          <div className="absolute top-1/4 -left-32 w-[28rem] h-[28rem] rounded-full bg-primary/[0.04] blur-[80px]" />
+          <div className="absolute bottom-1/4 -right-32 w-[28rem] h-[28rem] rounded-full bg-primary/[0.04] blur-[80px]" />
         </div>
 
         <div className="container mx-auto relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-foreground">
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-[1.1] text-foreground">
                 Need <span className="text-primary">HALP</span> with your first home loan?
               </h1>
-              <p className="text-lg md:text-xl mb-10 text-muted-foreground">
+              <p className="text-lg md:text-xl mb-10 text-muted-foreground max-w-xl lg:max-w-none">
                 5% deposit options, grants up to $45,000, and 40+ lenders compared.
                 We do the running around — you pick the keys.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-4">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                 <Link to="/apply">
                   <Button size="lg" className="text-base px-8 py-6 h-auto shadow-md hover:shadow-lg">
                     Get Pre-Approved
                   </Button>
                 </Link>
                 <Link to="/apply">
-                  <Button size="lg" variant="outline" className="text-base px-8 py-6 h-auto">
+                  <Button size="lg" variant="outline" className="text-base px-8 py-6 h-auto border-2">
                     Talk To A Broker
                   </Button>
                 </Link>
               </div>
             </div>
 
-            <div className="relative">
-              <div className="absolute -inset-4 bg-primary/10 rounded-3xl blur-2xl" />
+            <div className="relative flex items-center justify-center">
+              <div className="absolute w-[90%] h-[90%] rounded-[2.5rem] bg-gradient-to-br from-primary/10 via-primary/5 to-transparent" />
               <img
                 src={halpHero.url}
                 alt="HALP Home Loans broker helping a happy young couple secure their first home"
-                className="relative w-full h-auto object-contain"
+                className="relative w-full h-auto object-contain drop-shadow-xl"
                 loading="eager"
               />
             </div>
