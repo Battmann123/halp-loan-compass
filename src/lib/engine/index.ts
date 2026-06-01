@@ -14,7 +14,7 @@
  */
 
 // Meta + types (always re-exported at root)
-export { ENGINE_VERSION, LAST_UPDATED, CURRENT_FY, fyYearOf } from "./meta";
+export { ENGINE_VERSION, LAST_UPDATED, CURRENT_FY, VERIFIED_THROUGH_FY, fyYearOf, isFyOutOfDate } from "./meta";
 export type { AusState, OccupancyType, PropertyCategory, FYYear, RepaymentFrequency, RepaymentType, Source, CalcResult } from "./types";
 
 // Tax
