@@ -25,16 +25,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 7%;
 
-    /* Brand green #27ae60 */
-    --primary: 145 63% 42%;
-    --primary-foreground: 0 0% 100%;
+    /* Brand green — matches actual HALP site */
+    --primary: 149 100% 35%;
+    --primary-foreground: 150 80% 96%;
 
     /* Soft neutral secondary (warm off-white) */
     --secondary: 210 17% 97%;
     --secondary-foreground: 0 0% 7%;
 
     --muted: 210 17% 96%;
-    --muted-foreground: 220 9% 46%;     /* #6b7280 */
+    --muted-foreground: 0 0% 45%;        /* #737373 */
 
     --accent: 145 63% 42%;              /* same green, used as accent */
     --accent-foreground: 0 0% 100%;
