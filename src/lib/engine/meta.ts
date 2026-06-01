@@ -13,11 +13,32 @@ export const ENGINE_VERSION = "1.0.0" as const;
 export const LAST_UPDATED = "2026-05-12" as const;
 
 /**
- * Default Financial Year for any calculator that doesn't take an explicit
- * fyYear input. Update on 1 July each year (or sooner if Treasury legislates
- * a change to the next FY).
+ * Highest FY for which the engine has verified rates/thresholds loaded.
+ * Bump this only after verifying FHOG, stamp duty, LMI, land-tax, and price
+ * caps for the new year. Used to detect when the calendar has rolled past
+ * our verified data window.
  */
-export const CURRENT_FY = "2025-26" as const;
+export const VERIFIED_THROUGH_FY = "2026-27" as const;
+
+/**
+ * Default Financial Year for any calculator that doesn't take an explicit
+ * fyYear input. Auto-derives from today's date — flips on 1 July each year
+ * with zero code change, as long as VERIFIED_THROUGH_FY covers it.
+ *
+ * If the live date moves past VERIFIED_THROUGH_FY, we clamp to the verified
+ * year and `isFyOutOfDate()` returns true so the Rates Freshness page can
+ * surface a warning banner.
+ */
+export const CURRENT_FY: "2025-26" | "2026-27" = (() => {
+  const live = fyYearOf();
+  if (live === "future") return VERIFIED_THROUGH_FY;
+  return live;
+})();
+
+/** True when today's FY is newer than the engine's verified data window. */
+export function isFyOutOfDate(date: Date = new Date()): boolean {
+  return fyYearOf(date) === "future";
+}
 
 /**
  * Convert a Date (or now) to the active Australian financial year.
