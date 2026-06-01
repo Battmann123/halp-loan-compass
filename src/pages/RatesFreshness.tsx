@@ -226,7 +226,30 @@ const RatesFreshness = () => {
                 <Badge variant="outline" className="text-sm py-1.5 px-3">
                   Next scheduled review: {NEXT_REVIEW}
                 </Badge>
+                <Badge
+                  variant={FY_OUT_OF_DATE ? "destructive" : "secondary"}
+                  className="text-sm py-1.5 px-3"
+                >
+                  Active FY: {CURRENT_FY}
+                </Badge>
               </div>
+              {FY_OUT_OF_DATE && (
+                <div className="mt-4 mx-auto max-w-2xl flex items-start gap-3 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-left">
+                  <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-semibold text-destructive">
+                      Engine FY data is behind the calendar
+                    </p>
+                    <p className="text-muted-foreground mt-1">
+                      Today's financial year is <strong>{LIVE_FY}</strong>, but the engine
+                      is verified through <strong>{VERIFIED_THROUGH_FY}</strong>. Calculators
+                      will fall back to {VERIFIED_THROUGH_FY} rates until thresholds for
+                      the new year are reviewed and <code>VERIFIED_THROUGH_FY</code> is bumped
+                      in <code>src/lib/engine/meta.ts</code>.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
