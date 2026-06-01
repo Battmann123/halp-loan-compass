@@ -5,7 +5,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { organizationSchema, serviceSchema } from "@/lib/structuredData";
-import halpHero from "@/assets/halp-hero.jpg";
+import halpHero from "@/assets/halp-hero.png.asset.json";
 import {
   Calculator,
   Home as HomeIcon,
@@ -70,9 +70,9 @@ const Home = () => {
             <div className="relative">
               <div className="absolute -inset-4 bg-primary/10 rounded-3xl blur-2xl" />
               <img
-                src={halpHero}
+                src={halpHero.url}
                 alt="HALP Home Loans broker helping a happy young couple secure their first home"
-                className="relative rounded-2xl shadow-2xl w-full h-auto object-cover"
+                className="relative w-full h-auto object-contain"
                 loading="eager"
               />
             </div>
